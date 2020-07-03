@@ -40,6 +40,7 @@ export default class AppPreview extends React.Component {
   static propTypes = {
     appVersion: PropTypes.string,
   }
+
   static defaultProps = {
     appVersion: '',
   }

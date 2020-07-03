@@ -87,9 +87,7 @@ export default class MemberDevOpsProjects extends React.Component {
       width: '33%',
       render: (name, record) => (
         <Avatar
-          to={`/${this.workspace}/clusters/${record.cluster}/devops/${
-            record.namespace
-          }`}
+          to={`/${this.workspace}/clusters/${record.cluster}/devops/${record.namespace}`}
           icon="project"
           title={getDisplayName(record)}
         />

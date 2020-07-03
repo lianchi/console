@@ -34,7 +34,9 @@ import getRoutes from './routes'
 @trigger
 export default class NetworkpoliciesDetail extends React.Component {
   name = 'Network Policy'
+
   module = 'networkpolicies'
+
   store = new NetWorkStore(this.module)
 
   componentDidMount() {

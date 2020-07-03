@@ -92,6 +92,6 @@ export default {
     'Set the port to expose the container image and the service port.',
   SPECIFY_WORKLOAD_DESC:
     'Specify a workload that needs to be associated with the service.',
-  
+
   EIP_POOL_DESC: 'Access method within the cluster (DNS)',
 }

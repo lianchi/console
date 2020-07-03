@@ -166,9 +166,7 @@ export default class ContainerSetting extends React.Component {
       <Form.Group
         className={className}
         label={t('Container Settings')}
-        desc={t(
-          'Please set the container name and computing resources.'
-        )}
+        desc={t('Please set the container name and computing resources.')}
         noWrapper
       >
         {this.renderImageForm()}

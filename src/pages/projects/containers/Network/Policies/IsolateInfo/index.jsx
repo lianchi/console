@@ -29,6 +29,7 @@ export default class IsolateInfo extends React.Component {
       opened: props.networkIsolate,
     }
   }
+
   toggle = () => {
     const { opened } = this.state
     this.props.onEdit(!opened)
@@ -36,6 +37,7 @@ export default class IsolateInfo extends React.Component {
       opened: !opened,
     })
   }
+
   render() {
     const { opened } = this.state
     const { module } = this.props

@@ -56,9 +56,7 @@ export default class RoleDetail extends React.Component {
   get listUrl() {
     const { workspace, cluster, namespace } = this.props.match.params
 
-    return `/${workspace}/clusters/${cluster}/devops/${namespace}/${
-      this.module
-    }`
+    return `/${workspace}/clusters/${cluster}/devops/${namespace}/${this.module}`
   }
 
   get showEdit() {

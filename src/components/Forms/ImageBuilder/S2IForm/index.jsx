@@ -319,9 +319,7 @@ export default class S2IForm extends React.Component {
               rules={[{ required: true, message: t('This param is required') }]}
             >
               <Select
-                name={`${
-                  this.prefix
-                }spec.config.pushAuthentication.secretRef.name`}
+                name={`${this.prefix}spec.config.pushAuthentication.secretRef.name`}
                 options={this.state.imageSecretOptions}
                 onChange={this.handleImageSecretChange}
               />

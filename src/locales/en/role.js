@@ -206,7 +206,7 @@ export default {
   ROLE_WORKSPACE_ADMIN:
     'Allows admin access to perform any action on any resource. It gives full control over all resources in the workspace.',
   ROLE_WORKSPACE_REGULAR:
-    'Regular user in the workspace who cannot create namespaces or DevOps projects.',  
+    'Regular user in the workspace who cannot create namespaces or DevOps projects.',
   ROLE_WORKSPACE_VIEWER:
     'Allows viewer access to view all resources in the workspace.',
   ROLE_WORKSPACE_SELF_PROVISIONER:

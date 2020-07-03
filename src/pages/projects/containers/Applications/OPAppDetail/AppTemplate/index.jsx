@@ -50,7 +50,10 @@ export default class AppTemplate extends React.Component {
     this.appVersionStore = new AppVersionStore()
     this.appFileStore = new AppFileStore()
 
-    when(() => !isEmpty(this.store.detail), () => this.getData())
+    when(
+      () => !isEmpty(this.store.detail),
+      () => this.getData()
+    )
   }
 
   get workspace() {

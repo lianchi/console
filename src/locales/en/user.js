@@ -28,7 +28,8 @@ export default {
     'Password must contain numbers and letters, and must be at least 6 characters in length.',
   ROLE_DESC:
     'The role types are classified into cluster and project. The role of cluster type is used for managing the cluster.',
-  USER_DESC: 'This module allows the system admin to manage accounts, such as creating/updating/reading/deleting an account. The admin can also manage the role of each account. Users can log in the platform through their account name or email address.',
+  USER_DESC:
+    'This module allows the system admin to manage accounts, such as creating/updating/reading/deleting an account. The admin can also manage the role of each account. Users can log in the platform through their account name or email address.',
   USER_CREATE_DESC:
     'This module allows the system admin to manage accounts, such as creating/updating/reading/deleting an account. The admin can also manage the role of each account. Users can log in the platform through their account name or email address.',
   ROLE_BASEINFO_DESC: '',

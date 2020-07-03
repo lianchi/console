@@ -71,17 +71,11 @@ export default class AdvanceSettings extends React.Component {
 
     switch (this.sourceType) {
       case 'bitbucket_server':
-        return `${window.location.protocol}//${
-          window.location.host
-        }/devops_webhook/git/?url=${bitbucket_url}`
+        return `${window.location.protocol}//${window.location.host}/devops_webhook/git/?url=${bitbucket_url}`
       case 'github':
-        return `${window.location.protocol}//${
-          window.location.host
-        }/devops_webhook/${this.sourceType}/`
+        return `${window.location.protocol}//${window.location.host}/devops_webhook/${this.sourceType}/`
       default:
-        return `${window.location.protocol}//${
-          window.location.host
-        }/devops_webhook/git/?url=${url}`
+        return `${window.location.protocol}//${window.location.host}/devops_webhook/git/?url=${url}`
     }
   }
 
@@ -413,9 +407,7 @@ export default class AdvanceSettings extends React.Component {
                   desc={t('WHEN_CHRETE_PIEPLINE_DESC')}
                 >
                   <Select
-                    name={`${
-                      this.prefix
-                    }.multibranch_job_trigger.create_action_job_to_trigger`}
+                    name={`${this.prefix}.multibranch_job_trigger.create_action_job_to_trigger`}
                     isLoading={isLoading}
                     isLoadingAtBottom
                     onMenuScrollToBottom={this.handleScrollToBottom}
@@ -430,9 +422,7 @@ export default class AdvanceSettings extends React.Component {
                   desc={t('WHEN_DELETE_PIEPLINE_DESC')}
                 >
                   <Select
-                    name={`${
-                      this.prefix
-                    }.multibranch_job_trigger.delete_action_job_to_trigger`}
+                    name={`${this.prefix}.multibranch_job_trigger.delete_action_job_to_trigger`}
                     isLoading={isLoading}
                     isLoadingAtBottom
                     onMenuScrollToBottom={this.handleScrollToBottom}

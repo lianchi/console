@@ -221,7 +221,9 @@ export default class Viewer extends React.Component {
         ) : (
           <label>
             {!isEmpty(namespaceLabels) && (
-              <span>all pods in the namespace with the label {namespaceLabels} </span>
+              <span>
+                all pods in the namespace with the label {namespaceLabels}{' '}
+              </span>
             )}
             {!isEmpty(destPodLabels) && (
               <span>

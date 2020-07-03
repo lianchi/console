@@ -97,9 +97,7 @@ export default class ImageBuilderLastRun extends React.Component {
   handleDownload = () => {
     const { sourceUrl } = this.props.runDetail
     const path = get(parseUrl(sourceUrl), 'pathname', `/${sourceUrl}`)
-    const downLoadUrl = `${window.location.protocol}//${
-      window.location.host
-    }/b2i_download${path}`
+    const downLoadUrl = `${window.location.protocol}//${window.location.host}/b2i_download${path}`
     window.open(downLoadUrl)
   }
 

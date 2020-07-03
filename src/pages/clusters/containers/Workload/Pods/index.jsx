@@ -158,9 +158,7 @@ export default class Pods extends React.Component {
         <div>
           <Link
             className={styles.title}
-            to={`/clusters/${cluster}/projects/${
-              record.namespace
-            }/${module}/${name}`}
+            to={`/clusters/${cluster}/projects/${record.namespace}/${module}/${name}`}
           >
             {name}
           </Link>

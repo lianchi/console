@@ -96,6 +96,7 @@ export default {
     'Traffic governance depends on the microservice module, the current cluster does not enable the microservice module',
   TRACING_NO_MICROSERVICE_TIP:
     'Tracing depends on the microservice module, the current cluster does not enable the microservice module',
-  
-  APPLICATION_SERVICE_DESC: 'You can set different service components based on the service type in an application. Stateful and stateless services are both supported.'
+
+  APPLICATION_SERVICE_DESC:
+    'You can set different service components based on the service type in an application. Stateful and stateless services are both supported.',
 }

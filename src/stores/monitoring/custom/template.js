@@ -314,9 +314,7 @@ export default class CustomMonitoringTemplate {
 
   async fetchMetadata() {
     const { data: targetsMetadata } = (await request.get(
-      `kapis/monitoring.kubesphere.io/v1alpha3/namespaces/${
-        this.namespace
-      }/targets/metadata`
+      `kapis/monitoring.kubesphere.io/v1alpha3/namespaces/${this.namespace}/targets/metadata`
     )) || { data: [] }
     this.targetsMetadata = targetsMetadata || []
   }

@@ -51,9 +51,7 @@ export default class OPApps extends React.Component {
 
   get prefix() {
     const { workspace, cluster, namespace } = this.props.match.params
-    return `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/${
-      this.type
-    }`
+    return `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/${this.type}`
   }
 
   get canCreate() {

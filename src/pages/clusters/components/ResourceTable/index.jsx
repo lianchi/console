@@ -97,6 +97,7 @@ class ResourceTable extends BaseTable {
   }
 }
 
-export default inject('rootStore', 'clusterStore')(
-  observer(withTableActions(ResourceTable))
-)
+export default inject(
+  'rootStore',
+  'clusterStore'
+)(observer(withTableActions(ResourceTable)))

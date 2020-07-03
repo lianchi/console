@@ -244,8 +244,7 @@ export default {
 
   ROLE_WORKSPACE_ADMIN: '企业空间管理员，可以管理企业空间下所有的资源。',
   ROLE_WORKSPACE_MANAGER: '平台企业空间管理员，管理平台所有企业空间。',
-  ROLE_WORKSPACE_REGULAR:
-    '企业空间普通成员，无法创建 DevOps 工程和项目。',
+  ROLE_WORKSPACE_REGULAR: '企业空间普通成员，无法创建 DevOps 工程和项目。',
   ROLE_WORKSPACE_VIEWER: '企业空间的观察者，可以查看企业空间下所有的资源信息。',
   ROLE_WORKSPACE_SELF_PROVISIONER:
     '企业空间普通成员，可以在企业空间下创建 DevOps 工程和项目。',
