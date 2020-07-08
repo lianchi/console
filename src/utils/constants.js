@@ -1009,3 +1009,22 @@ export const CREDENTIAL_DISPLAY_KEY = {
   'secret-text': 'secret_text',
   kubeconfig: 'kubeconfig',
 }
+
+export const FED_ACTIVE_STATUS = {
+  FederatedApplication: 'Running',
+  FederatedService: 'Running',
+  FederatedDeployment: 'Running',
+  FederatedStatfulSet: 'Running',
+  FederatedVolume: 'Running',
+  FederatedIngress: 'Running',
+}
+
+export const APP_LABEL_MODULES = [
+  'applications',
+  'deployments',
+  'statefulsets',
+  'daemonsets',
+  'jobs',
+  'cronjobs',
+  'services',
+]

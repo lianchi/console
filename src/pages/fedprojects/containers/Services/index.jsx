@@ -18,7 +18,7 @@
 
 import React from 'react'
 
-import { Avatar, Text } from 'components/Base'
+import { Avatar, Status, Text } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import { withProjectList, ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
@@ -86,7 +86,7 @@ export default class Services extends React.Component {
   }
 
   get tableActions() {
-    const { tableProps, name, rowKey, trigger } = this.props
+    const { tableProps, name, trigger } = this.props
     return {
       ...tableProps.tableActions,
       selectActions: [
@@ -98,7 +98,7 @@ export default class Services extends React.Component {
           onClick: () =>
             trigger('resource.batch.delete', {
               type: t(name),
-              rowKey,
+              rowKey: 'name',
             }),
         },
       ],
@@ -106,14 +106,11 @@ export default class Services extends React.Component {
   }
 
   getColumns = () => {
-    const { getSortOrder, module } = this.props
+    const { module } = this.props
     return [
       {
         title: t('Name'),
         dataIndex: 'name',
-        sorter: true,
-        sortOrder: getSortOrder('name'),
-        search: true,
         render: (name, record) => (
           <Avatar
             icon={ICON_TYPES[module]}
@@ -121,9 +118,15 @@ export default class Services extends React.Component {
             title={getDisplayName(record)}
             desc={record.description || '-'}
             isMultiCluster={true}
-            to={`${this.props.match.url}/${name}`}
+            to={record.deletionTime ? null : `${this.props.match.url}/${name}`}
           />
         ),
+      },
+      {
+        title: t('Status'),
+        dataIndex: 'status',
+        isHideable: true,
+        render: status => <Status type={status} name={t(status)} flicker />,
       },
       {
         title: t('Service Type'),
@@ -143,8 +146,6 @@ export default class Services extends React.Component {
       {
         title: t('Created Time'),
         dataIndex: 'createTime',
-        sorter: true,
-        sortOrder: getSortOrder('createTime'),
         isHideable: true,
         width: 150,
         render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
@@ -165,7 +166,7 @@ export default class Services extends React.Component {
   render() {
     const { bannerProps, tableProps } = this.props
     return (
-      <ListPage {...this.props}>
+      <ListPage {...this.props} isFederated>
         <Banner {...bannerProps} tips={this.tips} />
         <Table
           {...tableProps}
@@ -173,6 +174,7 @@ export default class Services extends React.Component {
           tableActions={this.tableActions}
           columns={this.getColumns()}
           onCreate={this.showCreate}
+          searchType="name"
         />
       </ListPage>
     )

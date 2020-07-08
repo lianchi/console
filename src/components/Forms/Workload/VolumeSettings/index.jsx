@@ -53,7 +53,6 @@ class VolumeSettings extends React.Component {
     this.projectStore = new ProjectStore()
 
     if (props.isFederated) {
-      this.store = new FederatedStore(this.store)
       this.projectStore = new FederatedStore({
         module: this.projectStore.module,
       })
@@ -73,6 +72,7 @@ class VolumeSettings extends React.Component {
   componentDidMount() {
     if (this.namespace) {
       this.projectStore.fetchDetail({
+        name: this.namespace,
         namespace: this.namespace,
         cluster: this.cluster,
       })
@@ -84,7 +84,9 @@ class VolumeSettings extends React.Component {
   }
 
   get cluster() {
-    return this.props.cluster
+    return (
+      this.props.cluster || get(this.props.projectDetail, 'clusters[0].name')
+    )
   }
 
   get namespace() {
@@ -124,7 +126,7 @@ class VolumeSettings extends React.Component {
   }
 
   get selectVolume() {
-    return this.state.selectVolume
+    return { ...this.state.selectVolume }
   }
 
   showVolume = () => {
@@ -163,7 +165,7 @@ class VolumeSettings extends React.Component {
   }
 
   resetState = state => {
-    this.setState({ state: state || '' })
+    this.setState({ state: state || '', selectVolume: {} })
   }
 
   showConfig = () => {
@@ -190,14 +192,16 @@ class VolumeSettings extends React.Component {
 
   updateVolumes = newVolume => {
     const volumes = get(this.fedFormTemplate, `${this.prefix}spec.volumes`, [])
-
     let newVolumes = []
 
-    const existVolume = findVolume(volumes, newVolume)
+    const existVolume = !isEmpty(this.selectVolume)
+      ? this.selectVolume
+      : undefined
+
     const newSpecVolume = this.formatSpecVolume(existVolume, newVolume)
     if (existVolume) {
       newVolumes = volumes.map(item =>
-        item.name === newVolume.name ? newSpecVolume : item
+        item.name === existVolume.name ? newSpecVolume : item
       )
     } else {
       newVolumes = [...volumes, newSpecVolume]
@@ -242,7 +246,7 @@ class VolumeSettings extends React.Component {
           .filter(vm => vm.readOnly !== 'null')
           .map(({ logPath, ...vm }) => ({
             ...vm,
-            readOnly: vm.readOnly === 'true',
+            readOnly: String(vm.readOnly) === 'true',
           }))
       }
     })
@@ -358,6 +362,12 @@ class VolumeSettings extends React.Component {
   }
 
   handleVolume(newVolume = {}, newVolumeMounts = []) {
+    if (!newVolume.uid) {
+      newVolumeMounts.forEach(vm => {
+        vm.name = newVolume.name
+      })
+    }
+
     this.updateVolumes(newVolume)
     this.updateVolumeMounts(newVolumeMounts)
     this.updateLogConfigs(newVolumeMounts)
@@ -366,6 +376,10 @@ class VolumeSettings extends React.Component {
   }
 
   handleVolumeTemplate(newVolume = {}, newVolumeMounts = []) {
+    newVolumeMounts.forEach(vm => {
+      vm.name = newVolume.name
+    })
+
     this.updateVolumeTemplate(newVolume)
     this.updateVolumeTemplateMounts(newVolumeMounts)
     this.updateLogConfigs(newVolumeMounts)
@@ -389,7 +403,7 @@ class VolumeSettings extends React.Component {
 
   renderVolume() {
     const { collectSavedLog } = this.state
-    const volumes = this.store.list.data
+    const volumes = toJS(this.store.list.data)
     const isLoading = this.store.list.isLoading
 
     const containers = get(
@@ -415,6 +429,7 @@ class VolumeSettings extends React.Component {
   }
 
   renderConfig() {
+    const { isFederated, projectDetail } = this.props
     const containers = get(
       this.fedFormTemplate,
       `${this.prefix}spec.containers`,
@@ -425,10 +440,13 @@ class VolumeSettings extends React.Component {
       <MountConfig
         volume={this.selectVolume}
         containers={containers}
+        cluster={this.cluster}
         namespace={this.namespace}
         containers={containers}
         onSave={this.handleVolume}
         onCancel={this.resetState}
+        isFederated={isFederated}
+        projectDetail={projectDetail}
         checkVolumeNameExist={this.checkVolumeNameExist}
       />
     )

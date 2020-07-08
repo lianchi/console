@@ -18,7 +18,7 @@
 
 import React from 'react'
 
-import { Avatar } from 'components/Base'
+import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import { withProjectList, ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
@@ -100,7 +100,7 @@ export default class Deployments extends React.Component {
   }
 
   get tableActions() {
-    const { trigger, name, rowKey, tableProps } = this.props
+    const { trigger, name, tableProps } = this.props
     return {
       ...tableProps.tableActions,
       selectActions: [
@@ -112,7 +112,7 @@ export default class Deployments extends React.Component {
           onClick: () =>
             trigger('resource.batch.delete', {
               type: t(name),
-              rowKey,
+              rowKey: 'name',
             }),
         },
       ],
@@ -120,14 +120,11 @@ export default class Deployments extends React.Component {
   }
 
   getColumns = () => {
-    const { getSortOrder, module, projectStore } = this.props
+    const { module, projectStore } = this.props
     return [
       {
         title: t('Name'),
         dataIndex: 'name',
-        sorter: true,
-        sortOrder: getSortOrder('name'),
-        search: true,
         render: (name, record) => (
           <Avatar
             icon={ICON_TYPES[module]}
@@ -135,7 +132,7 @@ export default class Deployments extends React.Component {
             isMultiCluster={record.isFedManaged}
             title={getDisplayName(record)}
             desc={record.description || '-'}
-            to={`${this.props.match.url}/${name}`}
+            to={record.deletionTime ? null : `${this.props.match.url}/${name}`}
           />
         ),
       },
@@ -143,27 +140,26 @@ export default class Deployments extends React.Component {
         title: t('Status'),
         dataIndex: 'status',
         isHideable: true,
-        search: true,
         width: '22%',
-        render: (status, record) => (
-          <FedWorkloadStatus
-            data={record}
-            clusters={projectStore.detail.clusters}
-          />
-        ),
+        render: (status, record) =>
+          status === 'Deleting' ? (
+            <Status type={status} name={t(status)} flicker />
+          ) : (
+            <FedWorkloadStatus
+              data={record}
+              clusters={projectStore.detail.clusters}
+            />
+          ),
       },
       {
         title: t('Application'),
         dataIndex: 'app',
         isHideable: true,
-        search: true,
         width: '22%',
       },
       {
         title: t('Updated Time'),
         dataIndex: 'updateTime',
-        sorter: true,
-        sortOrder: getSortOrder('updateTime'),
         isHideable: true,
         width: 150,
         render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
@@ -184,7 +180,7 @@ export default class Deployments extends React.Component {
   render() {
     const { bannerProps, tableProps } = this.props
     return (
-      <ListPage {...this.props}>
+      <ListPage {...this.props} isFederated>
         <Banner {...bannerProps} tabs={this.tabs} />
         <Table
           {...tableProps}
@@ -192,6 +188,7 @@ export default class Deployments extends React.Component {
           tableActions={this.tableActions}
           columns={this.getColumns()}
           onCreate={this.showCreate}
+          searchType="name"
         />
       </ListPage>
     )

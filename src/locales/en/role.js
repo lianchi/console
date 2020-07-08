@@ -86,6 +86,7 @@ export default {
 
   CLUSTER_SETTINGS_DESC:
     'Manage cluster settings and authorizations to workspaces & edit cluster information',
+  WORKSPACE_ROLE_NAME_TIP: 'Please give a unique identifier as the role name.',
   ROLE_CREATE_TIP_TITLE: 'Next Step',
   ROLE_CREATE_TIP_MESSAGE:
     'You need to edit authorization after which the role can be created successfully.',
@@ -110,8 +111,7 @@ export default {
   APP_TEMPLATES_VIEW_DESC: 'View platform App Store',
   APP_TEMPLATES_MANAGEMENT_DESC:
     'Manage App Store at platform level and responsible for unified lifecycle management of cloud native applications including their release, removal and review',
-  PLATFORM_SETTINGS_MANAGEMENT_DESC:
-    'Manage platform settings, such as customized platform information, log collection configuration and email notification',
+  PLATFORM_SETTINGS_MANAGEMENT_DESC: 'Manage platform settings.',
   ACCOUNT_ROLE_DESC:
     'Account roles define the authorization an account has in the platform.',
   ACCOUNT_ROLE_CREATE_DESC:
@@ -174,6 +174,8 @@ export default {
   PROJECTS_CREATE_DESC:
     'Have the access to create projects and the project administrator has to be the creator',
   PROJECTS_VIEW_DESC: 'View all projects in the workspace',
+  FEDERATED_PROJECTS_MANAGEMENT_DESC:
+    'Manage all federated projects in the workspace, including creating/editing/deleting federated projects',
 
   DEVOPS_MANAGEMENT_DESC:
     'Manage all DevOps projects in the workspace, including creating/editing/deleting DevOps projects',
@@ -191,28 +193,30 @@ export default {
   WORKSPACE_APP_TEMPLATES_VIEW_DESC: 'View workspace app templates',
   WORKSPACE_APP_TEMPLATES_MANAGEMENT_DESC:
     'Upload/edit/delete workspace app templates; release/remove apps to App Store in the platform',
+  WORKSPACE_SETTINGS_DESC:
+    'Manage workspace settings, edit workspace information, network policies, etc.',
 
   ROLE_PLATFORM_ADMIN:
     'Platform administrator who can manage all resources in the platform.',
   ROLE_PLATFORM_REGULAR:
     'Normal user in the platform who has no access to any resources before joining the workspace or cluster.',
-  ROLE_USER_MANAGER: 'User manager in the platform who manages all users.',
 
   ROLE_CLUSTER_ADMIN:
     'Allows cluster-admin access to perform any action on any resource. It gives full control over all resources in the cluster and in all namespaces.',
   ROLE_CLUSTER_VIEWER:
     'Allows cluster-viwer to view all resources in the cluster.',
+  ROLE_USERS_MANAGER: 'User manager in the platform who manages all users.',
+  ROLE_WORKSPACES_MANAGER:
+    'Workspace manager in the platform who manages all workspaces in the platform.',
 
   ROLE_WORKSPACE_ADMIN:
     'Allows admin access to perform any action on any resource. It gives full control over all resources in the workspace.',
   ROLE_WORKSPACE_REGULAR:
-    'Regular user in the workspace who cannot create namespaces or DevOps projects.',  
+    'Regular user in the workspace who cannot create namespaces or DevOps projects.',
   ROLE_WORKSPACE_VIEWER:
     'Allows viewer access to view all resources in the workspace.',
   ROLE_WORKSPACE_SELF_PROVISIONER:
     'Regular user in the workspace who can create namespaces and DevOps projects.',
-  ROLE_WORKSPACE_MANAGER:
-    'Workspace manager in the platform who manages all workspaces in the platform.',
 
   ROLE_PROJECT_ADMIN:
     'Allows admin access to perform any action on any resource. It gives full control over all resources in the namespace.',

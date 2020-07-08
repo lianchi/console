@@ -16,18 +16,20 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, omitBy, uniqBy, isEmpty, set } from 'lodash'
+import { get, set, unset, cloneDeep, omitBy, uniqBy, isEmpty } from 'lodash'
 import { Modal, Notify } from 'components/Base'
 import QuotaEditModal from 'components/Modals/QuotaEdit'
 import ProjectCreateModal from 'components/Modals/ProjectCreate'
 import AssignWorkspaceModal from 'components/Modals/AssignWorkspace'
 import DefaultResourceEditModal from 'projects/components/Modals/DefaultResourceEdit'
 import GatewaySettingModal from 'projects/components/Modals/GatewaySetting'
+import DeleteModal from 'components/Modals/Delete'
 import FORM_TEMPLATES from 'utils/form.templates'
 import FED_TEMPLATES from 'utils/fed.templates'
 
 import QuotaStore from 'stores/quota'
 import FederatedStore from 'stores/federated'
+import ProjectStore from 'stores/project'
 
 export default {
   'project.create': {
@@ -41,6 +43,8 @@ export default {
         })
       const modal = Modal.open({
         onOk: async data => {
+          let selectCluster = ''
+          let projectType = 'projects'
           set(data, 'metadata.labels["kubesphere.io/workspace"]', workspace)
           const clusters = uniqBy(
             get(data, 'spec.placement.clusters', []),
@@ -50,20 +54,31 @@ export default {
           if (clusters.length > 1) {
             const federatedStore = new FederatedStore(store)
             set(data, 'spec.placement.clusters', clusters)
-            await store.create(data, { workspace })
+
+            const hostData = cloneDeep(data)
+            set(
+              hostData,
+              'metadata.labels["kubesphere.io/kubefed-host-namespace"]',
+              'true'
+            )
+            unset(hostData, 'spec.placement')
+            await store.create(hostData, { workspace })
             await federatedStore.create(FED_TEMPLATES.namespaces(data), {
               namespace: get(data, 'metadata.name'),
             })
+            projectType = 'federatedprojects'
           } else {
-            await store.create(data, {
-              cluster: get(clusters, '[0].name'),
+            const params = {
+              cluster: cluster || get(clusters, '[0].name'),
               workspace,
-            })
+            }
+            await store.create(data, params)
+            selectCluster = params.cluster
           }
 
           Modal.close(modal)
           Notify.success({ content: `${t('Created Successfully')}!` })
-          success && success()
+          success && success(projectType, selectCluster)
         },
         hideCluster: !globals.app.isMultiCluster || !!cluster,
         multiCluster,
@@ -122,25 +137,62 @@ export default {
     },
   },
   'project.default.resource': {
-    on({ store, detail, namespace, cluster, success, ...props }) {
+    on({
+      store,
+      detail,
+      namespace,
+      cluster,
+      success,
+      isFederated,
+      projectDetail,
+      ...props
+    }) {
+      if (isFederated) {
+        detail.limit = get(detail, 'resource.limit')
+      }
+
       const modal = Modal.open({
         onOk: async data => {
           if (isEmpty(detail)) {
-            await store.createLimitRange(
-              { namespace, cluster },
-              {
-                ...FORM_TEMPLATES.limitRange(),
-                spec: { limits: [{ ...data, type: 'Container' }] },
-              }
-            )
+            let formTemplate = FORM_TEMPLATES.limitRange()
+
+            if (isFederated) {
+              formTemplate = FORM_TEMPLATES.federated({
+                data: FORM_TEMPLATES.limitRange(),
+                clusters: projectDetail.clusters.map(item => item.name),
+                kind: 'LimitRange',
+              })
+              set(formTemplate, 'metadata.name', namespace)
+              set(formTemplate, 'spec.template.spec', {
+                limits: [{ ...data, type: 'Container' }],
+              })
+            } else {
+              set(formTemplate, 'spec', {
+                limits: [{ ...data, type: 'Container' }],
+              })
+            }
+
+            await store.create(formTemplate, { namespace, cluster })
           } else {
-            await store.updateLimitRange(
-              { ...detail, namespace, cluster },
-              {
-                ...detail._originData,
-                spec: { limits: [{ ...detail.limit, ...data }] },
-              }
+            const formTemplate = {
+              ...detail._originData,
+            }
+
+            if (isFederated) {
+              set(formTemplate, 'spec.template.spec', {
+                limits: [{ ...detail.limit, ...data }],
+              })
+            } else {
+              set(formTemplate, 'spec', {
+                limits: [{ ...detail.limit, ...data }],
+              })
+            }
+            set(
+              formTemplate,
+              'metadata.resourceVersion',
+              detail.resourceVersion
             )
+            await store.update({ ...detail, namespace, cluster }, formTemplate)
           }
 
           Modal.close(modal)
@@ -149,6 +201,7 @@ export default {
         },
         modal: DefaultResourceEditModal,
         store,
+        detail,
         ...props,
       })
     },
@@ -183,6 +236,29 @@ export default {
         store,
         detail,
         cluster,
+        ...props,
+      })
+    },
+  },
+  'fedproject.delete': {
+    on({ store, detail, success, ...props }) {
+      const projectStore = new ProjectStore()
+      const modal = Modal.open({
+        onOk: () => {
+          store.delete(detail).then(() => {
+            projectStore.delete({ name: detail.name })
+            Modal.close(modal)
+            Notify.success({ content: `${t('Deleted Successfully')}!` })
+            success && success()
+          })
+        },
+        store,
+        modal: DeleteModal,
+        resource: detail.name,
+        desc: t.html('MULTI_CLUSTER_PROJECT_DELETE_TIP', {
+          type: t('Multi-cluster Project'),
+          resource: detail.name,
+        }),
         ...props,
       })
     },

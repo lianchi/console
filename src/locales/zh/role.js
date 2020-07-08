@@ -38,6 +38,7 @@ export default {
 
   'Role Identifier': '角色标识符',
   'Edit Authorization': '编辑权限',
+  WORKSPACE_ROLE_NAME_TIP: '请设置一个唯一标识符作为角色名称。',
 
   'Create Project Role': '创建项目角色',
   'Edit Project Role': '编辑项目角色',
@@ -93,8 +94,7 @@ export default {
   APP_TEMPLATES_MANAGEMENT_DESC:
     '管理平台级别的应用商店，对云原生应用的上架、下架以及审核等应用全生命周期的统一管理。',
   'Platform Settings Management': '平台设置管理',
-  PLATFORM_SETTINGS_MANAGEMENT_DESC:
-    '管理平台设置，如自定义平台信息，logo，配置日志收集，邮件通知等。',
+  PLATFORM_SETTINGS_MANAGEMENT_DESC: '管理平台设置',
 
   'Workspace Roles View': '角色查看',
   'Workspace Roles Management': '角色管理',
@@ -114,18 +114,22 @@ export default {
   WORKSPACE_APP_TEMPLATES_VIEW_DESC: '查看企业空间应用模板',
   WORKSPACE_APP_TEMPLATES_MANAGEMENT_DESC:
     '上传/编辑/删除 企业空间应用模板，上架/下架应用到平台的应用商店',
+  WORKSPACE_SETTINGS_DESC: '管理企业空间设置，编辑企业空间信息、网络策略等',
 
   'Projects Management': '项目管理',
   'Projects View': '项目查看',
+  'Federated Projects Management': '联邦项目管理',
   'Projects Create': '项目创建',
-  'Devops Management': 'Devops 工程管理',
-  'Devops View': 'Devops 工程查看',
-  'Devops Create': 'Devops 工程创建',
+  'DevOps Management': 'DevOps 工程管理',
+  'DevOps View': 'DevOps 工程查看',
+  'DevOps Create': 'DevOps 工程创建',
 
   PROJECTS_MANAGEMENT_DESC:
     '管理企业空间里的所有项目，可以 创建/编辑/删除 项目',
   PROJECTS_CREATE_DESC: '拥有创建项目的权限，项目管理员只能为创建者自己',
   PROJECTS_VIEW_DESC: '可以查看企业空间里的所有项目',
+  FEDERATED_PROJECTS_MANAGEMENT_DESC:
+    '管理企业空间里的所有多集群项目，可以 创建/编辑/删除 多集群项目',
   DEVOPS_MANAGEMENT_DESC:
     '管理企业空间里的所有 DevOps 工程，可以 创建/编辑/删除 DevOps 工程',
   DEVOPS_CREATE_DESC:
@@ -237,15 +241,14 @@ export default {
   ROLE_PLATFORM_ADMIN: '平台管理员，可以管理平台内的所有资源。',
   ROLE_PLATFORM_REGULAR:
     '平台普通用户，在被邀请加入企业空间或集群之前没有任何资源操作权限。',
-  ROLE_USER_MANAGER: '平台用户管理员，管理平台所有用户。',
+  ROLE_USERS_MANAGER: '平台用户管理员，管理平台所有用户。',
+  ROLE_WORKSPACES_MANAGER: '平台企业空间管理员，管理平台所有企业空间。',
 
   ROLE_CLUSTER_ADMIN: '集群管理员，可以管理集群中所有的资源。',
   ROLE_CLUSTER_VIEWER: '集群观察者，可以查看集群下所有的资源。',
 
   ROLE_WORKSPACE_ADMIN: '企业空间管理员，可以管理企业空间下所有的资源。',
-  ROLE_WORKSPACE_MANAGER: '平台企业空间管理员，管理平台所有企业空间。',
-  ROLE_WORKSPACE_REGULAR:
-    '企业空间普通成员，无法创建 DevOps 工程和项目。',
+  ROLE_WORKSPACE_REGULAR: '企业空间普通成员，无法创建 DevOps 工程和项目。',
   ROLE_WORKSPACE_VIEWER: '企业空间的观察者，可以查看企业空间下所有的资源信息。',
   ROLE_WORKSPACE_SELF_PROVISIONER:
     '企业空间普通成员，可以在企业空间下创建 DevOps 工程和项目。',

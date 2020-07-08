@@ -92,11 +92,19 @@ export default class MountConfig extends React.Component {
   }
 
   fetchData() {
-    const { namespace } = this.props
+    const { cluster, namespace, projectDetail, isFederated } = this.props
+
+    const params = {
+      namespace,
+      cluster: cluster || get(projectDetail, 'clusters[0].name'),
+    }
+    if (isFederated) {
+      params.labelSelector = 'kubefed.io/managed=true'
+    }
 
     Promise.all([
-      this.configMapStore.fetchListByK8s({ namespace }),
-      this.secretStore.fetchListByK8s({ namespace }),
+      this.configMapStore.fetchListByK8s(params),
+      this.secretStore.fetchListByK8s(params),
     ]).then(([configMaps, secrets]) => {
       this.setState({ configMaps, secrets }, () => {
         if (this.state.formData.name) {

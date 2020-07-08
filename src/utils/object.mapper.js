@@ -40,6 +40,7 @@ import { getWorkloadUpdateTime } from 'utils/workload'
 import { getServiceType } from 'utils/service'
 import { getNodeRoles } from 'utils/node'
 import { getPodStatusAndRestartCount } from 'utils/status'
+import { FED_ACTIVE_STATUS } from 'utils/constants'
 
 const getOriginData = item =>
   omit(item, [
@@ -141,6 +142,9 @@ const NamespaceMapper = item => ({
   workspace: get(item, 'metadata.labels["kubesphere.io/workspace"]', ''),
   status: get(item, 'status.phase'),
   opRuntime: get(item, 'metadata.annotations.openpitrix_runtime'),
+  isFedHostNamespace:
+    get(item, 'metadata.labels["kubesphere.io/kubefed-host-namespace"]') ===
+    'true',
   _originData: getOriginData(item),
 })
 
@@ -158,6 +162,7 @@ const WorkLoadMapper = item => ({
   podNums: get(item, 'spec.replicas', 0),
   selector: get(item, 'spec.selector.matchLabels'),
   containers: get(item, 'spec.template.spec.containers'),
+  initContainers: get(item, 'spec.template.spec.initContainers'),
   volumes: get(item, 'spec.template.spec.volumes'),
   strategy: get(item, 'spec.strategy', {}),
   updateStrategy: get(item, 'spec.updateStrategy.type'),
@@ -1067,7 +1072,6 @@ const FederatedMapper = resourceMapper => item => {
   const overrides = get(item, 'spec.overrides', [])
   const template = get(item, 'spec.template', {})
   const clusters = get(item, 'spec.placement.clusters', [])
-
   const overrideClusterMap = keyBy(overrides, 'clusterName')
   const clusterTemplates = {}
   clusters.forEach(({ name }) => {
@@ -1092,6 +1096,9 @@ const FederatedMapper = resourceMapper => item => {
     labels: get(item, 'metadata.labels', {}),
     annotations: get(item, 'metadata.annotations', {}),
     app: get(item, 'metadata.labels["app.kubernetes.io/name"]'),
+    status: get(item, 'metadata.deletionTimestamp')
+      ? 'Deleting'
+      : FED_ACTIVE_STATUS[item.kind] || 'Active',
     _originData: getOriginData(item),
   }
 }

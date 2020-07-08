@@ -137,6 +137,11 @@ export default class Deployments extends React.Component {
     return desc
   }
 
+  getCheckboxProps = record => ({
+    disabled: record.isFedManaged,
+    name: record.name,
+  })
+
   getColumns = () => {
     const { getSortOrder, getFilteredValue, module } = this.props
     const { cluster } = this.props.match.params
@@ -177,7 +182,6 @@ export default class Deployments extends React.Component {
         title: t('Project'),
         dataIndex: 'namespace',
         isHideable: true,
-        search: true,
         width: '22%',
         render: namespace => (
           <Link to={`/clusters/${cluster}/projects/${namespace}`}>
@@ -217,6 +221,7 @@ export default class Deployments extends React.Component {
           columns={this.getColumns()}
           onCreate={this.showCreate}
           cluster={match.params.cluster}
+          getCheckboxProps={this.getCheckboxProps}
         />
       </ListPage>
     )

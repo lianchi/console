@@ -16,19 +16,24 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export default {
-  SECRET_DESC:
-    'A Secret is an object that contains a small amount of sensitive data such as a password, a token, or a key.',
-  SECRET_CREATE_DESC:
-    'A Secret is an object that contains a small amount of sensitive data such as a password, a token, or a key.',
-  SECRET_TYPE_DESC: 'You can choose or customize a Secret type.',
+import { get } from 'lodash'
 
-  SECRET_NO_CHINESE_CODE_DESC:
-    'Chinese characters cannot be included in the secret.',
+export const getOverrides = (template, data, keys) => {
+  const overrides = []
+  if (!template || !data) {
+    return overrides
+  }
 
-  IMAGE_REGISTRY_VALIDATE_TIP:
-    'Before creating image registry secret, please verify that if it is validate.',
+  keys.forEach(key => {
+    const templateValue = get(template, key, {})
+    const dataValue = get(data, key, {})
+    if (JSON.stringify(templateValue) !== JSON.stringify(dataValue)) {
+      overrides.push({
+        path: `/${key.replace(/\./g, '/')}`,
+        value: dataValue,
+      })
+    }
+  })
 
-  'DATA-KEY': 'Key',
-  'DATA-VALUE': 'Value',
+  return overrides
 }

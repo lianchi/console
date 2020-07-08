@@ -69,19 +69,15 @@ export default class CRDApps extends React.Component {
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props
     return [
       {
         title: t('Name'),
         dataIndex: 'name',
-        sorter: true,
-        sortOrder: getSortOrder('name'),
-        search: true,
         render: (name, record) => (
           <Avatar
             title={getDisplayName(record)}
             avatar={record.icon || '/assets/default-app.svg'}
-            to={`${this.props.match.url}/${name}`}
+            to={record.deletionTime ? null : `${this.props.match.url}/${name}`}
             desc={get(record, 'annotations["kubesphere.io/description"]', '-')}
           />
         ),
@@ -91,14 +87,17 @@ export default class CRDApps extends React.Component {
         dataIndex: 'status',
         isHideable: true,
         width: '20%',
-        render: (status, record) => (
-          <ClusterWrapper
-            clusters={record.clusters}
-            clustersDetail={this.props.projectStore.detail.clusters}
-          >
-            {cluster => this.renderStatus({ cluster, record })}
-          </ClusterWrapper>
-        ),
+        render: (status, record) =>
+          status === 'Deleting' ? (
+            <Status type={status} name={t(status)} flicker />
+          ) : (
+            <ClusterWrapper
+              clusters={record.clusters}
+              clustersDetail={this.props.projectStore.detail.clusters}
+            >
+              {cluster => this.renderStatus({ cluster, record })}
+            </ClusterWrapper>
+          ),
       },
       {
         title: t('Version'),
@@ -109,8 +108,6 @@ export default class CRDApps extends React.Component {
       {
         title: t('Created Time'),
         dataIndex: 'createTime',
-        sorter: true,
-        sortOrder: getSortOrder('createTime'),
         isHideable: true,
         width: 180,
         render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
@@ -165,7 +162,7 @@ export default class CRDApps extends React.Component {
   render() {
     const { bannerProps, tableProps } = this.props
     return (
-      <ListPage {...this.props} noWatch>
+      <ListPage {...this.props} isFederated>
         <Banner
           {...bannerProps}
           tips={this.tips}
@@ -175,6 +172,7 @@ export default class CRDApps extends React.Component {
           {...tableProps}
           {...this.getTableProps()}
           columns={this.getColumns()}
+          searchType="name"
         />
       </ListPage>
     )

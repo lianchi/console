@@ -186,8 +186,8 @@ client:
                 authKey: 'cluster-settings',
                 multiCluster: true,
               }
-            - { name: members, title: Cluster Members }
-            - { name: roles, title: Cluster Roles }
+            # - { name: members, title: Cluster Members }
+            # - { name: roles, title: Cluster Roles }
             - {
                 name: mail-server,
                 title: Mail Server,
@@ -264,7 +264,6 @@ client:
             - {
                 name: clusters,
                 title: Cluster Info,
-                authKey: 'workspace-settings',
                 multiCluster: true,
               }
             - { name: roles, title: Workspace Roles }
@@ -427,7 +426,7 @@ client:
 
   # preset infos
   presetUsers: [admin, sonarqube]
-  presetGlobalRoles: [platform-admin, platform-regular, workspace-manager, user-manager]
+  presetGlobalRoles: [platform-admin, platform-regular, workspaces-manager, users-manager]
   presetClusterRoles: [cluster-admin, cluster-viewer]
   presetWorkspaceRoles: [admin, regular, viewer, self-provisioner]
   presetDevOpsRoles: [admin, operator, viewer]

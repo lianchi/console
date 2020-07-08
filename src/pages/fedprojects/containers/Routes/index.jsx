@@ -17,7 +17,7 @@
  */
 
 import React from 'react'
-import { Avatar } from 'components/Base'
+import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import Table from 'components/Tables/List'
 import { withProjectList, ListPage } from 'components/HOCs/withList'
@@ -86,38 +86,39 @@ export default class Routers extends React.Component {
   }
 
   getColumns = () => {
-    const { getSortOrder, module } = this.props
+    const { module } = this.props
     return [
       {
         title: t('Name'),
         dataIndex: 'name',
-        sorter: true,
-        sortOrder: getSortOrder('name'),
-        search: true,
         render: (name, record) => (
           <Avatar
             icon={ICON_TYPES[module]}
             iconSize={40}
             title={getDisplayName(record)}
             desc={record.description || '-'}
-            to={`${this.props.match.url}/${name}`}
+            to={record.deletionTime ? null : `${this.props.match.url}/${name}`}
             isMultiCluster={true}
           />
         ),
       },
       {
+        title: t('Status'),
+        dataIndex: 'status',
+        isHideable: true,
+        width: '22%',
+        render: status => <Status type={status} name={t(status)} flicker />,
+      },
+      {
         title: t('Application'),
         dataIndex: 'app.kubernetes.io/name',
         isHideable: true,
-        search: true,
         width: '22%',
         render: (_, record) => record.app,
       },
       {
         title: t('Created Time'),
         dataIndex: 'createTime',
-        sorter: true,
-        sortOrder: getSortOrder('createTime'),
         isHideable: true,
         width: 150,
         render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
@@ -138,13 +139,14 @@ export default class Routers extends React.Component {
   render() {
     const { bannerProps, tableProps } = this.props
     return (
-      <ListPage {...this.props}>
+      <ListPage {...this.props} isFederated>
         <Banner {...bannerProps} tips={this.tips} />
         <Table
           {...tableProps}
           itemActions={this.itemActions}
           columns={this.getColumns()}
           onCreate={this.showCreate}
+          searchType="name"
         />
       </ListPage>
     )

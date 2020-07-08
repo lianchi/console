@@ -84,7 +84,7 @@ export default {
   ACCESS_CONTROL_DESC: '对平台中的企业空间、账号、以及角色权限进行统一管理',
   APP_STORE_MANAGEMENT_DESC:
     '对云原生应用的上架、下架以及审核等应用全生命周期的统一管理',
-  PLATFORM_SETTINGS_DESC: '定制化平台设置，如平台基本信息、日志收集器等',
+  PLATFORM_SETTINGS_DESC: '定制化平台设置，如平台基本信息等',
 
   Loading: '加载中',
   Active: '已启用',
@@ -260,11 +260,11 @@ export default {
   MINUTE_TIME: '{count} 分钟',
 
   NAME_DESC:
-    '最长 63 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母或数字开头及结尾',
+    '最长 63 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头, 小写字母或数字结尾',
   NAME_TOO_LONG: '最长 63 个字符',
 
   LONG_NAME_DESC:
-    '最长 253 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母或数字开头及结尾',
+    '最长 253 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头, 小写字母或数字结尾',
   LONG_NAME_TOO_LONG: '最长 253 个字符',
   LONG_DESC_TOO_LONG: '最长 1000 个字符',
   ALIAS_DESC: '别名可以由任意字符组成，帮助您更好的区分资源，并支持中文名称',

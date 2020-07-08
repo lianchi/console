@@ -32,12 +32,29 @@ export default class EnvStore {
     isLoading: true,
   }
 
+  getPath({ cluster, namespace } = {}) {
+    let path = ''
+    if (cluster) {
+      path += `/klusters/${cluster}`
+    }
+    if (namespace) {
+      path += `/namespaces/${namespace}`
+    }
+    return path
+  }
+
   @action
-  async fetchList({ namespace, containers }) {
+  async fetchList({ cluster, namespace, containers, initContainers }) {
     this.list.isLoading = true
 
+    const mergeContainers = [
+      ...initContainers.map(item => ({ ...item, type: 'init' })),
+      ...containers.map(item => ({ ...item, type: 'work' })),
+    ]
+
     const data = await Promise.all(
-      containers.map(container => {
+      mergeContainers.map(container => {
+        container.cluster = cluster
         container.namespace = namespace
         return this.fetchVariables(container)
       })
@@ -53,7 +70,7 @@ export default class EnvStore {
   async fetchVariables(container) {
     this.variables.isLoading = true
 
-    const { namespace, env = [] } = container
+    const { cluster, namespace, env = [] } = container
     const requests = []
     const items = []
     env.forEach(item => {
@@ -67,7 +84,9 @@ export default class EnvStore {
           })
           requests.push(
             request.get(
-              `api/v1/namespaces/${namespace}/secrets/${secretKeyRef.name}`
+              `api/v1${this.getPath({ cluster, namespace })}/secrets/${
+                secretKeyRef.name
+              }`
             )
           )
         }
@@ -79,7 +98,7 @@ export default class EnvStore {
           })
           requests.push(
             request.get(
-              `api/v1/namespaces/${namespace}/configmaps/${
+              `api/v1${this.getPath({ cluster, namespace })}/configmaps/${
                 configMapKeyRef.name
               }`
             )

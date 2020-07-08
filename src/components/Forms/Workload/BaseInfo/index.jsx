@@ -26,6 +26,7 @@ import {
   PATTERN_LENGTH_63,
   PATTERN_LENGTH_253,
   MODULE_KIND_MAP,
+  APP_LABEL_MODULES,
 } from 'utils/constants'
 
 import { Columns, Column, Input, TextArea } from '@pitrix/lego-ui'
@@ -89,12 +90,15 @@ export default class BaseInfo extends React.Component {
     const { module, isFederated } = this.props
 
     const labels = get(this.fedFormTemplate, 'metadata.labels', {})
-    labels.app = value
+
+    if (APP_LABEL_MODULES.includes(module)) {
+      labels.app = value.slice(0, 63)
+    }
 
     updateLabels(this.fedFormTemplate, module, labels)
 
-    if (isFederated) {
-      set(this.formTemplate, 'metadata.labels.app', value)
+    if (isFederated && APP_LABEL_MODULES.includes(module)) {
+      set(this.formTemplate, 'metadata.labels.app', value.slice(0, 63))
     }
   }, 200)
 
@@ -136,11 +140,17 @@ export default class BaseInfo extends React.Component {
         <Columns>
           {!this.props.namespace && (
             <Column>
-              <Form.Item label={t('Project')} desc={t('PROJECT_DESC')}>
+              <Form.Item
+                label={t('Project')}
+                desc={t('PROJECT_DESC')}
+                rules={[
+                  { required: true, message: t('Please select a project') },
+                ]}
+              >
                 <ProjectSelect
                   name="metadata.namespace"
                   cluster={this.props.cluster}
-                  defaultValue={this.namespace || 'default'}
+                  defaultValue={this.namespace}
                 />
               </Form.Item>
             </Column>

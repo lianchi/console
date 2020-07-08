@@ -42,7 +42,7 @@ export const ROLE_MODULES = {
       icon: 'project',
     },
     {
-      name: 'Devops Management',
+      name: 'DevOps Management',
       icon: 'strategy-group',
       hide: !globals.app.hasKSModule('devops'),
     },
@@ -54,6 +54,10 @@ export const ROLE_MODULES = {
     {
       name: 'Access Control',
       icon: 'key',
+    },
+    {
+      name: 'Workspace Settings',
+      icon: 'cogwheel',
     },
   ],
   roles: [

@@ -24,6 +24,7 @@ import { parse } from 'qs'
 import isEqual from 'react-fast-compare'
 import { MODULE_KIND_MAP } from 'utils/constants'
 import { trigger } from 'utils/action'
+import ObjectMapper from 'utils/object.mapper'
 
 export default function withList(options) {
   return WrappedComponent => {
@@ -259,32 +260,42 @@ export class ListPage extends React.Component {
   }
 
   initWebsocket() {
+    const { isFederated } = this.props
     if ('getWatchListUrl' in this.store) {
       const url = this.store.getWatchListUrl(this.props.match.params)
 
       this.websocket.watch(url)
 
-      const _getData = throttle(() => {
+      const _getData = throttle(query => {
         if (this.store.list.isLoading) {
           return
         }
         const params = parse(location.search.slice(1))
-        return this.props.getData({ ...params, silent: true })
+        return this.props.getData({ ...params, ...query, silent: true })
       }, 1000)
+
+      let kind = MODULE_KIND_MAP[this.props.module]
+
+      if (isFederated) {
+        kind = `Federated${kind}`
+      }
+
+      const mapper = isFederated
+        ? ObjectMapper.federated(this.store.mapper)
+        : this.store.mapper
 
       this.disposer = reaction(
         () => this.websocket.message,
         message => {
-          const kind = MODULE_KIND_MAP[this.props.module]
           if (message.object.kind === kind) {
             if (message.type === 'MODIFIED') {
               const data = {
                 ...this.props.match.params,
-                ...this.store.mapper(message.object),
+                ...mapper(message.object),
               }
               this.store.list.updateItem(data)
             } else if (message.type === 'DELETED' || message.type === 'ADDED') {
-              _getData()
+              _getData(isFederated ? { page: 1 } : {})
             }
           }
         }
