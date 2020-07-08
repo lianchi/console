@@ -135,9 +135,7 @@ export default class DevOps extends React.Component {
             iconSize={40}
             to={
               record.namespace && record.cluster
-                ? `/${this.workspace}/clusters/${record.cluster}/devops/${
-                    record.namespace
-                  }`
+                ? `/${this.workspace}/clusters/${record.cluster}/devops/${record.namespace}`
                 : null
             }
             desc={record.description || '-'}

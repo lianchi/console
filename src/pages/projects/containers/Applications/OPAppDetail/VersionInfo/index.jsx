@@ -58,9 +58,7 @@ export default class VersionInfo extends React.Component {
     const currentVersion =
       data.find(item => item.version_id === detail.version_id) || {}
 
-    const urlPrefix = `/apps/${
-      detail.app_id
-    }?workspace=${workspace}&cluster=${cluster}&namespace=${namespace}`
+    const urlPrefix = `/apps/${detail.app_id}?workspace=${workspace}&cluster=${cluster}&namespace=${namespace}`
 
     return (
       <ul>

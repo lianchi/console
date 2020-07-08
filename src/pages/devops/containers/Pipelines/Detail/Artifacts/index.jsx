@@ -70,9 +70,7 @@ export default class Artifacts extends React.Component {
   }
 
   getDownloadUrl(url) {
-    return `/kapis/clusters/${
-      this.props.match.pamars.cluster
-    }/jenkins.kubesphere.io${url}`
+    return `/kapis/clusters/${this.props.match.pamars.cluster}/jenkins.kubesphere.io${url}`
   }
 
   getFilteredValue = dataIndex => this.store.list.filters[dataIndex]

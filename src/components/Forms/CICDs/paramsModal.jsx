@@ -120,7 +120,7 @@ export default class ParamsModal extends React.Component {
       this.setState({ branches: { ...this.state.branches, ..._branches } })
 
       if (result.length === 100) {
-        this.start = this.start + 1
+        this.start += 1
         this.getBranches()
       }
       this.getBranchParameters()

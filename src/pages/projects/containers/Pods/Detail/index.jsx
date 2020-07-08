@@ -61,9 +61,7 @@ export default class PodDetail extends React.Component {
     }
 
     if (workspace) {
-      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${
-        this.module
-      }`
+      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${this.module}`
     }
     return `/clusters/${cluster}/${this.module}`
   }

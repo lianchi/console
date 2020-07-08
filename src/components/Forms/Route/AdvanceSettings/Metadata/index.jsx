@@ -21,6 +21,35 @@ import { Form } from 'components/Base'
 import { AnnotationsInput, PropertiesInput } from 'components/Inputs'
 
 export default class Metadata extends React.Component {
+<<<<<<< HEAD
+=======
+  labelsValidator = (rule, value, callback) => {
+    if (isUndefined(value)) {
+      return callback()
+    }
+    if (isEmpty(value)) {
+      return callback({ message: t('Labels cannot be empty') })
+    }
+
+    if (!isValidLabel(value)) {
+      return callback({ message: t('LABEL_FORMAT_DESC') })
+    }
+
+    this.props.store
+      .checkLabels({
+        labels: value,
+        namespace: this.props.namespace,
+        cluster: this.props.cluster,
+      })
+      .then(resp => {
+        if (resp.exist) {
+          return callback({ message: t('Labels exists'), field: rule.field })
+        }
+        callback()
+      })
+  }
+
+>>>>>>> e96f3e33bf26ef02036fb7465c3871fea537433d
   render() {
     return (
       <>

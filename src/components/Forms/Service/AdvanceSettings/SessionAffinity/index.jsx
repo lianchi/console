@@ -46,9 +46,7 @@ export default class SessionAffinity extends React.Component {
     return (
       <Form.Item label={t('Maximum Session Sticky Time (s)')}>
         <NumberInput
-          name={`Service.${
-            this.fedPreifx
-          }spec.sessionAffinityConfig.clientIP.timeoutSeconds`}
+          name={`Service.${this.fedPreifx}spec.sessionAffinityConfig.clientIP.timeoutSeconds`}
           defaultValue={10800}
           min={0}
         />

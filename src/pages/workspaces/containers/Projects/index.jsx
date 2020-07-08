@@ -195,9 +195,7 @@ export default class Projects extends React.Component {
             to={
               record.status === 'Terminating' || record.isFedHostNamespace
                 ? null
-                : `/${this.workspace}/clusters/${
-                    record.cluster
-                  }/projects/${name}`
+                : `/${this.workspace}/clusters/${record.cluster}/projects/${name}`
             }
             icon="project"
             iconSize={40}

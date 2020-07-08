@@ -51,9 +51,7 @@ export default class CRDAppDetail extends React.Component {
   get listUrl() {
     const { workspace, cluster, namespace } = this.props.match.params
 
-    return `/${workspace}/clusters/${cluster}/projects/${namespace}/${
-      this.module
-    }/composing`
+    return `/${workspace}/clusters/${cluster}/projects/${namespace}/${this.module}/composing`
   }
 
   get routing() {

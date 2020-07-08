@@ -133,9 +133,7 @@ export default class Jobs extends React.Component {
             title={getDisplayName(record)}
             desc={this.getItemDesc(record)}
             isMultiCluster={record.isFedManaged}
-            to={`/clusters/${cluster}/projects/${
-              record.namespace
-            }/${module}/${name}`}
+            to={`/clusters/${cluster}/projects/${record.namespace}/${module}/${name}`}
           />
         ),
       },

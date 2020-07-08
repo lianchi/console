@@ -86,9 +86,7 @@ export default class ContainerSetting extends React.Component {
   }
 
   get containerSecretPath() {
-    return `${
-      this.prefix
-    }metadata.annotations["kubesphere.io/containerSecrets"]`
+    return `${this.prefix}metadata.annotations["kubesphere.io/containerSecrets"]`
   }
 
   checkPullSecret() {

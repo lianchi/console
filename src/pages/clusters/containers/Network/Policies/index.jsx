@@ -133,9 +133,7 @@ export default class NetworkPolicies extends React.Component {
             iconSize={40}
             title={getDisplayName(record)}
             desc={record.description}
-            to={`/clusters/${cluster}/projects/${
-              record.namespace
-            }/${module}/${name}`}
+            to={`/clusters/${cluster}/projects/${record.namespace}/${module}/${name}`}
           />
         ),
       },

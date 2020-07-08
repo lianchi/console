@@ -71,9 +71,7 @@ export default class Ports extends Component {
                 </div>
                 {gateway.loadBalancerIngress && (
                   <a
-                    href={`http://${gateway.loadBalancerIngress}:${
-                      port.nodePort
-                    }`}
+                    href={`http://${gateway.loadBalancerIngress}:${port.nodePort}`}
                     target="_blank"
                   >
                     <Button className={styles.access} noShadow>

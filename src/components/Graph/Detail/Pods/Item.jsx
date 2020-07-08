@@ -43,9 +43,7 @@ export default class Item extends React.Component {
         </div>
         <div className={styles.text}>
           <Link
-            to={`/cluster/${data.cluster}/projects/${data.namespace}/pods/${
-              data.name
-            }`}
+            to={`/cluster/${data.cluster}/projects/${data.namespace}/pods/${data.name}`}
           >
             <strong>{data.name}</strong>
           </Link>

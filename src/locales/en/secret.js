@@ -25,9 +25,12 @@ export default {
 
   SECRET_NO_CHINESE_CODE_DESC:
     'Chinese characters cannot be included in the secret.',
+<<<<<<< HEAD
 
   IMAGE_REGISTRY_VALIDATE_TIP:
     'Before creating image registry secret, please verify that if it is validate.',
+=======
+>>>>>>> e96f3e33bf26ef02036fb7465c3871fea537433d
 
   'DATA-KEY': 'Key',
   'DATA-VALUE': 'Value',

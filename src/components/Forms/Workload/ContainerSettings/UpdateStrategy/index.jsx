@@ -285,7 +285,8 @@ export default class UpdateStrategyForm extends React.Component {
           </Column>
         </Columns>
       )
-    } else if (this.props.module === 'daemonsets') {
+    }
+    if (this.props.module === 'daemonsets') {
       return (
         <Columns className={styles.wrapper}>
           <Column>

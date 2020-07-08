@@ -212,18 +212,14 @@ class BaseInfo extends React.Component {
               icon="group"
               title={memberCount}
               desc={t('Members')}
-              url={`/${this.workspace}/clusters/${this.cluster}/devops/${
-                this.project_id
-              }/members`}
+              url={`/${this.workspace}/clusters/${this.cluster}/devops/${this.project_id}/members`}
             />
             <Info
               className={styles.info}
               icon="role"
               title={roleCount}
               desc={t('Project Roles')}
-              url={`/${this.workspace}/clusters/${this.cluster}/devops/${
-                this.project_id
-              }/roles`}
+              url={`/${this.workspace}/clusters/${this.cluster}/devops/${this.project_id}/roles`}
             />
           </div>
         </Card>

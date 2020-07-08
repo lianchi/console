@@ -167,7 +167,9 @@ export default class S2IForm extends React.Component {
       <Form ref={formRef} data={formTemplate}>
         <Form.Item
           label={t('Upload Artifacts')}
-          rules={[{ required: true, message: t('The file has not been uploaded.') }]}
+          rules={[
+            { required: true, message: t('The file has not been uploaded.') },
+          ]}
         >
           <Uploader
             name={`${this.prefix}spec.config.sourceUrl`}
@@ -216,9 +218,7 @@ export default class S2IForm extends React.Component {
               rules={[{ required: true, message: t('This param is required') }]}
             >
               <Select
-                name={`${
-                  this.prefix
-                }spec.config.pushAuthentication.secretRef.name`}
+                name={`${this.prefix}spec.config.pushAuthentication.secretRef.name`}
                 options={this.state.imageSecretOptions}
                 onChange={this.handleImageSecretChange}
               />

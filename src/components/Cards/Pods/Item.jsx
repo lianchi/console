@@ -111,9 +111,7 @@ export default class PodItem extends React.PureComponent {
 
   getLink = () => {
     const { detail } = this.props
-    return `${this.props.prefix}/projects/${detail.namespace}/pods/${
-      detail.name
-    }`
+    return `${this.props.prefix}/projects/${detail.namespace}/pods/${detail.name}`
   }
 
   getMonitoringCfgs = metrics => [

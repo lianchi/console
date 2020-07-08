@@ -80,9 +80,7 @@ export default class VolumeSnapshot extends React.Component {
           <Avatar
             icon={'snapshot'}
             iconSize={40}
-            to={`/clusters/${cluster}/projects/${
-              record.namespace
-            }/${module}/${name}`}
+            to={`/clusters/${cluster}/projects/${record.namespace}/${module}/${name}`}
             title={name}
             desc={record.snapshotClassName}
           />

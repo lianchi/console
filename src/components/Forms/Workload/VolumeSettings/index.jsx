@@ -100,9 +100,7 @@ class VolumeSettings extends React.Component {
   }
 
   get logPathPrefix() {
-    return `${
-      this.prefix
-    }metadata.annotations["logging.kubesphere.io/logsidecar-config"]`
+    return `${this.prefix}metadata.annotations["logging.kubesphere.io/logsidecar-config"]`
   }
 
   get projectEnableCollectingFileLog() {
