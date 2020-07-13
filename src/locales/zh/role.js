@@ -249,10 +249,7 @@ export default {
   ROLE_CLUSTER_VIEWER: '集群观察者，可以查看集群下所有的资源。',
 
   ROLE_WORKSPACE_ADMIN: '企业空间管理员，可以管理企业空间下所有的资源。',
-<<<<<<< HEAD
-=======
   ROLE_WORKSPACE_MANAGER: '平台企业空间管理员，管理平台所有企业空间。',
->>>>>>> e96f3e33bf26ef02036fb7465c3871fea537433d
   ROLE_WORKSPACE_REGULAR: '企业空间普通成员，无法创建 DevOps 工程和项目。',
   ROLE_WORKSPACE_VIEWER: '企业空间的观察者，可以查看企业空间下所有的资源信息。',
   ROLE_WORKSPACE_SELF_PROVISIONER:
