@@ -21,8 +21,6 @@ import { Form } from 'components/Base'
 import { AnnotationsInput, PropertiesInput } from 'components/Inputs'
 
 export default class Metadata extends React.Component {
-<<<<<<< HEAD
-=======
   labelsValidator = (rule, value, callback) => {
     if (isUndefined(value)) {
       return callback()
@@ -49,7 +47,6 @@ export default class Metadata extends React.Component {
       })
   }
 
->>>>>>> e96f3e33bf26ef02036fb7465c3871fea537433d
   render() {
     return (
       <>

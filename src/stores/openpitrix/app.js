@@ -73,13 +73,7 @@ export default class App extends Base {
     if (namespace) {
       await this.submitting(
         request.post(
-<<<<<<< HEAD
-          `${
-            this.baseUrl
-          }/workspaces/${workspace}/clusters/${cluster}/namespaces/${namespace}/applications`,
-=======
           `${this.baseUrl}clusters/${cluster}/namespaces/${namespace}/applications`,
->>>>>>> e96f3e33bf26ef02036fb7465c3871fea537433d
           params
         )
       )
