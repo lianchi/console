@@ -88,6 +88,8 @@ export default class Projects extends React.Component {
     return this.workspaceStore.clusters.data.map(item => ({
       label: item.name,
       value: item.name,
+      disabled: !item.isReady,
+      cluster: item,
     }))
   }
 
@@ -139,15 +141,12 @@ export default class Projects extends React.Component {
         key: 'edit',
         icon: 'pen',
         text: t('Edit'),
-        action: 'edit',
         onClick: item => trigger('resource.baseinfo.edit', { detail: item }),
       },
       {
         key: 'quotaEdit',
         icon: 'pen',
         text: t('Edit Quota'),
-        action: 'edit',
-        show: item => !item.isFedHostNamespace,
         onClick: item =>
           trigger('project.quota.edit', {
             type: t('Project'),
@@ -158,7 +157,6 @@ export default class Projects extends React.Component {
         key: 'delete',
         icon: 'trash',
         text: t('Delete'),
-        action: 'delete',
         onClick: item =>
           trigger('resource.delete', {
             type: t('Project'),
@@ -260,12 +258,11 @@ export default class Projects extends React.Component {
   showCreate = () =>
     this.props.trigger('project.create', {
       ...this.props.match.params,
-      success: (type, cluster) => {
-        this.handleTabChange(type)
-        if (type === 'projects') {
+      success: cluster => {
+        if (cluster) {
           this.workspaceStore.selectCluster(cluster)
-          this.getData({ silent: true })
         }
+        this.getData({ silent: true })
       },
     })
 

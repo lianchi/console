@@ -73,6 +73,8 @@ export default class ProjectSelectModal extends React.Component {
     return this.store.clusters.data.map(item => ({
       label: item.name,
       value: item.name,
+      cluster: item,
+      disabled: !item.isReady,
     }))
   }
 
@@ -179,21 +181,25 @@ export default class ProjectSelectModal extends React.Component {
   showCreate = () => {
     const { workspace, rootStore } = this.props
     const { cluster } = this.state
-    if (
-      this.state.type === 'projects' ||
-      this.state.type === 'federatedprojects'
-    ) {
+    if (this.state.type === 'projects') {
       rootStore.triggerAction('project.create', {
         store: this.projectStore,
         workspace,
-        success: this.fetchData,
+        success: () => this.fetchData(),
+      })
+    } else if (this.state.type === 'federatedprojects') {
+      rootStore.triggerAction('federated.project.create', {
+        store: this.projectStore,
+        workspace,
+        clusters: this.store.clusters.data.slice(),
+        success: () => this.fetchData(),
       })
     } else {
       rootStore.triggerAction('devops.create', {
         store: this.devopsStore,
         cluster,
         workspace,
-        success: this.fetchData,
+        success: () => this.fetchData(),
       })
     }
   }

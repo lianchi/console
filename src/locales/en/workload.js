@@ -40,7 +40,7 @@ export default {
   CRONJOB_CREATE_DESC:
     'A CronJob creates Jobs on a time-based schedule. For example, it runs a job periodically on a given schedule or only runs a job once on a given time.',
   CRONJOB_NAME_DESC:
-    'It can only contain lowercase letters, numbers and hyphens("-"), and must begin with a lowercase letter, ending with a number or lowercase letter. The maximum length of characters is set to 52.',
+    'It can only contain lowercase letters, numbers and hyphens("-"), and must begin and end with a lowercase letter or a number. The maximum length of characters is set to 52.',
   CRONJOB_NAME_TOO_LONG: 'The maximum length of characters is set to 52.',
 
   REPLICAS_SCALE_NOTIFY_TITLE: 'Does it take effect immediately?',
@@ -99,9 +99,9 @@ export default {
   PORT_INPUT_DESC:
     'The name is required and cannot be duplicated when there are multiple ports,',
   PORT_NAME_DESC:
-    'The port name can only contain lowercase letters, numbers and hyphens("-"), and must begin with a lowercase letter, ending with a number or lowercase letter. The maximum length of characters is set to 63.',
+    'The port name can only contain lowercase letters, numbers and hyphens("-"), and must begin and end with a lowercase letter or a number. The maximum length of characters is set to 63.',
   WORKLOAD_PORT_NAME_DESC:
-    'The port name can only contain lowercase letters, numbers and hyphens("-"), and must begin with a lowercase letter, ending with a number or lowercase letter. The maximum length of characters is set to 15.',
+    'The port name can only contain lowercase letters, numbers and hyphens("-"), and must begin and end with a lowercase letter or a number. The maximum length of characters is set to 15.',
 
   DEPLOYMENTS_BASEINFO_DESC:
     'You can give the deployment a name that is easy to distinguish when you use it.',

@@ -76,16 +76,14 @@ export default class ProjectCreateModal extends React.Component {
     return this.workspaceStore.clusters.data.map(item => ({
       label: item.name,
       value: item.name,
-      provider: item.provider,
-      group: item.group,
-      name: item.name,
-      disabled: !get(item, 'configz.devops', false),
+      cluster: item,
+      disabled: !item.isReady || !get(item, 'configz.devops', false),
     }))
   }
 
   get defaultCluster() {
     const clusters = this.workspaceStore.clusters.data
-      .filter(item => item.isHost)
+      .filter(item => item.isReady)
       .map(item => item.name)
 
     return isEmpty(clusters) ? undefined : clusters[0]
@@ -98,14 +96,23 @@ export default class ProjectCreateModal extends React.Component {
     })
   }
 
-  valueRenderer = item => <ClusterTitle cluster={item} size="small" noStatus />
+  valueRenderer = item => (
+    <ClusterTitle cluster={item.cluster} size="small" noStatus />
+  )
 
   optionRenderer = item => (
     <>
-      <ClusterTitle cluster={item} size="small" theme="light" noStatus />
+      <ClusterTitle
+        cluster={item.cluster}
+        size="small"
+        theme="light"
+        noStatus
+      />
       {item.disabled && (
         <div className={styles.toolmessage}>
-          <span>{t('NO_DEVOPS_INSTALL')}</span>
+          <span>
+            {!item.cluster.isReady ? t('Not Ready') : t('NO_DEVOPS_INSTALL')}
+          </span>
         </div>
       )}
     </>

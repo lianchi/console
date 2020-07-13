@@ -63,15 +63,12 @@ export default class DeploymentDetail extends React.Component {
     return this.props.rootStore.routing
   }
 
-  fetchData = () => {
+  fetchData = async () => {
     const { params } = this.props.match
-    const clusters = this.props.projectStore.detail.clusters.map(
-      item => item.name
-    )
-    this.store.fetchDetail(params)
-    this.store.fetchResources({
+    await this.store.fetchDetail(params)
+    await this.store.fetchResources({
       ...params,
-      clusters,
+      clusters: this.store.detail.clusters.map(item => item.name),
     })
   }
 
@@ -127,7 +124,7 @@ export default class DeploymentDetail extends React.Component {
       },
       {
         name: t('Application'),
-        value: detail.application,
+        value: detail.app,
       },
       {
         name: t('Created Time'),

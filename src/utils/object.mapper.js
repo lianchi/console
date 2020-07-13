@@ -19,6 +19,7 @@
 import {
   get,
   set,
+  has,
   pick,
   isEmpty,
   omit,
@@ -169,9 +170,7 @@ const WorkLoadMapper = item => ({
   availableCondition:
     get(item, 'status.conditions', []).find(cd => cd.type === 'Available') ||
     {},
-  app:
-    get(item, 'metadata.labels.release') ||
-    get(item, 'metadata.labels["app.kubernetes.io/name"]'),
+  app: get(item, 'metadata.labels["app.kubernetes.io/name"]'),
   ownerReference: get(item, 'metadata.ownerReferences[0]', {}),
   hasS2i: Object.keys(get(item, 'metadata.labels', {})).some(labelKey =>
     labelKey.startsWith('s2ibuilder')
@@ -296,9 +295,6 @@ const HpaMapper = item => {
     get(item, 'status.currentMetrics') || [],
     metric => get(metric, 'resource.name')
   )
-  const targetMetrics = keyBy(get(item, 'spec.metrics') || [], metric =>
-    get(metric, 'resource.name')
-  )
 
   return {
     ...getBaseInfo(item),
@@ -314,19 +310,15 @@ const HpaMapper = item => {
       'cpu.resource.current.averageUtilization'
     ),
     cpuTargetUtilization: get(
-      targetMetrics,
-      'cpu.resource.target.averageUtilization'
+      item,
+      'metadata.annotations.cpuTargetUtilization'
     ),
     memoryCurrentValue: get(
       currentMetrics,
       'memory.resource.current.averageValue',
-      ''
+      0
     ),
-    memoryTargetValue: get(
-      targetMetrics,
-      'memory.resource.target.averageValue',
-      ''
-    ),
+    memoryTargetValue: get(item, 'metadata.annotations.memoryTargetValue', ''),
     _originData: getOriginData(item),
   }
 }
@@ -381,9 +373,7 @@ const PodsMapper = item => ({
   node: get(item, 'spec.nodeName', ''),
   nodeIp: get(item, 'status.hostIP', 'none'),
   podIp: get(item, 'status.podIP'),
-  app:
-    get(item, 'metadata.labels.release') ||
-    get(item, 'metadata.labels["app.kubernetes.io/name"]'),
+  app: get(item, 'metadata.labels["app.kubernetes.io/name"]'),
   containers: getContainers(
     get(item, 'spec.containers', []),
     get(item, 'status.containerStatuses', []),
@@ -513,9 +503,7 @@ const ServiceMapper = item => {
     loadBalancerIngress:
       get(item, 'status.loadBalancer.ingress[0].ip') ||
       get(item, 'status.loadBalancer.ingress[0].hostname'),
-    app:
-      get(item, 'metadata.labels.release') ||
-      get(item, 'metadata.labels["app.kubernetes.io/name"]'),
+    app: get(item, 'metadata.labels["app.kubernetes.io/name"]'),
     _originData: getOriginData(item),
   }
 }
@@ -623,9 +611,7 @@ const IngressMapper = item => ({
   rules: get(item, 'spec.rules', []),
   tls: get(item, 'spec.tls', []),
   loadBalancerIngress: get(item, 'status.loadBalancer.ingress', []),
-  app:
-    get(item, 'metadata.labels.release') ||
-    get(item, 'metadata.labels["app.kubernetes.io/name"]'),
+  app: get(item, 'metadata.labels["app.kubernetes.io/name"]'),
   _originData: getOriginData(item),
 })
 
@@ -1047,11 +1033,10 @@ const ClusterMapper = item => {
     conditions,
     configz: get(item, 'status.configz', {}),
     provider: get(item, 'spec.provider'),
-    isHost:
-      get(
-        item,
-        'metadata.annotations["cluster.kubesphere.io/is-host-cluster"]'
-      ) === 'true',
+    isHost: has(
+      get(item, 'metadata.labels', {}),
+      'cluster-role.kubesphere.io/host'
+    ),
     nodeCount: get(item, 'status.nodeCount'),
     kubernetesVersion: get(item, 'status.kubernetesVersion'),
     labels: get(item, 'metadata.labels'),

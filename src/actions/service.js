@@ -82,12 +82,17 @@ export default {
             return
           }
 
-          store.create(data, { cluster, namespace }).then(() => {
-            Modal.close(modal)
-            Notify.success({ content: `${t('Created Successfully')}!` })
-            success && success()
-            formPersist.delete(`${module}_create_form`)
-          })
+          store
+            .create(data, {
+              cluster,
+              namespace: namespace || get(data, 'metadata.namespace'),
+            })
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: `${t('Created Successfully')}!` })
+              success && success()
+              formPersist.delete(`${module}_create_form`)
+            })
         },
         module,
         cluster,
@@ -130,7 +135,7 @@ export default {
           })
         },
         modal: EditGatewayModal,
-        detail: detail._originData,
+        detail: toJS(detail._originData),
         store,
         ...props,
       })

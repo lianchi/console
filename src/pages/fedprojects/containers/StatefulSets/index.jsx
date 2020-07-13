@@ -95,13 +95,14 @@ export default class StatefulSets extends React.Component {
           trigger('workload.delete', {
             type: t(this.name),
             detail: item,
+            isFederated: true,
           }),
       },
     ]
   }
 
   get tableActions() {
-    const { trigger, name, rowKey, tableProps } = this.props
+    const { trigger, name, tableProps } = this.props
     return {
       ...tableProps.tableActions,
       selectActions: [
@@ -113,7 +114,8 @@ export default class StatefulSets extends React.Component {
           onClick: () =>
             trigger('workload.batch.delete', {
               type: t(name),
-              rowKey,
+              rowKey: 'name',
+              isFederated: true,
             }),
         },
       ],
@@ -172,10 +174,9 @@ export default class StatefulSets extends React.Component {
       },
       {
         title: t('Application'),
-        dataIndex: 'app.kubernetes.io/name',
+        dataIndex: 'app',
         isHideable: true,
         width: '22%',
-        render: (_, record) => record.app,
       },
       {
         title: t('Updated Time'),

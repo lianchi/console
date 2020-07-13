@@ -51,6 +51,8 @@ client:
 
   # current support lanaguages
   supportLangs:
+    - label: '繁體中文'
+      value: 'tc'
     - label: '简体中文'
       value: 'zh'
     - label: 'English'
@@ -261,11 +263,6 @@ client:
           icon: cogwheel
           children:
             - { name: base-info, title: Basic Info, skipAuth: true }
-            - {
-                name: clusters,
-                title: Cluster Info,
-                multiCluster: true,
-              }
             - { name: roles, title: Workspace Roles }
             - { name: members, title: Workspace Members }
 

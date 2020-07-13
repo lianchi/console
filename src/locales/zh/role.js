@@ -57,6 +57,7 @@ export default {
   Modules: '功能模块',
   'Authorized Actions': '可执行操作',
   'No Authorization': '暂无权限规则',
+  'Invited Successfully': '邀请成功',
   NO_AVAILABLE_ROLE: '当前项目无可用角色',
   JOIN_PROJECT_PLACEHOLDER: '输入用户名或者邮箱邀请用户加入到项目中',
   ROLE_DELETE_TIP: '当前角色已有用户绑定，请解绑后重试',
@@ -234,7 +235,7 @@ export default {
   'Default user role which allows a user to manage resources within the projects created by the user himself or invited by others. It does not allow the user to manage unauthorized resources in the cluster.':
     '默认用户角色，仅允许对自己创建或受邀加入的项目中的资源进行管理，无权操作集群范围内其他资源。',
 
-  'No authorized users': '暂无授权用户',
+  NO_AUTHORIZED_USERS: '目前没有用户被授权此角色',
 
   'Unable to delete preset role': '无法删除预置角色',
 

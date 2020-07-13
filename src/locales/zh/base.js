@@ -87,7 +87,7 @@ export default {
   PLATFORM_SETTINGS_DESC: '定制化平台设置，如平台基本信息等',
 
   Loading: '加载中',
-  Active: '已启用',
+  Active: '活跃',
   Running: '运行中',
   Succeeded: '运行中',
   'Not Running': '未运行',
@@ -108,7 +108,7 @@ export default {
   Completed: '已完成',
   Unfinished: '未完成',
   Healthy: '健康',
-  active: '已启用',
+  active: '活跃',
   running: '运行中',
   waiting: '等待中',
   pending: '等待中',
@@ -260,11 +260,11 @@ export default {
   MINUTE_TIME: '{count} 分钟',
 
   NAME_DESC:
-    '最长 63 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头, 小写字母或数字结尾',
+    '最长 63 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母或数字开头及结尾',
   NAME_TOO_LONG: '最长 63 个字符',
 
   LONG_NAME_DESC:
-    '最长 253 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头, 小写字母或数字结尾',
+    '最长 253 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母或数字开头及结尾',
   LONG_NAME_TOO_LONG: '最长 253 个字符',
   LONG_DESC_TOO_LONG: '最长 1000 个字符',
   ALIAS_DESC: '别名可以由任意字符组成，帮助您更好的区分资源，并支持中文名称',

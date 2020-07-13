@@ -101,7 +101,7 @@ export default class CRDApps extends React.Component {
       },
       {
         title: t('Version'),
-        dataIndex: 'version',
+        dataIndex: 'resource.version',
         isHideable: true,
         width: '20%',
       },
@@ -142,7 +142,7 @@ export default class CRDApps extends React.Component {
           {
             key: 'create',
             type: 'control',
-            text: t('Create Application'),
+            text: t('Create Composing Application'),
             onClick: this.showCreate,
           },
         ]

@@ -23,25 +23,19 @@ import cookie from 'utils/cookie'
 import { lazy, getBrowserLang } from 'utils'
 
 const getLocales = {
+  tc: lazy(() => import(/* webpackChunkName: "locales-tc" */ `../locales/tc`)),
   zh: lazy(() => import(/* webpackChunkName: "locales-zh" */ `../locales/zh`)),
   en: lazy(() => import(/* webpackChunkName: "locales-en" */ `../locales/en`)),
 }
 
 const init = async () => {
   const supportLangs = globals.config.supportLangs.map(item => item.value)
-  const defaultLang = get(globals.user, 'lang')
-  if (defaultLang && cookie('lang') !== defaultLang) {
-    cookie('lang', defaultLang)
+  const userLang = get(globals.user, 'lang') || getBrowserLang()
+  if (userLang && cookie('lang') !== userLang) {
+    cookie('lang', userLang)
   }
 
-  let lang = cookie('lang') || getBrowserLang()
-
-  if (!supportLangs.includes(lang)) {
-    lang = defaultLang
-    cookie('lang', lang)
-  }
-
-  if (lang === 'zh') {
+  if (userLang === 'zh') {
     moment.locale('zh', {
       relativeTime: {
         s: '1秒',

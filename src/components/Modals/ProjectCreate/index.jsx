@@ -18,11 +18,10 @@
 
 import React from 'react'
 import { observer } from 'mobx-react'
-import { get, isEmpty, set, uniqBy } from 'lodash'
+import { get, isEmpty } from 'lodash'
 import PropTypes from 'prop-types'
 import { Columns, Column, Select, Input, TextArea } from '@pitrix/lego-ui'
 import { Modal, Form } from 'components/Base'
-import { ArrayInput, ObjectInput } from 'components/Inputs'
 import ClusterTitle from 'components/Clusters/ClusterTitle'
 import { PATTERN_SERVICE_NAME, PATTERN_LENGTH_63 } from 'utils/constants'
 
@@ -77,16 +76,15 @@ export default class ProjectCreateModal extends React.Component {
     return this.workspaceStore.clusters.data.map(item => ({
       label: item.name,
       value: item.name,
-      provider: item.provider,
-      group: item.group,
-      name: item.name,
+      cluster: item,
+      disabled: !item.isReady,
     }))
   }
 
   @computed
   get defaultClusters() {
     const clusters = this.workspaceStore.clusters.data
-      .filter(item => item.isHost)
+      .filter(item => item.isReady)
       .map(item => ({ name: item.name }))
 
     return isEmpty(clusters) ? undefined : clusters
@@ -128,121 +126,42 @@ export default class ProjectCreateModal extends React.Component {
     })
   }
 
-  multiClusterValidator = async (rule, value, callback) => {
-    const name = get(this.props.formTemplate, 'metadata.name')
-
-    if (!value || !name) {
-      return callback()
-    }
-
-    if (value.length > 1) {
-      const resp = await this.store.checkName({ name })
-      if (resp.exist) {
-        return callback({
-          message: t('Project name exists on host cluster'),
-          field: rule.field,
-        })
-      }
-    }
-
-    const resps = await Promise.all([
-      ...value.map(cluster =>
-        this.store.checkName({ name, cluster: cluster.name })
-      ),
-    ])
-
-    const index = resps.findIndex(item => item.exist)
-
-    if (index > -1 && value[index]) {
-      return callback({
-        message: t('NAME_EXIST_IN_CLUSTER', { cluster: value[index].name }),
-        field: rule.field,
-      })
-    }
-
-    callback()
-  }
-
-  valueRenderer = item => <ClusterTitle cluster={item} size="small" noStatus />
-
-  optionRenderer = item => (
-    <ClusterTitle cluster={item} size="small" theme="light" noStatus />
-  )
-
-  handleClusterChange = clusters => {
-    set(
-      this.props.formTemplate,
-      'spec.placement.clusters',
-      uniqBy(clusters, 'name')
-    )
-  }
-
   handleNameChange = () => {
     if (this.clusterRef.current && this.clusterRef.current.state.error) {
-      const name = 'spec.placement.clusters'
       this.clusterRef.current.validate({
-        [name]: get(this.props.formTemplate, name),
+        cluster: get(this.props.formTemplate, 'cluster'),
       })
     }
   }
 
+  valueRenderer = item => (
+    <ClusterTitle cluster={item.cluster} size="small" noStatus />
+  )
+
+  optionRenderer = item => (
+    <ClusterTitle cluster={item.cluster} size="small" theme="light" noStatus />
+  )
+
   renderClusters() {
-    const { multiCluster } = this.props
-
-    if (!multiCluster) {
-      return (
-        <Form.Group
-          label={t('Cluster Settings')}
-          desc={t('Select the cluster to create the project.')}
-        >
-          <Form.Item
-            ref={this.clusterRef}
-            rules={[
-              { required: true, message: t('Please select a cluster') },
-              { validator: this.singleClusterValidator },
-            ]}
-          >
-            <Select
-              name="spec.placement.clusters[0].name"
-              className={styles.cluster}
-              options={this.clusters}
-              valueRenderer={this.valueRenderer}
-              optionRenderer={this.optionRenderer}
-            />
-          </Form.Item>
-        </Form.Group>
-      )
-    }
-
     return (
       <Form.Group
         label={t('Cluster Settings')}
-        desc={t('PROJECT_CLUSTER_SETTINGS_DESC')}
+        desc={t('Select the cluster to create the project.')}
       >
         <Form.Item
           ref={this.clusterRef}
           rules={[
             { required: true, message: t('Please select a cluster') },
-            { validator: this.multiClusterValidator },
+            { validator: this.singleClusterValidator },
           ]}
         >
-          <ArrayInput
-            name="spec.placement.clusters"
-            addText={t('Add Cluster')}
-            itemType="object"
-            defaultValue={this.defaultClusters}
-            onChange={this.handleClusterChange}
-          >
-            <ObjectInput>
-              <Select
-                name="name"
-                className={styles.cluster}
-                options={this.clusters}
-                valueRenderer={this.valueRenderer}
-                optionRenderer={this.optionRenderer}
-              />
-            </ObjectInput>
-          </ArrayInput>
+          <Select
+            name="cluster"
+            className={styles.cluster}
+            options={this.clusters}
+            valueRenderer={this.valueRenderer}
+            optionRenderer={this.optionRenderer}
+          />
         </Form.Item>
       </Form.Group>
     )

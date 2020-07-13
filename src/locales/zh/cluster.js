@@ -44,6 +44,9 @@ export default {
   'Connection Method': '连接方式',
 
   'Host Cluster': 'Host 集群',
+  'Host Clusters': 'Host 集群',
+  'Member Cluster': '成员集群',
+  'Member Clusters': '成员集群',
 
   'Kubernetes Version': 'Kubernetes 版本',
 
@@ -107,7 +110,7 @@ export default {
 
   NO_CLUSTER_TIP: '请添加至少 1 个集群',
   NO_CLUSTER_TIP_DESC:
-    '集群是一组运行着 Kubernetes 的节点（物理或者虚拟机）, Kubesphere 的功能也依托于集群中的节点来运行',
+    '集群是一组运行着 Kubernetes 的节点 (物理或者虚拟机)，Kubesphere 的功能也依托于集群中的节点来运行',
   ADD_NEW_CLUSTER_DESC: '添加新的 Kubernetes 集群',
   CHOOSE_PROVIDER_DESC:
     'KubeSphere 提供了在主流服务商中快速部署 Kubernetes 集群的方案',
@@ -182,4 +185,9 @@ export default {
 
   CLUSTER_AGENT_TITLE: '请根据集群中提供的代理连接设置加入集群',
   CLUSTER_AGENT_DESC: '需要在集群中设置下相应的代理 Agent',
+
+  SELECT_HOST_CLUSTER_WARNING:
+    '请尽量不要在 Host 集群上创建资源, 以免 Host 集群负载过高, 导致多集群稳定性下降.',
+  HOST_CLUSTER_VISIBILITY_WARNING:
+    '请谨慎将 Host 集群授权给企业空间, Host 集群负载过高会导致多集群稳定性下降.',
 }

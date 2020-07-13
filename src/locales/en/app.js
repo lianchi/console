@@ -125,7 +125,7 @@ export default {
 
   START_UPLOAD: 'Upload',
 
-  APP_ICON_NOTE: 'JPG or PNG within 200px * 200px',
+  APP_ICON_NOTE: 'JPG or PNG within 96px * 96px',
 
   MISS_FILE_NOTE: 'The file {file} not found',
 }

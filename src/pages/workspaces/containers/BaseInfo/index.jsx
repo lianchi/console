@@ -169,6 +169,7 @@ class BaseInfo extends React.Component {
         name: 'DevOps Projects',
         icon: 'strategy-group',
         value: metrics.workspace_devops_project_count,
+        hidden: !globals.app.hasKSModule('devops'),
       },
       {
         name: 'Workspace Members',
@@ -205,14 +206,16 @@ class BaseInfo extends React.Component {
           )}
         </div>
         <div className={styles.content}>
-          {options.map(option => (
-            <Text
-              key={option.name}
-              icon={option.icon}
-              title={option.value}
-              description={t(option.name)}
-            />
-          ))}
+          {options
+            .filter(option => !option.hidden)
+            .map(option => (
+              <Text
+                key={option.name}
+                icon={option.icon}
+                title={option.value}
+                description={t(option.name)}
+              />
+            ))}
         </div>
       </Panel>
     )
@@ -290,7 +293,7 @@ class BaseInfo extends React.Component {
                 title={t(networkIsolation ? 'On' : 'Off')}
                 description={t('Workspace Network Isolation')}
               />
-              {this.enabledActions.includes('manage') && (
+              {this.enabledActions.includes('manage') && cluster.isReady && (
                 <Switch
                   className={styles.switch}
                   text={t(networkIsolation ? 'On' : 'Off')}

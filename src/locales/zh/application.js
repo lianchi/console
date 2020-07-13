@@ -22,7 +22,7 @@ export default {
   'Deployed Applications': '已部署应用',
   'Deploy New Application': '部署新应用',
   'Deploy App': '部署应用',
-  'Create Application': '构建应用',
+  'Create Composing Application': '构建自制应用',
   'App Template': '应用模板',
   Deploy: '部署',
   'Application Type': '应用类型',
@@ -40,6 +40,9 @@ export default {
   'Application Component': '应用组件',
   'Application Route': '应用路由',
   'Traffic Management': '流量治理',
+
+  'No Components': '暂无组件',
+  'Cluster Select': '集群选择',
 
   'Application governance is not enabled': '应用治理未启用',
 
@@ -129,7 +132,7 @@ export default {
   APP_ICON_TIP: '点击上传应用图标，尺寸最大为 120px * 120px',
 
   CLUSTER_NAME_DESC:
-    '最长 14 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头, 小写字母或数字结尾',
+    '最长 14 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母或数字开头及结尾',
 
   CLUSTER_ALIAS_DESC:
     '别名可以由任意字符组成，帮助您更好的区分资源，并支持中文名称',

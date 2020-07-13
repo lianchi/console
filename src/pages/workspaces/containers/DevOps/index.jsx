@@ -45,7 +45,6 @@ export default class DevOps extends React.Component {
         key: 'edit',
         icon: 'pen',
         text: t('Edit'),
-        action: 'edit',
         onClick: item =>
           trigger('devops.edit', { detail: item, success: this.getData }),
       },
@@ -53,7 +52,6 @@ export default class DevOps extends React.Component {
         key: 'delete',
         icon: 'trash',
         text: t('Delete'),
-        action: 'delete',
         onClick: item =>
           trigger('resource.delete', {
             type: t('DevOps Project'),
@@ -91,6 +89,8 @@ export default class DevOps extends React.Component {
     return this.workspaceStore.clusters.data.map(item => ({
       label: item.name,
       value: item.name,
+      disabled: !item.isReady,
+      cluster: item,
     }))
   }
 

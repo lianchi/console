@@ -52,6 +52,16 @@ export default class ContainerStore {
     return `${path}/namespaces/${namespace}/pods/${podName}`
   }
 
+  getPath = ({ cluster }) => {
+    let path = ''
+
+    if (cluster) {
+      path += `/klusters/${cluster}`
+    }
+
+    return path
+  }
+
   @action
   async fetchDetail({ cluster, namespace, podName, containerName }) {
     this.isLoading = true
@@ -66,6 +76,7 @@ export default class ContainerStore {
     detail.createTime = get(pod, 'createTime', '')
     detail.app = detail.app || pod.app
     detail.cluster = cluster
+    pod.cluster = cluster
 
     this.volumes = await getWorkloadVolumes(pod)
 
@@ -136,9 +147,11 @@ export default class ContainerStore {
     )
 
   @action
-  getImageDetail = async params => {
+  getImageDetail = async ({ cluster, ...params }) => {
     const result = await request.get(
-      `kapis/resources.kubesphere.io/v1alpha2/registry/blob`,
+      `kapis/resources.kubesphere.io/v1alpha2${this.getPath({
+        cluster,
+      })}/registry/blob`,
       params,
       null,
       e => e

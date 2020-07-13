@@ -31,8 +31,8 @@ export default class Version extends Base {
 
   // data action value is: submit、cancel、release、suspend、recover
   @action
-  handle = async ({ app_id, version_id, ...data } = {}) => {
-    const url = this.getUrl({ app_id, version_id, name: 'action' })
+  handle = async ({ app_id, version_id, workspace, ...data } = {}) => {
+    const url = this.getUrl({ app_id, version_id, workspace, name: 'action' })
     return await this.submitting(request.post(url, data))
   }
 }

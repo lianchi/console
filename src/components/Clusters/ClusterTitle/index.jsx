@@ -99,6 +99,18 @@ export default class ClusterTitle extends Component {
                 })}
               </Tag>
             )}
+            {cluster.isHost && (
+              <Tag
+                className={classNames('margin-l12', tagClass)}
+                type="warning"
+              >
+                {t('Host Cluster')}
+              </Tag>
+            )}
+            &nbsp;
+            {size === 'small' && !noStatus && !isReady && (
+              <StatusReason data={cluster} />
+            )}
           </div>
           <div className={styles.description}>
             {isReady || noStatus ? (
