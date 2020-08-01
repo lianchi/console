@@ -17,14 +17,14 @@
  */
 
 import React from 'react'
-import { Icon, Input, TextArea } from '@pitrix/lego-ui'
+import { Icon, Input } from '@pitrix/lego-ui'
 import {
   PATTERN_NAME,
   CLUSTER_GROUP_TAG_TYPE,
   CLUSTER_PROVIDERS,
   CLUSTER_PRESET_GROUPS,
 } from 'utils/constants'
-import { Form, Tag } from 'components/Base'
+import { Form, Tag, TextArea } from 'components/Base'
 import { SelectInput } from 'components/Inputs'
 
 import SubTitle from '../SubTitle'
@@ -50,13 +50,6 @@ export default class BaseInfo extends React.Component {
   nameValidator = (rule, value, callback) => {
     if (!value) {
       return callback()
-    }
-
-    if (value.length > 63) {
-      return callback({
-        message: `${t('Invalid name')}, ${t('NAME_DESC')}`,
-        field: rule.field,
-      })
     }
 
     this.props.store.checkName({ name: value }).then(resp => {
@@ -86,7 +79,7 @@ export default class BaseInfo extends React.Component {
             { validator: this.nameValidator },
           ]}
         >
-          <Input name="metadata.name" />
+          <Input name="metadata.name" maxLength={63} />
         </Form.Item>
         <Form.Item label={t('CLUSTER_TAG')} desc={t('CLUSTER_TAG_DESC')}>
           <SelectInput
@@ -104,8 +97,11 @@ export default class BaseInfo extends React.Component {
             optionRenderer={this.providerOptionRenderer}
           />
         </Form.Item>
-        <Form.Item label={t('Description')}>
-          <TextArea name="metadata.annotations['kubesphere.io/description']" />
+        <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
+          <TextArea
+            name="metadata.annotations['kubesphere.io/description']"
+            maxLength={256}
+          />
         </Form.Item>
       </div>
     )

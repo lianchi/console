@@ -144,6 +144,7 @@ class InternetAccess extends React.Component {
             <ClusterTitle cluster={cluster} theme="light" />
           </div>
           <Text
+            className={styles.desc}
             title={t('Gateway Not Set')}
             description={t('PROJECT_INTERNET_ACCESS_DESC')}
           />
@@ -270,7 +271,7 @@ class InternetAccess extends React.Component {
     return (
       <div>
         <GatewaySettingModal
-          cluster={cluster}
+          cluster={cluster.name}
           detail={toJS(this.store.gateway.data)}
           visible={this.state.showGatewaySetting}
           onOk={this.handleGatewaySetting}

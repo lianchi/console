@@ -100,7 +100,9 @@ class VolumeSettings extends React.Component {
   }
 
   get logPathPrefix() {
-    return `${this.prefix}metadata.annotations["logging.kubesphere.io/logsidecar-config"]`
+    return `${
+      this.prefix
+    }metadata.annotations["logging.kubesphere.io/logsidecar-config"]`
   }
 
   get projectEnableCollectingFileLog() {
@@ -193,7 +195,7 @@ class VolumeSettings extends React.Component {
     let newVolumes = []
 
     const existVolume = !isEmpty(this.selectVolume)
-      ? this.selectVolume
+      ? get(this.selectVolume, 'specVolume', this.selectVolume)
       : undefined
 
     const newSpecVolume = this.formatSpecVolume(existVolume, newVolume)
@@ -254,20 +256,23 @@ class VolumeSettings extends React.Component {
 
   checkMaxUnavalable = volumes => {
     if (['deployments', 'daemonsets'].includes(this.props.module)) {
-      const hasPVC = volumes.some(
-        volume => !isEmpty(volume.persistentVolumeClaim)
-      )
-      const maxUnavailable = get(
-        this.fedFormTemplate,
-        'spec.strategy.rollingUpdate.maxUnavailable',
-        null
-      )
-      if (hasPVC && !maxUnavailable) {
-        set(
+      const strategyType = get(this.fedFormTemplate, 'spec.strategy.type')
+      if (strategyType === 'RollingUpdate') {
+        const hasPVC = volumes.some(
+          volume => !isEmpty(volume.persistentVolumeClaim)
+        )
+        const maxUnavailable = get(
           this.fedFormTemplate,
           'spec.strategy.rollingUpdate.maxUnavailable',
-          1
+          null
         )
+        if (hasPVC && !maxUnavailable) {
+          set(
+            this.fedFormTemplate,
+            'spec.strategy.rollingUpdate.maxUnavailable',
+            1
+          )
+        }
       }
     }
   }
@@ -283,13 +288,15 @@ class VolumeSettings extends React.Component {
     newVolumeMounts.forEach(vm => {
       const existVolume = findVolume(volumes, vm.volume)
 
-      const path = `containerLogConfigs.${vm.containerName}.${vm.name ||
-        existVolume.name}`
+      if (existVolume) {
+        const path = `containerLogConfigs.${vm.containerName}.${vm.name ||
+          existVolume.name}`
 
-      if (vm.logPath) {
-        set(logConfig, path, vm.logPath.split(','))
-      } else {
-        unset(logConfig, path)
+        if (vm.logPath) {
+          set(logConfig, path, vm.logPath.split(','))
+        } else {
+          unset(logConfig, path)
+        }
       }
     })
 
@@ -375,7 +382,7 @@ class VolumeSettings extends React.Component {
 
   handleVolumeTemplate(newVolume = {}, newVolumeMounts = []) {
     newVolumeMounts.forEach(vm => {
-      vm.name = newVolume.name
+      vm.name = newVolume.name || get(newVolume, 'metadata.name')
     })
 
     this.updateVolumeTemplate(newVolume)

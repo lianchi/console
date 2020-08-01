@@ -26,7 +26,7 @@ import Banner from 'components/Cards/Banner'
 import Table from 'workspaces/components/ResourceTable'
 import withList, { ListPage } from 'components/HOCs/withList'
 
-import { getDisplayName } from 'utils'
+import { getDisplayName, getLocalTime } from 'utils'
 import { getSuitableValue, getValueByUnit } from 'utils/monitoring'
 
 import ProjectStore from 'stores/project'
@@ -72,15 +72,7 @@ export default class Projects extends React.Component {
   }
 
   get showFederated() {
-    const { workspace } = this.props.match.params
-    return (
-      globals.app.isMultiCluster &&
-      globals.app.hasPermission({
-        workspace,
-        module: 'federatedprojects',
-        action: 'view',
-      })
-    )
+    return globals.app.isMultiCluster
   }
 
   @computed
@@ -123,13 +115,16 @@ export default class Projects extends React.Component {
         labelSelector:
           'kubefed.io/managed!=true, kubesphere.io/kubefed-host-namespace!=true',
       })
-      await this.monitoringStore.fetchMetrics({
-        cluster,
-        ...this.props.match.params,
-        resources: store.list.data.map(item => item.name),
-        metrics: Object.values(MetricTypes),
-        last: true,
-      })
+      const resources = store.list.data.map(item => item.name)
+      if (resources.length > 0) {
+        await this.monitoringStore.fetchMetrics({
+          cluster,
+          resources,
+          ...this.props.match.params,
+          metrics: Object.values(MetricTypes),
+          last: true,
+        })
+      }
     }
     store.list.silent = false
   }
@@ -141,12 +136,14 @@ export default class Projects extends React.Component {
         key: 'edit',
         icon: 'pen',
         text: t('Edit'),
+        action: 'edit',
         onClick: item => trigger('resource.baseinfo.edit', { detail: item }),
       },
       {
         key: 'quotaEdit',
         icon: 'pen',
         text: t('Edit Quota'),
+        action: 'edit',
         onClick: item =>
           trigger('project.quota.edit', {
             type: t('Project'),
@@ -157,6 +154,7 @@ export default class Projects extends React.Component {
         key: 'delete',
         icon: 'trash',
         text: t('Delete'),
+        action: 'delete',
         onClick: item =>
           trigger('resource.delete', {
             type: t('Project'),
@@ -193,7 +191,9 @@ export default class Projects extends React.Component {
             to={
               record.status === 'Terminating' || record.isFedHostNamespace
                 ? null
-                : `/${this.workspace}/clusters/${record.cluster}/projects/${name}`
+                : `/${this.workspace}/clusters/${
+                    record.cluster
+                  }/projects/${name}`
             }
             icon="project"
             iconSize={40}
@@ -206,7 +206,6 @@ export default class Projects extends React.Component {
         title: t('Status'),
         dataIndex: 'status',
         isHideable: true,
-        search: true,
         render: status => <Status type={status} name={t(status)} flicker />,
       },
       {
@@ -237,6 +236,13 @@ export default class Projects extends React.Component {
         isHideable: true,
         render: record => this.getLastValue(record, MetricTypes.pod),
       },
+      {
+        title: t('Created Time'),
+        dataIndex: 'createTime',
+        isHideable: true,
+        sorter: true,
+        render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
+      },
     ]
   }
 
@@ -258,6 +264,7 @@ export default class Projects extends React.Component {
   showCreate = () =>
     this.props.trigger('project.create', {
       ...this.props.match.params,
+      defaultCluster: this.workspaceStore.cluster,
       success: cluster => {
         if (cluster) {
           this.workspaceStore.selectCluster(cluster)
@@ -294,9 +301,8 @@ export default class Projects extends React.Component {
           onCreate={this.showCreate}
           searchType="name"
           {...this.clusterProps}
-          monitorLoading={isLoadingMonitor}
+          isLoading={tableProps.isLoading || isLoadingMonitor}
           getCheckboxProps={this.getCheckboxProps}
-          alwaysUpdate
         />
       </ListPage>
     )

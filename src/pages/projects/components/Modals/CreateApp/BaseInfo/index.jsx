@@ -19,10 +19,10 @@
 import { get, set, debounce } from 'lodash'
 import React from 'react'
 import { PropTypes } from 'prop-types'
-import { Input, Select, TextArea } from '@pitrix/lego-ui'
-import { PATTERN_NAME, PATTERN_LENGTH_63 } from 'utils/constants'
+import { Input, Select } from '@pitrix/lego-ui'
+import { PATTERN_NAME, PATTERN_SERVICE_VERSION } from 'utils/constants'
 import { updateFederatedAnnotations, generateId } from 'utils'
-import { Form } from 'components/Base'
+import { Form, TextArea } from 'components/Base'
 
 import styles from './index.scss'
 
@@ -138,19 +138,29 @@ export default class BaseInfo extends React.Component {
                 pattern: PATTERN_NAME,
                 message: `${t('Invalid name')}, ${t('NAME_DESC')}`,
               },
-              { pattern: PATTERN_LENGTH_63, message: t('NAME_TOO_LONG') },
               { validator: this.nameValidator },
             ]}
           >
-            <Input name="metadata.name" onChange={this.handleNameChange} />
+            <Input
+              name="metadata.name"
+              onChange={this.handleNameChange}
+              maxLength={63}
+            />
           </Form.Item>
           <Form.Item
             label={t('Application Version(Optional)')}
-            desc={t('Specify an application version')}
+            desc={`${t('COMPONENT_VERSION_DESC')}`}
+            rules={[
+              {
+                pattern: PATTERN_SERVICE_VERSION,
+                message: t('COMPONENT_VERSION_DESC'),
+              },
+            ]}
           >
             <Input
               name="metadata.labels['app.kubernetes.io/version']"
               onChange={this.handleVersionChange}
+              maxLength={16}
             />
           </Form.Item>
           <Form.Item
@@ -165,8 +175,11 @@ export default class BaseInfo extends React.Component {
               disabled={!serviceMeshEnable}
             />
           </Form.Item>
-          <Form.Item label={t('Description')}>
-            <TextArea name="spec.descriptor.description" />
+          <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
+            <TextArea
+              name="metadata.annotations['kubesphere.io/description']"
+              maxLength={256}
+            />
           </Form.Item>
         </Form>
       </div>

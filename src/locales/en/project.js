@@ -17,6 +17,116 @@
  */
 
 export default {
+  'Add quota item': 'Add quota item',
+  'Are you sure to disable it?': 'Are you sure to disable it?',
+  'Assign Workspace': 'Assign Workspace',
+  'Choose a workspace': 'Choose a workspace',
+  Closed: 'Closed',
+  'Container Resource Default Request': 'Container Resource Default Request',
+  'Create Multi-cluster Project': 'Create Multi-cluster Project',
+  'Create Project': 'Create Project',
+  cronjobs: 'cronjobs',
+  DaemonSet: 'DaemonSet',
+  daemonsets: 'daemonsets',
+  'Default limit resource': 'Default limit resource',
+  'default request CPU should not be greater than default limit CPU':
+    'default request CPU should not be greater than default limit CPU',
+  'default request memory should not be greater than default limit memory':
+    'default request memory should not be greater than default limit memory',
+  'Default request resource': 'Default request resource',
+  'Delete Project': 'Delete Project',
+  Deleting: 'Deleting',
+  Deployment: 'Deployment',
+  deployments: 'deployments',
+  Details: 'Details',
+  'DevOps Project': 'DevOps Project',
+  'DevOps Projects': 'DevOps Projects',
+  'Disk Log Collection': 'Disk Log Collection',
+  'Disk Log Collection of the project is about to be disabled.':
+    'Disk Log Collection of the project is about to be disabled.',
+  'Edit Gateway': 'Edit Gateway',
+  'Edit Project': 'Edit Project',
+  'Edit Project Quota': 'Edit Project Quota',
+  'Edit Resource Default Request': 'Edit Resource Default Request',
+  'Empty value means no limit, CPU 1 Core = 1000m':
+    'Empty value means no limit, CPU 1 Core = 1000m',
+  'Enter DevOps Project': 'Enter DevOps Project',
+  'Enter Project': 'Enter Project',
+  FED_HOST_NAMESPACE_TIP:
+    'Please do not manipulate resources in this project as it is related to a multi-cluster project.',
+  'Gateway Info': 'Gateway Info',
+  'Gateway Not Set': 'Gateway Not Set',
+  'Help Information': 'Help Information',
+  'How to invite other members to the current project?':
+    'How to invite other members to the current project?',
+  'How to set the project gateway?': 'How to set the project gateway?',
+  'Invalid project name': 'Invalid project name',
+  'Invite Member': 'Invite Member',
+  'Invite Members to the DevOps Project':
+    'Invite Members to the DevOps Project',
+  'Invite Members to the Project': 'Invite Members to the Project',
+  jobs: 'jobs',
+  'limits.cpu': 'limits.cpu',
+  'limits.memory': 'limits.memory',
+  LoadBalancer: 'LoadBalancer',
+  'Manage Project': 'Manage Project',
+  'Member Name': 'Member Name',
+  Members: 'Members',
+  'Members Management': 'Members Management',
+  'Modify Member Role': 'Modify Member Role',
+  'Modify Members Role': 'Modify Members Role',
+  'Multi-cluster Project': 'Multi-cluster Project',
+  'Multi-cluster Projects': 'Multi-cluster Projects',
+  MULTI_CLUSTER_PROJECT_DELETE_TIP:
+    'Deleting a multi-cluster project will also delete the same project on the host cluster.</br>Please enter the {type} name <strong>{resource}</strong> to make sure you understand the risk of the operation.',
+  'Network Isolation': 'Network Isolation',
+  'No Platform Manage Authorization': 'No Platform Manage Authorization',
+  'Not Assigned': 'Not Assigned',
+  Opened: 'Opened',
+  'Please input project name': 'Please input project name',
+  pods: 'pods',
+  'Project Info': 'Project Info',
+  'Project Manager': 'Project Manager',
+  'Project Member': 'Project Member',
+  'Project Members': 'Project Members',
+  'project members': 'project members',
+  'Project Name': 'Project Name',
+  'Project name exists': 'Project name exists',
+  'The project name exists on the host cluster.':
+    'The project name exists on the host cluster.',
+  'Project Overview': 'Project Overview',
+  'Project Placement': 'Project Placement',
+  'Project Quota': 'Project Quota',
+  'Project Role': 'Project Role',
+  'Project Roles': 'Project Roles',
+  'Project Quota Not Set': 'Project Quota Not Set',
+  'Resource Default Request Not Set': 'Resource Default Request Not Set',
+  Project_Admin: 'Project_Admin',
+  Projects: 'Projects',
+  projects: 'projects',
+  'Quota Management': 'Quota Management',
+  'Remove Member': 'Remove Member',
+  'Remove Members': 'Remove Members',
+  'requests.cpu': 'requests.cpu',
+  'requests.memory': 'requests.memory',
+  'Resource Quota': 'Resource Quota',
+  'Resource Type': 'Resource Type',
+  'Select a user of the workspace as the manager of the project.':
+    'Select a user of the workspace as the manager of the project.',
+  'Select Project Type': 'Select Project Type',
+  'Select the cluster to create the project.':
+    'Select the cluster to create the project.',
+  Service: 'Service',
+  'Set Gateway': 'Set Gateway',
+  StatefulSet: 'StatefulSet',
+  statefulsets: 'statefulsets',
+  'Target Workspace': 'Target Workspace',
+  Terminating: 'Terminating',
+  Usage: 'Usage',
+  Volume: 'Volume',
+  'You can limit the number of resources. Blank means no limit.':
+    'You can limit the number of resources. Blank means no limit.',
+
   PROJECTS_DESC:
     'A project is a Kubernetes namespace in KubeSphere, which provides a mechanism to organize resources in a workspace.',
   PROJECT_CREATE_DESC:
@@ -39,7 +149,7 @@ export default {
   INVITE_MEMBER_DESC: 'You can invite new members to assist your project.',
   INVITE_MEMBER_DESC_DEVOPS:
     'You can invite new members to assist your DevOps project.',
-  INVITE_MEMBER_SEARCH_PLACEHODLER: 'Enter an email address to invite members',
+  INVITE_MEMBER_SEARCH_PLACEHODLER: 'Enter a username to invite members',
   INVITE_MEMBER_CHOOSE_ROLE_TIP: 'Please assign a role to this member',
   DELETE_MEMBER_TIP:
     'Are you sure about deleting the member <strong>{name}</strong>? The member cannot access this project once removed.',
@@ -72,7 +182,7 @@ export default {
 
   HOW_TO_USE_QUOTA_Q: 'How to use quotas?',
   HOW_TO_USE_QUOTA_A:
-    "Resource Quotas are a mechanism used to limit user's resources usage. You can limit the number of CPUs, memory, and pod replicas.",
+    "Resource Quotas are a mechanism used to limit user's resources usage. You can limit the number of CPUs, memories, and pod replicas.",
 
   WHAT_IS_LIMIT_RANGE_Q: 'What is the container resource default request?',
   WHAT_IS_LIMIT_RANGE_A:
@@ -117,6 +227,9 @@ export default {
     'Unable to deploy applications in multi-cluster projects.',
   MULTI_CLUSER_PROJECT_TIP:
     'The current multi-cluster project runs on different clusters. You can switch between clusters to check the setting of this project in each of them.',
+
+  MULTI_CLUSER_RESOURCE_TIP:
+    'The current multi-cluster resource runs on different clusters. You can switch between clusters to check the setting of this resource in each of them.',
 
   MULTI_CLUSTER_PROJECT_CREATE_DESC:
     'A multi-cluster project runs across different clusters, which helps you to build a container environment for rapid iteration of applications and achieve high availability.',

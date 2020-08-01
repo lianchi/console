@@ -20,9 +20,9 @@ import { get, set } from 'lodash'
 import React from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
-import { Input, TextArea } from '@pitrix/lego-ui'
+import { Input } from '@pitrix/lego-ui'
 
-import { Modal, Form, Alert } from 'components/Base'
+import { Modal, Form, Alert, TextArea } from 'components/Base'
 import EditAuthorization from 'components/Modals/EditAuthorization'
 
 import { PATTERN_NAME } from 'utils/constants'
@@ -75,7 +75,7 @@ export default class CreateModal extends React.Component {
       return callback()
     }
 
-    const { cluster, namespace } = this.props
+    const { workspace, cluster, namespace } = this.props
     const name = get(this.props.formTemplate, 'metadata.name')
 
     if (this.props.edit && name === value) {
@@ -83,7 +83,7 @@ export default class CreateModal extends React.Component {
     }
 
     this.props.store
-      .checkName({ name: value, cluster, namespace })
+      .checkName({ name: value, workspace, cluster, namespace })
       .then(resp => {
         if (resp.exist) {
           return callback({ message: t('Role name exists'), field: rule.field })
@@ -144,16 +144,22 @@ export default class CreateModal extends React.Component {
             { validator: this.roleNameValidator },
           ]}
         >
-          <Input name="metadata.name" />
+          <Input name="metadata.name" maxLength={63} />
         </Form.Item>
         <Form.Item
           label={t(`${t('Role Name')}(${t('Alias')})`)}
           desc={t('ALIAS_DESC')}
         >
-          <Input name="metadata.annotations['kubesphere.io/alias-name']" />
+          <Input
+            name="metadata.annotations['kubesphere.io/alias-name']"
+            maxLength={63}
+          />
         </Form.Item>
-        <Form.Item label={t('Description')}>
-          <TextArea name="metadata.annotations['kubesphere.io/description']" />
+        <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
+          <TextArea
+            name="metadata.annotations['kubesphere.io/description']"
+            maxLength={256}
+          />
         </Form.Item>
         <Alert
           className="margin-t12"

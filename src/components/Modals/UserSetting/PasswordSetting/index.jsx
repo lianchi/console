@@ -103,7 +103,7 @@ export default class PasswordSetting extends React.Component {
             ]}
           >
             <InputPassword
-              name="current_password"
+              name="currentPassword"
               placeholder={t('Please input current password')}
               autoComplete="cur-password"
             />
@@ -135,7 +135,7 @@ export default class PasswordSetting extends React.Component {
           </Form.Item>
           <Form.Item
             className={styles.password}
-            label={t('Repeat the new password')}
+            label={t('Repeat the New Password')}
             rules={[
               { required: true, message: t('Please repeat the new password') },
               { validator: this.passwordValidator },

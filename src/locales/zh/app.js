@@ -175,7 +175,7 @@ export default {
   'Please input category name': '请输入分类名称',
   ICON_DESC: '请选择一个图标来标识分类',
   'Please select icon': '请选择图标',
-  'Website format is error': '输入的网站格式错误',
+  'Wrong website format': '输入的网站格式错误',
 
   Screenshot: '截图',
   'Version No': '版本号',
@@ -219,4 +219,7 @@ export default {
   'Please select a workspace': '请选择企业空间',
   'Please select a cluster': '请选择集群',
   'Please select a project': '请选择项目',
+
+  HELM_APP_SCHEMA_FORM_TIP:
+    '此应用支持表单模式，可选择通过表单或 YAML 编辑器来修改默认应用配置。注意：不同模式之间数据独立。',
 }

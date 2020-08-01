@@ -40,7 +40,7 @@ export default class IsolateInfo extends React.Component {
 
   render() {
     const { opened } = this.state
-    const { module } = this.props
+    const { module, canEdit } = this.props
     return (
       <div className={styles.wrapper}>
         <div className={styles.left}>
@@ -57,13 +57,15 @@ export default class IsolateInfo extends React.Component {
             <div>{t('NETWORK_POLICY_STATUS')}</div>
           </div>
         </div>
-        <div
-          className={classNames(styles.toggle, opened ? '' : styles.closed)}
-          onClick={this.toggle}
-        >
-          <span>{opened ? t('On') : t('Close')}</span>
-          <label className={styles.toggleop} />
-        </div>
+        {canEdit && (
+          <div
+            className={classNames(styles.toggle, opened ? '' : styles.closed)}
+            onClick={this.toggle}
+          >
+            <span>{opened ? t('On') : t('Close')}</span>
+            <label className={styles.toggleop} />
+          </div>
+        )}
       </div>
     )
   }

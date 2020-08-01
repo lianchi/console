@@ -47,7 +47,7 @@ export const S2I_STATUS_DESC = {
 }
 
 export const CRONJOB_STATUS = [
-  { text: 'Pause', value: 'pause' },
+  { text: 'Paused', value: 'paused' },
   { text: 'Running', value: 'running' },
 ]
 
@@ -217,8 +217,8 @@ export const ICON_TYPES = {
   'requests.memory': 'memory',
   configmaps: 'hammer',
   secrets: 'key',
-  'alert-message': 'loudspeaker',
-  'alert-policy': 'wrench',
+  'alert-messages': 'loudspeaker',
+  'alert-policies': 'wrench',
   apiserver: 'api',
   etcd: 'etcd',
   scheduler: 'scheduler',
@@ -242,7 +242,7 @@ export const MODULE_KIND_MAP = {
   ingresses: 'Ingress',
   persistentvolumeclaims: 'PersistentVolumeClaim',
   storageclasses: 'StorageClass',
-  'alerting-policy': 'AlertingPolicy',
+  'alert-policies': 'AlertingPolicy',
   configmaps: 'ConfigMap',
   secrets: 'Secret',
   s2ibuilders: 'S2iBuilder',
@@ -253,6 +253,7 @@ export const MODULE_KIND_MAP = {
   dashboards: 'Dashboard',
   applications: 'Application',
   users: 'User',
+  devops: 'DevOpsProject',
 }
 
 export const QUOTAS_MAP = {
@@ -448,16 +449,13 @@ export const GRAY_RELEASE_CATEGORIES = [
 
 export const PATTERN_NAME = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/
 export const PATTERN_SERVICE_NAME = /^[a-z]([-a-z0-9]*[a-z0-9])?$/
+export const PATTERN_SERVICE_VERSION = /^[a-z0-9]*$/
 export const PATTERN_LABEL = /(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?/
 export const PATTERN_PASSWORD = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{6,}$/
 export const PATTERN_IMAGE = /^\S+$/
-export const PATTERN_LENGTH_52 = /^.{0,52}$/
-export const PATTERN_LENGTH_63 = /^.{0,63}$/
-export const PATTERN_LENGTH_253 = /^.{0,253}$/
-export const PATTERN_LENGTH_1000 = /^.{0,1000}$/
 export const PATTERN_PORT_NAME = /^[a-z]([-a-z0-9]*[a-z0-9])?$/
 export const PATTERN_COMPONENT_VERSION = /^[a-z0-9]+$/
-export const PATTERN_PIPELINE_NAME = /^[a-zA-Z0-9]([-a-zA-Z0-9_]*)?$/
+export const PATTERN_PIPELINE_NAME = /[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/
 export const PATTERN_HOST = /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
 
 export const PATTERN_URL = /[a-zA-z]+:\/\/[^\s]*/
@@ -736,7 +734,7 @@ export const PROVISIONERS = [
       {
         key: 'adminSecretNamespace',
         type: 'input',
-        defaultValue: 'default',
+        c: 'default',
         desc: 'CEPHRBD_ADMIN_SECRET_NAMESPACE_DESC',
       },
       {
@@ -832,7 +830,7 @@ export const API_VERSIONS = {
   strategies: 'apis/servicemesh.kubesphere.io/v1alpha2',
   servicepolicies: 'apis/servicemesh.kubesphere.io/v1alpha2',
   horizontalpodautoscalers: 'apis/autoscaling/v2beta2',
-  customresourcedefinitions: 'apis/apiextensions.k8s.io/v1',
+  customresourcedefinitions: 'apis/apiextensions.k8s.io/v1beta1',
   clusters: 'apis/cluster.kubesphere.io/v1alpha1',
   workspaces: 'apis/tenant.kubesphere.io/v1alpha2',
   users: 'apis/iam.kubesphere.io/v1alpha2',

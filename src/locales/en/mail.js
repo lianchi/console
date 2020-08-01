@@ -17,10 +17,21 @@
  */
 
 export default {
+  'Mail Server': 'Mail Server',
+  'Platform Settings': 'Platform Settings',
+  'Send a test email': 'Send a test email',
+  'Sender Email': 'Sender Email',
+  'Server Settings': 'Server Settings',
+  'Server Username': 'Server Username',
+  'SMTP Server Address': 'SMTP Server Address',
+  'The sender mail account': 'The sender mail account',
+  'Use SSL Secure Connection': 'Use SSL Secure Connection',
+
   MAIL_SERVER_DESC:
     'This module provides email delivery services with custom settings.',
   EMPTY_MAIL_SERVER:
     'Temporarily no email server has been set up. You need to set up an email server to provide email delivery services.',
+  TEST_EMAIL_TITLE: '[KubeSphere] Testing Email',
   TEST_EMAIL_RECIPIENT: 'Testing Email Address',
   TEST_EMAIL_ADDRESS_FORM_DESC: 'The testing address to receive emails',
   SENDER_MAIL: 'Sender Email Address',

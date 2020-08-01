@@ -17,6 +17,139 @@
  */
 
 export default {
+  'According to the HTTP header': 'According to the HTTP header',
+  'Add Component': 'Add Component',
+  'Add Component Successfully': 'Add Component Successfully',
+  'Add Internet access rule for the application':
+    'Add Internet access rule for the application',
+  'Add New Component': 'Add New Component',
+  'Add Service': 'Add Service',
+  'Add stateful or stateless services': 'Add stateful or stateless services',
+  'App Description': 'App Description',
+  'App store deployment': 'App store deployment',
+  'App Template': 'App Template',
+  'App Types': 'App Types',
+  APP_ICON_TIP: 'APP_ICON_TIP',
+  application: 'application',
+  'Application Component': 'Application Component',
+  'Application Components': 'Application Components',
+  'Application components combine workloads and services as components in applications':
+    'Application components combine workloads and services as components in applications',
+  'Application Governance': 'Application Governance',
+  'Application governance is not enabled':
+    'Application governance is not enabled',
+  'Application Icon': 'Application Icon',
+  'Application Name': 'Application Name',
+  'Application Route': 'Application Route',
+  'Application Type': 'Application Type',
+  'Application Version(Optional)': 'Application Version(Optional)',
+  APPLICATION_YAML_DESC: 'APPLICATION_YAML_DESC',
+  Applications: 'Applications',
+  'Base ejection time (s)': 'Base ejection time (s)',
+  'Based on HTTP cookie': 'Based on HTTP cookie',
+  'Based on HTTP header': 'Based on HTTP header',
+  'Build an app by app template': 'Build an app by app template',
+  'Build an app by services': 'Build an app by services',
+  'Called Depth': 'Called Depth',
+  'Called Services': 'Called Services',
+  'Choose existing services or create new service components to build an app':
+    'Choose existing services or create new service components to build an app',
+  'Circuit Breaker': 'Circuit Breaker',
+  'Cluster Select': 'Cluster Select',
+  'Cluster Selection': 'Cluster Selection',
+  'Component Version': 'Component Version',
+  'Composing App': 'Composing App',
+  'Connection pool management': 'Connection pool management',
+  'Connection timeout': 'Connection timeout',
+  'Continuous error response (5xx) number':
+    'Continuous error response (5xx) number',
+  'Create Application by Service': 'Create Application by Service',
+  'Create Composing Application': 'Create Composing Application',
+  'Current Version': 'Current Version',
+  Deploy: 'Deploy',
+  'Deploy App': 'Deploy App',
+  'Deploy applications with one-click application templates provided by Kubesphere':
+    'Deploy applications with one-click application templates provided by Kubesphere',
+  'Deploy New Application': 'Deploy New Application',
+  'Deploy sample app Bookinfo': 'Deploy sample app Bookinfo',
+  'Deployed Applications': 'Deployed Applications',
+  'Edit Component': 'Edit Component',
+  'From App Store': 'From App Store',
+  'From App Templates': 'From App Templates',
+  'From third party Helm': 'From third party Helm',
+  'From workspace': 'From workspace',
+  'Hash based on a specific HTTP header.':
+    'Hash based on a specific HTTP header.',
+  'Hash based on HTTP cookie.': 'Hash based on HTTP cookie.',
+  'Hash based on the source IP address.':
+    'Hash based on the source IP address.',
+  'How to use Application Governance': 'How to use Application Governance',
+  'If the maximum number of requests in the backend connection is set to 1, the keep alive feature is disabled.':
+    'If the maximum number of requests in the backend connection is set to 1, the keep alive feature is disabled.',
+  'If you need to access applications by application route, add routing rules':
+    'If you need to access applications by application route, add routing rules',
+  'Inspection period (unit: s)': 'Inspection period (unit: s)',
+  'Invalid version': 'Invalid version',
+  'Load balance algorithm': 'Load balance algorithm',
+  Log: 'Log',
+  'Max number of connections': 'Max number of connections',
+  'Max number of requests per connection':
+    'Max number of requests per connection',
+  'Max request retries': 'Max request retries',
+  'Maximum pending requests': 'Maximum pending requests',
+  'Maximum requests': 'Maximum requests',
+  Method: 'Method',
+  'Microservice enabled': 'Microservice enabled',
+  'Microservice not enabled': 'Microservice not enabled',
+  'No Components': 'No Components',
+  'No result found': 'No result found',
+  Off: 'Off',
+  On: 'On',
+  'Please finish the sub form first': 'Please finish the sub form first',
+  'Please input an application name': 'Please input an application name',
+  'Please input component version': 'Please input component version',
+  'Please save the current form first': 'Please save the current form first',
+  'Please try other query conditions': 'Please try other query conditions',
+  'Pod isolation ratio (unit: %)': 'Pod isolation ratio (unit: %)',
+  Process: 'Process',
+  Receive: 'Receive',
+  Rollback: 'Rollback',
+  'Sample apps can help you get started with app creation and app governance':
+    'Sample apps can help you get started with app creation and app governance',
+  Send: 'Send',
+  'Service components should not be empty':
+    'Service components should not be empty',
+  'Service Ports': 'Service Ports',
+  SERVICE_PORT_NAME_DESC: 'SERVICE_PORT_NAME_DESC',
+  'Services & Operations': 'Services & Operations',
+  'Session retention': 'Session retention',
+  'Success rate': 'Success rate',
+  Tags: 'Tags',
+  'TCP - Inbound Traffic': 'TCP - Inbound Traffic',
+  'TCP - Outbound Traffic': 'TCP - Outbound Traffic',
+  'TCP connection timeout.': 'TCP connection timeout.',
+  'Temporarily unable to use tracing': 'Temporarily unable to use tracing',
+  'Temporarily unable to use traffic management':
+    'Temporarily unable to use traffic management',
+  'The app has not received the request for a long time, please visit the app and try traffic management':
+    'The app has not received the request for a long time, please visit the app and try traffic management',
+  'The maximum number of HTTP1 or TCP connections to the target host.':
+    'The maximum number of HTTP1 or TCP connections to the target host.',
+  'The maximum number of retries to the target host within the specified time.':
+    'The maximum number of retries to the target host within the specified time.',
+  'The number of consecutive 5xx errors in one inspection cycle':
+    'The number of consecutive 5xx errors in one inspection cycle',
+  'The response code will be filtered in the inspection cycle.':
+    'The response code will be filtered in the inspection cycle.',
+  TOTAL_COLLECTIONS: 'TOTAL_COLLECTIONS',
+  Traffic: 'Traffic',
+  'Traffic (requests per second)': 'Traffic (requests per second)',
+  'Traffic Entry': 'Traffic Entry',
+  'Traffic Management': 'Traffic Management',
+  'Traffic Monitoring': 'Traffic Monitoring',
+  Upgrade: 'Upgrade',
+  'Workload Type': 'Workload Type',
+
   TOTAL_APPS: 'Total {num} applications',
 
   APPLICATIONS_DESC:
@@ -31,13 +164,10 @@ export default {
   LB_RANDOM: 'RANDOM',
 
   CLUSTER_NAME_DESC:
-    'It can only contain lowercase letters, numbers and hyphens("-"), and must begin and end with a lowercase letter or a number. The maximum length of characters is set to 14.',
-
-  CLUSTER_ALIAS_DESC:
-    'Alias can be composed of any character to help you better distinguish resources and support Chinese names.',
+    'It can only contain lowercase letters, numbers and hyphens("-"), and must begin with a lowercase letter, ending with a number or lowercase letter. The maximum length of characters is set to 14.',
 
   COMPONENT_VERSION_DESC:
-    'For the application of governance to distinguish between components. It can only contain lowercase letters and numbers. The maximum length of characters is set to 16.',
+    'It can only contain lowercase letters and numbers. The maximum length of characters is set to 16.',
 
   APP_WORKLOAD_TYPE_DESC:
     'Support stateless services (Deployment) and stateful services (StatefulSet)',
@@ -46,7 +176,7 @@ export default {
   SERVICE_STATEFULSET: 'Stateful service(StatefulSet)',
 
   CONNECTION_POOL_TIP:
-    'Create a fixed number of connection objects for the application, save them in the pool for reuse. The existing pool is available for each access, and is returned to the pool after use.',
+    'A fixed number of connection objects will be created for the application and stored in the connection pool for reuse. The existing pool is available for each access, and each connection object will be returned to the pool after use.',
 
   APP_GOVERNANCE_DESC:
     'If Application Governance is enabled, the Istio-proxy container will be injected as a SideCar in each component. <a href="https://istio.io/docs/setup/kubernetes/additional-setup/sidecar-injection/" target="_blank">READ MORE</a>',
@@ -93,10 +223,13 @@ export default {
     'Basic application information (such as name description)',
 
   TRAFFIC_MANAGEMENT_NO_MICROSERVICE_TIP:
-    'Traffic governance depends on the microservice module, the current cluster does not enable the microservice module',
+    'Traffic governance depends on the microservices module. The current cluster has not enabled the microservices module.',
   TRACING_NO_MICROSERVICE_TIP:
-    'Tracing depends on the microservice module, the current cluster does not enable the microservice module',
+    'Tracing depends on the microservices module. The current cluster has not enabled the microservices module.',
 
   APPLICATION_SERVICE_DESC:
     'You can set different service components based on the service type in an application. Stateful and stateless services are both supported.',
+
+  INTERNET_ACCESS_DESC:
+    "You can set the application's Internet access rules (Ingress).",
 }

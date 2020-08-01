@@ -16,12 +16,12 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { omit, isEmpty } from 'lodash'
+import { isEmpty } from 'lodash'
 import React from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { Card } from 'components/Base'
-import Annotations from 'projects/components/Cards/Annotations'
+import Placement from 'projects/components/Cards/Placement'
 
 import Rule from './Rule'
 
@@ -40,6 +40,17 @@ class ResourceStatus extends React.Component {
   componentDidMount() {
     const detail = toJS(this.store.detail)
     this.store.getGateway(detail)
+  }
+
+  renderPlacement() {
+    const { name, namespace } = this.props.match.params
+    const { detail } = this.store
+    if (detail.isFedManaged) {
+      return (
+        <Placement module={this.module} name={name} namespace={namespace} />
+      )
+    }
+    return null
   }
 
   renderRules() {
@@ -71,21 +82,11 @@ class ResourceStatus extends React.Component {
     )
   }
 
-  renderAnnotations() {
-    const detail = toJS(this.store.detail)
-
-    return (
-      <Annotations
-        data={omit(detail.annotations, ['displayName', 'desc', 'creator'])}
-      />
-    )
-  }
-
   renderContent() {
     return (
       <div>
+        {this.renderPlacement()}
         {this.renderRules()}
-        {this.renderAnnotations()}
       </div>
     )
   }

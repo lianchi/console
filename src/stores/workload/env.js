@@ -18,6 +18,7 @@
 
 import { action, observable } from 'mobx'
 import { get } from 'lodash'
+import { safeAtob } from 'utils'
 
 export default class EnvStore {
   @observable
@@ -44,7 +45,12 @@ export default class EnvStore {
   }
 
   @action
-  async fetchList({ cluster, namespace, containers, initContainers }) {
+  async fetchList({
+    cluster,
+    namespace,
+    containers = [],
+    initContainers = [],
+  }) {
     this.list.isLoading = true
 
     const mergeContainers = [
@@ -117,7 +123,7 @@ export default class EnvStore {
       if (value.kind === 'Secret' && item.key) {
         return {
           name: item.name,
-          value: atob(get(value.data, item.key, '')),
+          value: safeAtob(get(value.data, item.key, '')),
         }
       }
 

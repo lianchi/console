@@ -31,9 +31,14 @@ export default {
     on({ store, success, cluster, workspace, clusters, ...props }) {
       const modal = Modal.open({
         onOk: async data => {
+          set(
+            data,
+            'metadata.annotations["kubesphere.io/creator"]',
+            globals.user.username
+          )
           set(data, 'metadata.labels["kubesphere.io/workspace"]', workspace)
           const specClusters = uniqBy(
-            get(data, 'spec.placement.clusters', []),
+            get(data, 'spec.placement.clusters', []).filter(item => item.name),
             'name'
           )
 
@@ -81,7 +86,41 @@ export default {
         store,
         modal: DeleteModal,
         resource: detail.name,
-        type: 'Multi-cluster Project',
+        type: t('Multi-cluster Project'),
+        isLoading: projectStore.isLoading,
+        ...props,
+      })
+    },
+  },
+  'federated.project.delete.batch': {
+    on({ store, success, rowKey, ...props }) {
+      const projectStore = new ProjectStore()
+      const { data, selectedRowKeys } = store.list
+      const selectNames = data
+        .filter(item => selectedRowKeys.includes(item[rowKey]))
+        .map(item => item.name)
+
+      const modal = Modal.open({
+        onOk: async () => {
+          const reqs = []
+
+          data.forEach(item => {
+            if (selectNames.includes(item.name)) {
+              reqs.push(projectStore.delete({ name: item.name }))
+            }
+          })
+
+          await Promise.all(reqs)
+
+          Modal.close(modal)
+          Notify.success({ content: `${t('Deleted Successfully')}!` })
+          store.setSelectRowKeys([])
+          success && success()
+        },
+        resource: selectNames.join(', '),
+        modal: DeleteModal,
+        store,
+        isLoading: projectStore.isLoading,
         ...props,
       })
     },

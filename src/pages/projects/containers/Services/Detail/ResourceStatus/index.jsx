@@ -25,6 +25,7 @@ import RouterStore from 'stores/router'
 
 import { Panel, Text } from 'components/Base'
 import PodsCard from 'components/Cards/Pods'
+import Placement from 'projects/components/Cards/Placement'
 
 import Ports from '../Ports'
 
@@ -66,27 +67,19 @@ export default class ResourceStatus extends React.Component {
     const { params } = this.props.match
     const { name, type } = this.store.workload
 
-    if (type) {
+    if (type && name) {
       this.workloadStore.setModule(type)
-      await this.workloadStore.fetchDetail({ ...params, name })
+      const result = await this.workloadStore.checkName({ ...params, name })
+      if (result.exist) {
+        await this.workloadStore.fetchDetail({ ...params, name })
+      }
     }
 
     this.routerStore.getGateway(params)
   }
 
-  handlePodUpdate = () => {
-    const { cluster, namespace, name } = this.workloadStore.detail
-    this.workloadStore.fetchDetail({ cluster, namespace, name, silent: true })
-  }
-
   renderPods() {
-    return (
-      <PodsCard
-        prefix={this.prefix}
-        detail={this.store.detail}
-        onUpdate={this.handlePodUpdate}
-      />
-    )
+    return <PodsCard prefix={this.prefix} detail={this.store.detail} />
   }
 
   renderExternal() {
@@ -97,6 +90,21 @@ export default class ResourceStatus extends React.Component {
         <Text title={detail.externalName} description={t('ExternalName')} />
       </Panel>
     )
+  }
+
+  renderPlacement() {
+    const { name, namespace } = this.props.match.params
+    const { detail } = this.store
+    if (detail.isFedManaged) {
+      return (
+        <Placement
+          module={this.store.module}
+          name={name}
+          namespace={namespace}
+        />
+      )
+    }
+    return null
   }
 
   renderPorts() {
@@ -119,6 +127,7 @@ export default class ResourceStatus extends React.Component {
 
     return (
       <div>
+        {this.renderPlacement()}
         {this.renderPorts()}
         {this.renderPods()}
       </div>

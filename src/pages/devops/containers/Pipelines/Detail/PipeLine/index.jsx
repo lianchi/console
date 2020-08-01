@@ -47,8 +47,7 @@ export default class Pipeline extends React.Component {
   }
 
   get enabledActions() {
-    const { cluster, project_id } = this.props.match.params
-    const devops = this.props.detailStore.getDevops(project_id)
+    const { cluster, devops } = this.props.match.params
 
     return globals.app.getActions({
       module: 'pipelines',
@@ -59,9 +58,8 @@ export default class Pipeline extends React.Component {
 
   get isMutiBranch() {
     const { detailStore } = this.props
-    const scmSource = toJS(detailStore).detail.scmSource
-    const length = scmSource ? Object.keys(scmSource).length : 0
-    return Boolean(length)
+    const scmSource = toJS(detailStore.detail.scmSource)
+    return !isEmpty(scmSource)
   }
 
   get sourceBranch() {
@@ -137,8 +135,8 @@ export default class Pipeline extends React.Component {
     this.setState({ showEditPipeline: false }, () => {
       this.handleFresh()
     })
-    const { project_id, name } = params
-    localStorage.removeItem(`${globals.user.username}-${project_id}-${name}`)
+    const { devops, name } = params
+    localStorage.removeItem(`${globals.user.username}-${devops}-${name}`)
   }
 
   handleRun = debounce(() => {
@@ -154,13 +152,13 @@ export default class Pipeline extends React.Component {
 
   handleRunOk = async (parameters, branch) => {
     const { detail } = this.props.detailStore
-    const { project_id, cluster } = this.props.match.params
+    const { devops, cluster } = this.props.match.params
     await this.props.detailStore.runBranch({
       name: detail.name,
       branch,
       parameters,
       cluster,
-      project_id,
+      devops,
     })
     this.props.rootStore.routing.push('./activity')
   }

@@ -35,7 +35,7 @@ import FederatedStore from 'stores/federated'
 })
 export default class Secrets extends React.Component {
   get itemActions() {
-    const { getData, trigger } = this.props
+    const { trigger } = this.props
     return [
       {
         key: 'edit',
@@ -64,8 +64,8 @@ export default class Secrets extends React.Component {
         action: 'edit',
         onClick: item =>
           trigger('secret.edit', {
-            detail: item.resource,
-            success: getData,
+            detail: item,
+            isFederated: true,
           }),
       },
       {
@@ -77,7 +77,6 @@ export default class Secrets extends React.Component {
           trigger('resource.delete', {
             type: t(this.name),
             detail: item,
-            success: getData,
           }),
       },
     ]
@@ -104,20 +103,21 @@ export default class Secrets extends React.Component {
         title: t('Status'),
         dataIndex: 'status',
         isHideable: true,
+        width: '12%',
         render: status => <Status type={status} name={t(status)} flicker />,
       },
       {
         title: t('Type'),
         dataIndex: 'resource.type',
         isHideable: true,
-        width: '24%',
+        width: '12%',
         render: type => t(SECRET_TYPES[type] || type),
       },
       {
         title: t('Config Number'),
         dataIndex: 'resource.data',
         isHideable: true,
-        width: '20%',
+        width: '12%',
         render: data => Object.keys(data).length,
       },
       {

@@ -62,11 +62,23 @@ export default class VolumeDetail extends React.Component {
   }
 
   get listUrl() {
+    const { isFedManaged } = toJS(this.store.detail)
+
     const { workspace, cluster, namespace } = this.props.match.params
     if (workspace) {
-      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${this.module}`
+      if (isFedManaged) {
+        return `/${workspace}/federatedprojects/${namespace}/${this.module}`
+      }
+
+      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${
+        this.module
+      }`
     }
     return `/clusters/${cluster}/${this.module}`
+  }
+
+  get isFedManaged() {
+    return this.store.detail.isFedManaged
   }
 
   fetchData = async () => {
@@ -126,9 +138,7 @@ export default class VolumeDetail extends React.Component {
         false
       ),
       onClick: () => {
-        this.trigger('volume.clone', {
-          store: this.store,
-        })
+        this.trigger('volume.clone', {})
       },
     },
     {
@@ -143,9 +153,7 @@ export default class VolumeDetail extends React.Component {
         false
       ),
       onClick: () => {
-        this.trigger('volume.create.snapshot', {
-          store: this.store,
-        })
+        this.trigger('volume.create.snapshot', {})
       },
     },
     {
@@ -164,7 +172,6 @@ export default class VolumeDetail extends React.Component {
         const storageClassSizeConfig = this.storageclass.getStorageSizeConfig()
 
         this.trigger('volume.expand', {
-          store: this.store,
           isExpanding: isSubmitting,
           shouldAlertVisible: detail.inUse,
           detail: originData,
@@ -267,8 +274,9 @@ export default class VolumeDetail extends React.Component {
       module: this.module,
       authKey: this.authKey,
       name: getDisplayName(this.store.detail),
+      desc: this.store.detail.description,
       attrs: this.getAttrs(),
-      operations: this.getOperations(),
+      operations: this.isFedManaged ? [] : this.getOperations(),
       icon: 'storage',
       breadcrumbs: [
         {

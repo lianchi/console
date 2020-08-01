@@ -54,11 +54,23 @@ export default class SecretDetail extends React.Component {
   }
 
   get listUrl() {
+    const { isFedManaged } = toJS(this.store.detail)
+
     const { workspace, cluster, namespace } = this.props.match.params
     if (workspace) {
-      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${this.module}`
+      if (isFedManaged) {
+        return `/${workspace}/federatedprojects/${namespace}/${this.module}`
+      }
+
+      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${
+        this.module
+      }`
     }
     return `/clusters/${cluster}/${this.module}`
+  }
+
+  get isFedManaged() {
+    return this.store.detail.isFedManaged
   }
 
   fetchData = () => {
@@ -162,7 +174,7 @@ export default class SecretDetail extends React.Component {
       module: this.module,
       name: getDisplayName(this.store.detail),
       desc: this.store.detail.description,
-      operations: this.getOperations(),
+      operations: this.isFedManaged ? [] : this.getOperations(),
       attrs: this.getAttrs(),
       breadcrumbs: [
         {

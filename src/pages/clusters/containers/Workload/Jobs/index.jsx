@@ -62,7 +62,7 @@ export default class Jobs extends React.Component {
   }
 
   get itemActions() {
-    const { trigger } = this.props
+    const { trigger, store } = this.props
     return [
       {
         key: 'edit',
@@ -79,10 +79,7 @@ export default class Jobs extends React.Component {
         icon: 'refresh',
         text: t('Rerun'),
         action: 'edit',
-        onClick: item =>
-          trigger('job.rerun', {
-            detail: item,
-          }),
+        onClick: item => store.rerun(item),
       },
       {
         key: 'delete',
@@ -106,7 +103,7 @@ export default class Jobs extends React.Component {
   }
 
   getItemDesc = record => {
-    const { status, reason } = getWorkloadStatus(record, this.module)
+    const { status, reason } = getWorkloadStatus(record, this.props.module)
     const desc = reason ? (
       <StatusReason status={status} reason={t(reason)} data={record} />
     ) : (
@@ -133,7 +130,9 @@ export default class Jobs extends React.Component {
             title={getDisplayName(record)}
             desc={this.getItemDesc(record)}
             isMultiCluster={record.isFedManaged}
-            to={`/clusters/${cluster}/projects/${record.namespace}/${module}/${name}`}
+            to={`/clusters/${cluster}/projects/${
+              record.namespace
+            }/${module}/${name}`}
           />
         ),
       },

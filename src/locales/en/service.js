@@ -17,6 +17,73 @@
  */
 
 export default {
+  ' has no corresponding workload.': ' has no corresponding workload.',
+  'Access Method': 'Access Method',
+  'Access Type': 'Access Type',
+  'Add Route Rule': 'Add Route Rule',
+  'Add Selector': 'Add Selector',
+  'Associated Application': 'Associated Application',
+  'Automatically assign Service IP': 'Automatically assign Service IP',
+  'Commonly included tags in the current workloads':
+    'Commonly included tags in the current workloads',
+  'Container Port': 'Container Port',
+  'Create Service': 'Create Service',
+  'Create service by specifying workloads':
+    'Create service by specifying workloads',
+  'Create service by Yaml': 'Create service by Yaml',
+  Creating: 'Creating',
+  'Creation failed, please delete and try again':
+    'Creation failed, please delete and try again',
+  'Custom Creation': 'Custom Creation',
+  'Delete Service': 'Delete Service',
+  'Do not assign Service IP': 'Do not assign Service IP',
+  'Edit Internet Access': 'Edit Internet Access',
+  'Edit Service': 'Edit Service',
+  'Enable Sticky Session': 'Enable Sticky Session',
+  'External Address': 'External Address',
+  'External Service': 'External Service',
+  'Internal access': 'Internal access',
+  'Invalid port': 'Invalid port',
+  'Language Type': 'Language Type',
+  'LoadBalancer IP': 'LoadBalancer IP',
+  'Map Services outside the cluster': 'Map Services outside the cluster',
+  'Maximum Session Sticky Time (s)': 'Maximum Session Sticky Time (s)',
+  'No related resources found with current service(s)':
+    'No related resources found with current service(s)',
+  'Node Port': 'Node Port',
+  'Node Port(s)': 'Node Port(s)',
+  'Not Associate': 'Not Associate',
+  'Path is Required': 'Path is Required',
+  'Please input ExternalName': 'Please input ExternalName',
+  'Please input ports': 'Please input ports',
+  'Please input selectors that have corresponding workloads':
+    'Please input selectors that have corresponding workloads',
+  'Please input service name': 'Please input service name',
+  'Please input valid Selector': 'Please input valid Selector',
+  'Please select a workload': 'Please select a workload',
+  'Please select Service': 'Please select Service',
+  Ports: 'Ports',
+  routes: 'routes',
+  Selector: 'Selector',
+  selector: 'selector',
+  'Service Access': 'Service Access',
+  'Service Mesh': 'Service Mesh',
+  'Service Name': 'Service Name',
+  'Service Port': 'Service Port',
+  'Service Type': 'Service Type',
+  services: 'services',
+  'Simple Service': 'Simple Service',
+  'Specify Workload': 'Specify Workload',
+  'Specify Workloads': 'Specify Workloads',
+  'Stateful Service': 'Stateful Service',
+  'Stateless Service': 'Stateless Service',
+  'Sure to delete the service(s)?': 'Sure to delete the service(s)?',
+  'Target Port': 'Target Port',
+  'The current selector': 'The current selector',
+  'The maximum session sticky time is 10800s (3 hours).':
+    'The maximum session sticky time is 10800s (3 hours).',
+  'Virtual IP': 'Virtual IP',
+
   SERVICE_EXTERNAL_NAME_DESC:
     'Map the service to the contents of the externalName field by returning a CNAME record with its value.',
   TOTAL_WORKLOAD: '{ count } workloads in total',
@@ -25,7 +92,7 @@ export default {
   SERVICE_SELECTOR_AFFECT_2: ' affect {count} workloads',
 
   SERVICE_NAME_DESC:
-    'It can only contain lowercase letters, numbers and hyphens("-"), and must begin and end with a lowercase letter or a number. The maximum length of characters is set to 63.',
+    'It can only contain lowercase letters, numbers and hyphens("-"), and must begin with a lowercase letter, ending with a number or lowercase letter. The maximum length of characters is set to 63.',
   SERVICE_DESC:
     'A Service is an abstraction that defines a logical collection of Pods and a strategy for accessing them.',
   SERVICE_CREATE_DESC:
@@ -94,4 +161,6 @@ export default {
     'Specify a workload that needs to be associated with the service.',
 
   EIP_POOL_DESC: 'Access method within the cluster (DNS)',
+
+  SERVICE_SESSION_STICKY_DESC: 'Must be greater than 0 and less than 86400',
 }

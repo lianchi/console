@@ -73,7 +73,7 @@ export default {
   'Map Services outside the cluster': '映射集群外部的服务',
   'Please input ports': '请输入端口',
   'Please select a workload': '请选择一个工作负载',
-  'Please input valid Selector': '请输入正确的选择器',
+  'Please input valid Selector': '请输入有效的选择器',
   TOTAL_WORKLOAD: '共 {count} 个工作负载',
 
   'Enable Sticky Session': '开启会话保持',
@@ -82,7 +82,7 @@ export default {
     '会话保持时间默认是 10800 秒(即 3 小时)',
 
   SERVICE_NAME_DESC:
-    '最长 63 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母或数字开头及结尾',
+    '最长 63 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头, 字母或数字结尾',
 
   SERVICE_DESC:
     '服务 (Service) 是定义了一类容器组的逻辑集合和一个用于访问它们的策略。',
@@ -164,4 +164,6 @@ export default {
   SERVICE_PORTS_DESC: '设置容器镜像暴露的端口以及服务端口',
 
   EIP_POOL_DESC: '集群内部访问方式(DNS)',
+
+  SERVICE_SESSION_STICKY_DESC: '最小为 0，最大为 86400',
 }

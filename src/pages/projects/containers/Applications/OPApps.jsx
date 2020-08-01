@@ -38,7 +38,9 @@ export default class OPApps extends React.Component {
 
   get prefix() {
     const { workspace, cluster, namespace } = this.props.match.params
-    return `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/${this.type}`
+    return `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/${
+      this.type
+    }`
   }
 
   get canCreate() {
@@ -89,8 +91,6 @@ export default class OPApps extends React.Component {
       {
         title: t('Name'),
         dataIndex: 'name',
-        sorter: true,
-        sortOrder: getSortOrder('name'),
         render: (name, record) => (
           <Avatar
             isApp
@@ -159,6 +159,7 @@ export default class OPApps extends React.Component {
   }
 
   getTableProps() {
+    const { tableProps } = this.props
     const actions = this.canCreate
       ? [
           {
@@ -171,12 +172,16 @@ export default class OPApps extends React.Component {
       : []
 
     return {
-      actions,
-      onCreate: null,
-      selectActions: [],
+      tableActions: {
+        ...tableProps.tableActions,
+        actions,
+        onCreate: null,
+        selectActions: [],
+      },
       emptyProps: {
         desc: t('APP_DEPLOYMENT_DESC'),
       },
+      searchType: 'keyword',
     }
   }
 

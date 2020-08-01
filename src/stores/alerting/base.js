@@ -59,7 +59,6 @@ export default class AlertStoreBase extends Base {
     workspace,
     namespace,
     pod,
-    keyword,
     status,
     reverse = false,
     limit = 10,
@@ -85,8 +84,9 @@ export default class AlertStoreBase extends Base {
       params.offset = (Number(page) - 1) * limit || 0
     }
 
-    if (keyword) {
-      params.search_word = keyword
+    if (params.keyword) {
+      params.search_word = params.keyword
+      delete params.keyword
     }
 
     if (status) {
@@ -110,7 +110,6 @@ export default class AlertStoreBase extends Base {
       total: result.total || 0,
       limit: Number(limit) || 10,
       page: Number(page) || 1,
-      keyword,
       status,
       reverse,
       filters: omit(filters, ['namespace', 'sort_key']),
@@ -126,7 +125,11 @@ export default class AlertStoreBase extends Base {
     const result = await request.get(this.getDetailUrl(params))
     const data = this.mapper(get(result, `[${this.itemsKey}][0]`) || {})
 
-    this.detail = { cluster: params.cluster, ...data }
+    this.detail = {
+      cluster: params.cluster,
+      namespace: params.namespace,
+      ...data,
+    }
     this.isLoading = false
 
     return data

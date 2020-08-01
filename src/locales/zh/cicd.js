@@ -151,7 +151,7 @@ export default {
   'Scan Reponsitory Logs': '扫描仓库日志',
   'Started By': '实施者',
   Rescan: '重新扫描',
-  'Scan Logs Success': '扫描日志成功',
+  'Logs Scanned Successfully': '扫描日志成功',
   'Configuration error': '配置信息错误',
   'branch success': '分支成功',
   tips_Parametric_build: `参数化构建过程允许您在进行构建时传入一个或多个参数。
@@ -462,4 +462,6 @@ export default {
   'select a pipeline': '选择一个流水线',
   timer: '定时器',
   'Started By {name}': '由{name}触发扫描',
+  'Credential ID exists': '凭证 ID 已存在',
+  'Invalid credential ID': '凭证 ID 格式不合法',
 }

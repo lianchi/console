@@ -68,52 +68,50 @@ export default class CRDApps extends React.Component {
     return canCreateDeployment && canCreateService
   }
 
-  getColumns = () => {
-    return [
-      {
-        title: t('Name'),
-        dataIndex: 'name',
-        render: (name, record) => (
-          <Avatar
-            title={getDisplayName(record)}
-            avatar={record.icon || '/assets/default-app.svg'}
-            to={record.deletionTime ? null : `${this.props.match.url}/${name}`}
-            desc={get(record, 'annotations["kubesphere.io/description"]', '-')}
-          />
+  getColumns = () => [
+    {
+      title: t('Name'),
+      dataIndex: 'name',
+      render: (name, record) => (
+        <Avatar
+          title={getDisplayName(record)}
+          avatar={record.icon || '/assets/default-app.svg'}
+          to={record.deletionTime ? null : `${this.props.match.url}/${name}`}
+          desc={get(record, 'annotations["kubesphere.io/description"]', '-')}
+        />
+      ),
+    },
+    {
+      title: t('Status'),
+      dataIndex: 'status',
+      isHideable: true,
+      width: '20%',
+      render: (status, record) =>
+        status === 'Deleting' ? (
+          <Status type={status} name={t(status)} flicker />
+        ) : (
+          <ClusterWrapper
+            clusters={record.clusters}
+            clustersDetail={this.props.projectStore.detail.clusters}
+          >
+            {cluster => this.renderStatus({ cluster, record })}
+          </ClusterWrapper>
         ),
-      },
-      {
-        title: t('Status'),
-        dataIndex: 'status',
-        isHideable: true,
-        width: '20%',
-        render: (status, record) =>
-          status === 'Deleting' ? (
-            <Status type={status} name={t(status)} flicker />
-          ) : (
-            <ClusterWrapper
-              clusters={record.clusters}
-              clustersDetail={this.props.projectStore.detail.clusters}
-            >
-              {cluster => this.renderStatus({ cluster, record })}
-            </ClusterWrapper>
-          ),
-      },
-      {
-        title: t('Version'),
-        dataIndex: 'resource.version',
-        isHideable: true,
-        width: '20%',
-      },
-      {
-        title: t('Created Time'),
-        dataIndex: 'createTime',
-        isHideable: true,
-        width: 180,
-        render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
-      },
-    ]
-  }
+    },
+    {
+      title: t('Version'),
+      dataIndex: 'resource.version',
+      isHideable: true,
+      width: '20%',
+    },
+    {
+      title: t('Created Time'),
+      dataIndex: 'createTime',
+      isHideable: true,
+      width: 180,
+      render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
+    },
+  ]
 
   renderStatus({ cluster, record }) {
     const data = get(record, `resources[${cluster.name}]`)
@@ -136,7 +134,8 @@ export default class CRDApps extends React.Component {
     })
   }
 
-  getTableProps() {
+  get tableActions() {
+    const { tableProps } = this.props
     const actions = this.canCreate
       ? [
           {
@@ -147,15 +146,22 @@ export default class CRDApps extends React.Component {
           },
         ]
       : []
-
     return {
+      ...tableProps.tableActions,
       actions,
       onCreate: null,
       selectActions: [],
+    }
+  }
+
+  getTableProps() {
+    return {
+      tableActions: this.tableActions,
       emptyProps: {
         title: t('Composing App'),
         desc: t('COMPOSING_APP_DESC'),
       },
+      searchType: 'name',
     }
   }
 
@@ -172,7 +178,6 @@ export default class CRDApps extends React.Component {
           {...tableProps}
           {...this.getTableProps()}
           columns={this.getColumns()}
-          searchType="name"
         />
       </ListPage>
     )

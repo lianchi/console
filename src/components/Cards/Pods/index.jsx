@@ -17,11 +17,11 @@
  */
 
 import React from 'react'
-import { reaction } from 'mobx'
-import { inject, observer } from 'mobx-react'
+import { reaction, toJS } from 'mobx'
+import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
-import { isEmpty, get, throttle } from 'lodash'
+import { isEmpty, has, get, throttle } from 'lodash'
 import {
   Icon,
   Level,
@@ -34,8 +34,10 @@ import {
 
 import { joinSelector } from 'utils'
 import { startAutoRefresh, stopAutoRefresh } from 'utils/monitoring'
+import ObjectMapper from 'utils/object.mapper'
 import PodStore from 'stores/pod'
 import PodMonitorStore from 'stores/monitoring/pod'
+import WebSocketStore from 'stores/websocket'
 
 import { Panel, Search, Button } from 'components/Base'
 import PodItem from './Item'
@@ -47,13 +49,13 @@ const MetricTypes = {
   memory: 'pod_memory_usage_wo_cache',
 }
 
-@inject('rootStore')
 @observer
 export default class PodsCard extends React.Component {
   static propTypes = {
     prefix: PropTypes.string,
     title: PropTypes.string,
     detail: PropTypes.object,
+    details: PropTypes.object,
     hideHeader: PropTypes.bool,
     hideFooter: PropTypes.bool,
     isFederated: PropTypes.bool,
@@ -66,6 +68,7 @@ export default class PodsCard extends React.Component {
   static defaultProps = {
     title: 'Pods',
     detail: {},
+    details: {},
     hideHeader: false,
     hideFooter: false,
     isFederated: false,
@@ -80,28 +83,29 @@ export default class PodsCard extends React.Component {
     this.store = new PodStore()
     this.monitorStore = new PodMonitorStore()
 
+    const selectCluster = props.isFederated
+      ? get(props, 'clusters[0]')
+      : props.detail.cluster
+
     this.state = {
       expandItem: '',
-      selectCluster:
-        get(props, 'clusters[0]', '') || props.detail.cluster || '',
+      selectCluster: selectCluster || '',
+      params: this.getParams(selectCluster),
     }
 
-    this.websocket = props.rootStore.websocket
+    this.websocket = new WebSocketStore()
     this.initWebsocket()
-
-    this.params = this.getParams(props)
   }
 
   initWebsocket() {
-    const { onUpdate } = this.props
-    const { selectCluster } = this.state
-    const { namespace, selector } = this.props.detail || {}
+    const { selectCluster, params = {} } = this.state
+    const { namespace, labelSelector } = params
 
     const url = `api/v1/watch${
       selectCluster ? `/klusters/${selectCluster}` : ''
-    }/namespaces/${namespace}/pods?labelSelector=${joinSelector(selector)}`
+    }/namespaces/${namespace}/pods?labelSelector=${labelSelector}`
 
-    if (url && namespace && selector) {
+    if (url && namespace && labelSelector) {
       this.websocket.watch(url)
 
       this.fetchData = throttle(this.fetchData, 2000)
@@ -109,10 +113,16 @@ export default class PodsCard extends React.Component {
       this.disposer = reaction(
         () => this.websocket.message,
         message => {
-          if (message.object.kind === 'Pod' && message.type === 'MODIFIED') {
-            this.fetchData({ noMetrics: true, silent: true }).then(() => {
-              onUpdate && onUpdate(selectCluster)
-            })
+          if (message.object.kind === 'Pod') {
+            if (message.type === 'MODIFIED') {
+              const data = {
+                cluster: selectCluster,
+                ...ObjectMapper.pods(toJS(message.object)),
+              }
+              this.store.list.updateItem(data)
+            } else if (message.type === 'DELETED' || message.type === 'ADDED') {
+              this.fetchData({ silent: true })
+            }
           }
         }
       )
@@ -120,9 +130,27 @@ export default class PodsCard extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.detail !== prevProps.detail) {
-      this.params = this.getParams(this.props)
-      this.fetchData()
+    const { detail, details, isFederated } = this.props
+    if (
+      detail !== prevProps.detail ||
+      (isFederated &&
+        Object.keys(details).length !== Object.keys(prevProps.details).length)
+    ) {
+      const selectCluster = isFederated
+        ? get(this.props, 'clusters[0]')
+        : detail.cluster
+
+      this.setState(
+        {
+          expandItem: '',
+          selectCluster: selectCluster || '',
+          params: this.getParams(selectCluster),
+        },
+        () => {
+          this.fetchData()
+          this.initWebsocket()
+        }
+      )
     }
   }
 
@@ -139,21 +167,24 @@ export default class PodsCard extends React.Component {
     this.disposer && this.disposer()
   }
 
-  getParams = (props = {}) => {
-    const { selectCluster } = this.state
-    const { name, namespace, kind, selector, _originData } = props.detail || {}
-    const _kind = kind || get(_originData, 'kind', '')
+  getParams = cluster => {
+    const { detail, details, isFederated } = this.props
+    const _detail = isFederated ? details[cluster] : detail
+    const { name, namespace, kind: _kind, selector, _originData } =
+      _detail || {}
+    const kind = _kind || get(_originData, 'kind', '')
+
     let result = {}
 
-    if (selectCluster) {
-      result.cluster = selectCluster
+    if (cluster) {
+      result.cluster = cluster
     }
 
     if (namespace) {
       result.namespace = namespace
     }
 
-    switch (_kind) {
+    switch (kind) {
       case 'PVC':
         result.pvcName = name
         break
@@ -163,18 +194,23 @@ export default class PodsCard extends React.Component {
       case 'Namespace':
         result.namespace = name
         break
+      case 'Service':
+        result.labelSelector = joinSelector(selector)
+        break
       default:
         result.ownerKind = kind === 'Deployment' ? 'ReplicaSet' : kind
         result.labelSelector = joinSelector(selector)
-        if (isEmpty(selector)) {
-          result = {}
-        }
     }
+
+    if (has(result, 'labelSelector') && isEmpty(selector)) {
+      result = {}
+    }
+
     return result
   }
 
   fetchData = async ({ noMetrics, silent, ...params } = {}) => {
-    if (isEmpty(this.params)) {
+    if (isEmpty(this.state.params)) {
       this.store.list.isLoading = false
       return
     }
@@ -183,7 +219,7 @@ export default class PodsCard extends React.Component {
     silent && (this.store.list.silent = true)
     await this.store.fetchList({
       limit,
-      ...this.params,
+      ...this.state.params,
       ...params,
     })
     this.store.list.silent = false
@@ -196,14 +232,14 @@ export default class PodsCard extends React.Component {
   fetchMetrics = (params = {}) => {
     const { data, isLoading } = this.store.list
 
-    if (isEmpty(data) || isLoading) return false
+    if (isEmpty(data) || isLoading || isEmpty(this.state.params)) return false
 
     this.monitorStore.fetchMetrics({
       step: '1m',
       times: 30,
       resources: data.map(item => item.name),
       metrics: Object.values(MetricTypes),
-      ...this.params,
+      ...this.state.params,
       ...params,
     })
   }
@@ -264,15 +300,18 @@ export default class PodsCard extends React.Component {
   }
 
   handleClusterChange = cluster => {
-    this.setState({ selectCluster: cluster }, () => {
-      this.params = this.getParams(this.props)
-      this.fetchData()
-      this.initWebsocket()
-    })
+    this.setState(
+      { selectCluster: cluster, params: this.getParams(cluster) },
+      () => {
+        this.fetchData()
+        this.initWebsocket()
+      }
+    )
   }
 
   renderHeader = () => {
     const { isFederated } = this.props
+    const { selectCluster } = this.state
     return (
       <div className={styles.header}>
         {isFederated && (
@@ -280,7 +319,7 @@ export default class PodsCard extends React.Component {
             name="cluster"
             prefixIcon={<Icon name="cluster" />}
             className={styles.cluster}
-            value={this.params.cluster}
+            value={selectCluster}
             options={this.getClustersOptions()}
             onChange={this.handleClusterChange}
           />

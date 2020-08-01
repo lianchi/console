@@ -55,9 +55,15 @@ export default class StatefulSetDetail extends React.Component {
   get listUrl() {
     const { workspace, cluster, namespace } = this.props.match.params
     if (workspace) {
-      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${this.module}`
+      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${
+        this.module
+      }`
     }
     return `/clusters/${cluster}/${this.module}`
+  }
+
+  get isFedManaged() {
+    return this.store.detail.isFedManaged
   }
 
   fetchData = async () => {
@@ -75,7 +81,6 @@ export default class StatefulSetDetail extends React.Component {
         this.trigger('resource.baseinfo.edit', {
           type: t(this.name),
           detail: toJS(this.store.detail),
-          success: this.fetchData,
         }),
     },
     {
@@ -192,7 +197,7 @@ export default class StatefulSetDetail extends React.Component {
       module: this.module,
       name: getDisplayName(this.store.detail),
       desc: this.store.detail.description,
-      operations: this.getOperations(),
+      operations: this.isFedManaged ? [] : this.getOperations(),
       attrs: this.getAttrs(),
       breadcrumbs: [
         {
@@ -207,6 +212,7 @@ export default class StatefulSetDetail extends React.Component {
         stores={stores}
         {...sideProps}
         routes={getRoutes(this.props.match.path)}
+        watch
       />
     )
   }

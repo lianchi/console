@@ -29,9 +29,16 @@ export default class StorageClassSetting extends React.Component {
   constructor(props) {
     super(props)
 
-    const { provisioner: provisionerValue } = this.formTemplate
     this.isCustomizedProvision = PROVISIONERS.every(
-      ({ value }) => value !== provisionerValue
+      ({ value }) => value !== this.provisionerValue
+    )
+  }
+
+  get provisionerValue() {
+    return get(
+      this.formTemplate,
+      'metadata.annotations["kubesphere.io/provisioner"]',
+      this.formTemplate.provisioner
     )
   }
 
@@ -40,23 +47,9 @@ export default class StorageClassSetting extends React.Component {
     return get(formTemplate, MODULE_KIND_MAP[module], formTemplate)
   }
 
-  getSnapshotOptions() {
-    return [
-      {
-        label: t('True'),
-        value: 'true',
-      },
-      {
-        label: t('False'),
-        value: 'false',
-      },
-    ]
-  }
-
   getAccessModesOptions() {
-    const { provisioner: provisionerValue } = this.formTemplate
     const provisioner =
-      PROVISIONERS.find(({ value }) => value === provisionerValue) || {}
+      PROVISIONERS.find(({ value }) => value === this.provisionerValue) || {}
 
     const supportedAccessModes = isEmpty(provisioner.access_modes)
       ? Object.keys(ACCESS_MODES)
@@ -77,10 +70,8 @@ export default class StorageClassSetting extends React.Component {
   }
 
   renderParams() {
-    const { provisioner: provisionerValue } = this.formTemplate
-
     const provisioner = PROVISIONERS.find(
-      ({ value }) => value === provisionerValue
+      ({ value }) => value === this.provisionerValue
     )
 
     if (isEmpty(provisioner) || isEmpty(provisioner.params)) {
@@ -126,7 +117,6 @@ export default class StorageClassSetting extends React.Component {
   render() {
     const { formRef } = this.props
 
-    const snapshotOptions = this.getSnapshotOptions()
     const accessModesOptions = this.getAccessModesOptions()
     const defaultModes = accessModesOptions.map(({ value }) => value)
 
@@ -146,12 +136,8 @@ export default class StorageClassSetting extends React.Component {
               </Form.Item>
             </Column>
             <Column>
-              <Form.Item label={t('Support Volume Snapshot')}>
-                <Select
-                  name="metadata.annotations['storageclass.kubesphere.io/support-snapshot']"
-                  options={snapshotOptions}
-                  defaultValue="false"
-                />
+              <Form.Item label={t('Reclaiming Policy')}>
+                <Input name="reclaimPolicy" disabled />
               </Form.Item>
             </Column>
           </Columns>
@@ -162,7 +148,7 @@ export default class StorageClassSetting extends React.Component {
                 desc={t('ACCESS_MODES_DESC')}
               >
                 <Select
-                  name="metadata.annotations['storageclass.kubesphere.io/supported_access_modes']"
+                  name="metadata.annotations['storageclass.kubesphere.io/supported-access-modes']"
                   options={accessModesOptions}
                   defaultValue={defaultModes}
                   multi
@@ -170,28 +156,14 @@ export default class StorageClassSetting extends React.Component {
               </Form.Item>
             </Column>
             <Column>
-              <Form.Item label={t('Reclaiming Policy')}>
-                <Input name="reclaimPolicy" disabled />
+              <Form.Item
+                rules={[{ required: true, message: t('required') }]}
+                label={t('Storage System')}
+              >
+                <Input name={'provisioner'} />
               </Form.Item>
             </Column>
           </Columns>
-          {this.isCustomizedProvision && (
-            <Columns>
-              <Column>
-                <Form.Item
-                  rules={[
-                    {
-                      required: true,
-                      message: t('required'),
-                    },
-                  ]}
-                  label={t('Storage System')}
-                >
-                  <Input name={'provisioner'} />
-                </Form.Item>
-              </Column>
-            </Columns>
-          )}
           {this.renderParams()}
         </Form>
       </div>

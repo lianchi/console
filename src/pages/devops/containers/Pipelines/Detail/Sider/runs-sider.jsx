@@ -48,8 +48,8 @@ class RunSider extends Base {
   }
 
   get listUrl() {
-    const { workspace, project_id, cluster } = this.props.match.params
-    return `/${workspace}/clusters/${cluster}/devops/${project_id}/pipelines`
+    const { workspace, devops, cluster } = this.props.match.params
+    return `/${workspace}/clusters/${cluster}/devops/${devops}/pipelines`
   }
 
   init = async () => {
@@ -65,7 +65,7 @@ class RunSider extends Base {
     await this.props.rootStore.getRules({
       cluster: params.cluster,
       workspace: params.workspace,
-      devops: this.store.getDevops(params.project_id),
+      devops: params.devops,
     })
   }
 
@@ -93,7 +93,7 @@ class RunSider extends Base {
   componentDidUpdate(prevProps) {
     const { runDetail } = this.store
     const {
-      project_id,
+      devops,
       runid,
       branch,
       workspace,
@@ -108,7 +108,7 @@ class RunSider extends Base {
 
     if (runDetail.id && runDetail.id !== runid) {
       this.routing.push(
-        `/${workspace}/clusters/${cluster}devops/${project_id}/pipelines/${name}${
+        `/${workspace}/clusters/${cluster}devops/${devops}/pipelines/${name}${
           branch ? `/branch/${branch}` : ''
         }/run/${runDetail.id}`
       )
@@ -132,16 +132,16 @@ class RunSider extends Base {
   @action
   rePlay = async () => {
     const { params } = this.props.match
+
     const result = await this.store.replay(params)
-    if (params.branch) {
-      this.routing.push(
-        `/${params.workspace}/clusters/${params.cluster}/devops/${
-          params.project_id
-        }/pipelines/${params.name}${
-          params.branch ? `/branch/${params.branch}` : ''
-        }/activity`
-      )
-    }
+    this.routing.push(
+      `/${params.workspace}/clusters/${params.cluster}/devops/${
+        params.devops
+      }/pipelines/${params.name}${
+        params.branch ? `/branch/${params.branch}` : ''
+      }/activity`
+    )
+
     if (result.id) {
       this.store.runDetail = result
     }
@@ -175,8 +175,7 @@ class RunSider extends Base {
   }
 
   get enabledActions() {
-    const { cluster, project_id } = this.props.match.params
-    const devops = this.store.getDevops(project_id)
+    const { cluster, devops } = this.props.match.params
 
     return globals.app.getActions({
       module: 'pipelines',

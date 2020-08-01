@@ -35,7 +35,7 @@ import getRoutes from './routes'
 @inject('rootStore')
 @observer
 @trigger
-export default class StorageClassDetail extends React.Component {
+export default class VolumeSnapshotDetail extends React.Component {
   store = new VolumeSnapshotStore()
 
   componentDidMount() {
@@ -57,7 +57,9 @@ export default class StorageClassDetail extends React.Component {
   get listUrl() {
     const { workspace, cluster, namespace } = this.props.match.params
     if (workspace) {
-      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${this.module}`
+      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${
+        this.module
+      }`
     }
     return `/clusters/${cluster}/${this.module}`
   }

@@ -52,8 +52,8 @@ class BaseInfo extends React.Component {
   }
 
   componentDidMount() {
-    this.memberStore.fetchList(this.params)
-    this.roleStore.fetchList(this.params)
+    this.canViewMembers && this.memberStore.fetchList(this.params)
+    this.canViewRoles && this.roleStore.fetchList(this.params)
     this.quotaStore.fetch(this.params)
     this.limitRangeStore.fetchListByK8s(this.params)
   }
@@ -95,12 +95,30 @@ class BaseInfo extends React.Component {
     })
   }
 
+  get canViewRoles() {
+    return globals.app.hasPermission({
+      module: 'roles',
+      actions: 'view',
+      ...this.params,
+      project: this.params.namespace,
+    })
+  }
+
+  get canViewMembers() {
+    return globals.app.hasPermission({
+      module: 'members',
+      actions: 'view',
+      ...this.params,
+      project: this.params.namespace,
+    })
+  }
+
   getData = () => {
     this.store.fetchDetail(this.params)
   }
 
   get itemActions() {
-    const { routing } = this.props
+    const { routing } = this.props.rootStore
     const { detail } = this.store
     const limitRanges = this.limitRangeStore.list.data
     const actions = [
@@ -137,7 +155,8 @@ class BaseInfo extends React.Component {
           this.trigger('resource.delete', {
             detail,
             desc: t.html('DELETE_PROJECT_TIP', { resource: detail.name }),
-            success: () => routing.push('/'),
+            success: () =>
+              routing.push(`/workspaces/${this.params.workspace}/projects`),
           }),
       },
     ]
@@ -204,6 +223,7 @@ class BaseInfo extends React.Component {
           workspace={this.workspace}
           actions={this.enabledItemActions}
           onMenuClick={this.handleMoreMenuClick}
+          showDetail={this.canViewMembers && this.canViewRoles}
         />
         <DefaultResource detail={limitRange} />
         <ResourceQuota detail={quota} />

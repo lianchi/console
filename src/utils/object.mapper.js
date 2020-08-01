@@ -31,6 +31,7 @@ import {
 } from 'lodash'
 import {
   safeParseJSON,
+  safeAtob,
   generateId,
   getDescription,
   getAliasName,
@@ -42,6 +43,7 @@ import { getServiceType } from 'utils/service'
 import { getNodeRoles } from 'utils/node'
 import { getPodStatusAndRestartCount } from 'utils/status'
 import { FED_ACTIVE_STATUS } from 'utils/constants'
+import moment from 'moment-mini'
 
 const getOriginData = item =>
   omit(item, [
@@ -70,6 +72,7 @@ const getBaseInfo = item => ({
 const DefaultMapper = item => ({
   ...getBaseInfo(item),
   namespace: get(item, 'metadata.namespace'),
+  spec: get(item, 'spec'),
   _originData: getOriginData(item),
 })
 
@@ -98,8 +101,7 @@ const WorkspaceMapper = item => {
       get(item, 'spec.manager') ||
       getResourceCreator(item),
     clusters,
-    networkIsolation:
-      get(item, 'spec.template.spec.networkIsolation') === 'true',
+    networkIsolation: get(item, 'spec.template.spec.networkIsolation'),
     overrides,
     clusterTemplates,
     _originData: getOriginData(item),
@@ -133,6 +135,7 @@ const UserMapper = item => ({
   ),
   status: get(item, 'status.state', 'Pending'),
   conditions: get(item, 'status.conditions', []),
+  lastLoginTime: get(item, 'status.lastLoginTime'),
   _originData: getOriginData(item),
 })
 
@@ -246,6 +249,9 @@ const S2IBuildersMapper = item => {
       ? replaceToLocalOrigin(sourceUrl)
       : sourceUrl,
     type: get(item, 'metadata.labels["s2i-type.kubesphere.io"]', 's2i'),
+    module: get(item, 'kind')
+      ? `${get(item, 'kind').toLowerCase()}s`
+      : 's2ibuilders',
     _originData: getOriginData(item),
   }
 }
@@ -392,16 +398,26 @@ const PodsMapper = item => ({
   _originData: getOriginData(item),
 })
 
-const EventsMapper = item => ({
-  ...getBaseInfo(item),
-  type: get(item, 'type'),
-  reason: get(item, 'reason'),
-  message: get(item, 'message'),
-  startTime: get(item, 'firstTimestamp') || get(item, 'creationTimestamp'),
-  endTime: get(item, 'lastTimestamp'),
-  source: get(item, 'source.component'),
-  _originData: getOriginData(item),
-})
+const EventsMapper = item => {
+  const now = Date.now()
+  const age =
+    item.count > 1
+      ? `${moment(item.lastTimestamp).to(now, true)} (x${
+          item.count
+        } over ${moment(item.firstTimestamp).to(now, true)})`
+      : moment(item.firstTimestamp).to(now, true)
+
+  return {
+    ...getBaseInfo(item),
+    age,
+    type: get(item, 'type'),
+    reason: get(item, 'reason'),
+    message: get(item, 'message'),
+    from: get(item, 'source.component'),
+    lastTimestamp: item.lastTimestamp,
+    _originData: getOriginData(item),
+  }
+}
 
 const getVolumePhase = item => {
   const phase = get(item, 'status.phase')
@@ -441,9 +457,6 @@ const VolumeMapper = item => {
     ),
     inUse: get(item, 'metadata.annotations["kubesphere.io/in-use"]') === 'true',
     type: 'pvc',
-    allowSnapshot:
-      get(item, 'metadata.annotations["kubesphere.io/allow-snapshot"]') ===
-      'true',
     _originData: getOriginData(item),
   }
 }
@@ -650,7 +663,7 @@ const secretDataParser = data => {
     return Object.entries(get(data, 'data', {})).reduce(
       (prev, [key, value]) => ({
         ...prev,
-        [key]: atob(value) === 'undefined' ? '' : atob(value),
+        [key]: safeAtob(value) === 'undefined' ? '' : safeAtob(value),
       }),
       {}
     )
@@ -661,8 +674,8 @@ const secretDataParser = data => {
       ...prev,
       [key]:
         key === '.dockerconfigjson'
-          ? safeParseJSON(atob(value), {})
-          : atob(value),
+          ? safeParseJSON(safeAtob(value), {})
+          : safeAtob(value),
     }),
     {}
   )
@@ -801,7 +814,7 @@ const AlertMapper = item => {
     id: get(item, 'alert_id'),
     addressListId: get(item, 'nf_address_list_id'),
     name: get(item, 'alert_name'),
-    displayName: get(item, 'policy_name'),
+    aliasName: get(item, 'policy_name'),
     desc: get(item, 'policy_description'),
     rulesCount: get(item, 'rules_count') || 0,
     alertStatus,
@@ -1040,7 +1053,7 @@ const ClusterMapper = item => {
     nodeCount: get(item, 'status.nodeCount'),
     kubernetesVersion: get(item, 'status.kubernetesVersion'),
     labels: get(item, 'metadata.labels'),
-    group: get(item, 'metadata.labels["cluster.kubesphere.io/group"]'),
+    group: get(item, 'metadata.labels["cluster.kubesphere.io/group"]', ''),
     isReady: globals.app.isMultiCluster
       ? get(conditions, 'Ready.status') === 'True'
       : true,
@@ -1088,16 +1101,20 @@ const FederatedMapper = resourceMapper => item => {
   }
 }
 
-const DevOpsMapper = item => ({
-  uid: get(item, 'metadata.uid'),
-  name: get(item, 'metadata.name'),
-  creator: getResourceCreator(item),
-  description: getDescription(item),
-  createTime: get(item, 'metadata.creationTimestamp'),
-  workspace: get(item, 'metadata.labels["kubesphere.io/workspace"]'),
-  namespace: get(item, 'status.adminNamespace'),
-  _originData: getOriginData(item),
-})
+const DevOpsMapper = item => {
+  const phase = get(item, 'status.phase')
+  const deletionTimestamp = get(item, 'metadata.deletionTimestamp')
+
+  return {
+    ...getBaseInfo(item),
+    name: get(item, 'metadata.generateName'),
+    devops: get(item, 'metadata.name'),
+    workspace: get(item, 'metadata.labels["kubesphere.io/workspace"]'),
+    namespace: get(item, 'status.adminNamespace'),
+    status: deletionTimestamp ? 'Terminating' : phase || 'Active',
+    _originData: getOriginData(item),
+  }
+}
 
 const PipelinesMapper = item => ({
   ...getBaseInfo(item),
@@ -1137,7 +1154,7 @@ const DashboardMapper = item => {
     datasource,
     description,
     title,
-    _originData: item,
+    _originData: getOriginData(item),
   }
 }
 

@@ -23,14 +23,12 @@ import { observer } from 'mobx-react'
 import { updateLabels } from 'utils'
 import {
   PATTERN_NAME,
-  PATTERN_LENGTH_63,
-  PATTERN_LENGTH_253,
   MODULE_KIND_MAP,
   APP_LABEL_MODULES,
 } from 'utils/constants'
 
-import { Columns, Column, Input, TextArea } from '@pitrix/lego-ui'
-import { Form } from 'components/Base'
+import { Columns, Column, Input } from '@pitrix/lego-ui'
+import { Form, TextArea } from 'components/Base'
 import { ProjectSelect } from 'components/Inputs'
 
 @observer
@@ -52,19 +50,6 @@ export default class BaseInfo extends React.Component {
     return this.props.isFederated
       ? get(this.formTemplate, 'spec.template')
       : this.formTemplate
-  }
-
-  get nameLengthRules() {
-    return {
-      63: {
-        pattern: PATTERN_LENGTH_63,
-        message: t('NAME_TOO_LONG'),
-      },
-      253: {
-        pattern: PATTERN_LENGTH_253,
-        message: t('LONG_NAME_TOO_LONG'),
-      },
-    }
   }
 
   nameValidator = (rule, value, callback) => {
@@ -120,20 +105,23 @@ export default class BaseInfo extends React.Component {
                   pattern: PATTERN_NAME,
                   message: `${t('Invalid name')}, ${desc}`,
                 },
-                this.nameLengthRules[maxNameLength] || {},
                 { validator: this.nameValidator },
               ]}
             >
               <Input
                 name="metadata.name"
                 onChange={this.handleNameChange}
+                maxLength={maxNameLength}
                 autoFocus={true}
               />
             </Form.Item>
           </Column>
           <Column>
             <Form.Item label={t('Alias')} desc={t('ALIAS_DESC')}>
-              <Input name="metadata.annotations['kubesphere.io/alias-name']" />
+              <Input
+                name="metadata.annotations['kubesphere.io/alias-name']"
+                maxLength={63}
+              />
             </Form.Item>
           </Column>
         </Columns>
@@ -156,8 +144,11 @@ export default class BaseInfo extends React.Component {
             </Column>
           )}
           <Column>
-            <Form.Item label={t('Description')}>
-              <TextArea name="metadata.annotations['kubesphere.io/description']" />
+            <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
+              <TextArea
+                name="metadata.annotations['kubesphere.io/description']"
+                maxLength={256}
+              />
             </Form.Item>
           </Column>
         </Columns>

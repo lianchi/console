@@ -22,9 +22,10 @@ import PropTypes from 'prop-types'
 import { get, set } from 'lodash'
 import { observable, action } from 'mobx'
 import { observer } from 'mobx-react'
-import { Form, Modal } from 'components/Base'
-import { Input, Select, TextArea, Loading } from '@pitrix/lego-ui'
+import { Form, Modal, TextArea } from 'components/Base'
+import { Input, Select, Loading } from '@pitrix/lego-ui'
 import CredentialStore from 'stores/devops/credential'
+import { PATTERN_NAME } from 'utils/constants'
 
 import styles from './index.scss'
 
@@ -97,9 +98,6 @@ export default class CredentialModal extends React.Component {
   type = 'username_password'
 
   @observable
-  isConflict = false
-
-  @observable
   kubeconfig = ''
 
   @observable
@@ -109,8 +107,8 @@ export default class CredentialModal extends React.Component {
   isGetConfigLoading = false
 
   @action
-  async handleCreate(data, { project_id, cluster }, reject) {
-    return await this.store.handleCreate(data, { project_id, cluster }, reject)
+  async handleCreate(data, { devops, cluster }) {
+    return await this.store.handleCreate(data, { devops, cluster })
   }
 
   @action
@@ -134,31 +132,25 @@ export default class CredentialModal extends React.Component {
 
   @action
   handleOk = () => {
-    const { isEditMode, project_id, cluster } = this.props
+    const { isEditMode, devops, cluster } = this.props
     const formData = this.formRef.current.getData()
-    this.isConflict = false
+
     this.formRef.current.validate(async () => {
       this.isSubmitting = true
       this.updateFormData(formData)
 
       if (isEditMode) {
         await this.store
-          .updateCredential(formData, { project_id, cluster })
+          .updateCredential(formData, { devops, cluster })
           .finally(() => {
             this.isSubmitting = false
           })
       } else {
-        await this.handleCreate(formData, { project_id, cluster }, resp => {
-          if (resp.status === 409) {
-            this.isConflict = true
-          }
-        }).finally(() => {
+        await this.handleCreate(formData, { devops, cluster }).finally(() => {
           this.isSubmitting = false
         })
       }
-      if (!this.isConflict) {
-        this.props.onOk()
-      }
+      this.props.onOk()
     })
   }
 
@@ -175,6 +167,29 @@ export default class CredentialModal extends React.Component {
     if (!this.kubeconfig && this.type === 'kubeconfig') {
       this.fetchKubeConfig()
     }
+  }
+
+  nameValidator = (rule, value, callback) => {
+    const { devops, cluster, isEditMode } = this.props
+    if (!value || isEditMode) {
+      return callback()
+    }
+
+    this.store
+      .checkName({
+        name: value,
+        devops,
+        cluster,
+      })
+      .then(resp => {
+        if (resp.exist) {
+          return callback({
+            message: t('Credential ID exists'),
+            field: rule.field,
+          })
+        }
+        callback()
+      })
   }
 
   renderCredentForm = () => {
@@ -256,13 +271,13 @@ export default class CredentialModal extends React.Component {
         <Form data={this.formData} ref={this.formRef}>
           <Form.Item
             label={t('Credential ID')}
-            error={
-              this.isConflict
-                ? { message: t('This name has been used.') }
-                : null
-            }
             rules={[
-              { required: true, message: t('Please input credential name') },
+              { required: true, message: t('Please input credential') },
+              {
+                pattern: PATTERN_NAME,
+                message: `${t('Invalid credential ID')}, ${t('NAME_DESC')}`,
+              },
+              { validator: this.nameValidator },
             ]}
           >
             <Input name="id" disabled={isEditMode} />
@@ -285,8 +300,8 @@ export default class CredentialModal extends React.Component {
             <div className={styles.desc}>{t('EDIT_CREDENTIAL_DESC')}</div>
           ) : null}
           {this.renderCredentForm()}
-          <Form.Item label={t('Description')}>
-            <TextArea name="description" />
+          <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
+            <TextArea name="description" maxLength={256} />
           </Form.Item>
         </Form>
       </Modal>

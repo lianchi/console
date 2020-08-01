@@ -65,7 +65,6 @@ export default {
   'Component Version': '组件版本',
 
   'Please input an application name': '请输入应用名称',
-  'Specify an application version': '指定一个应用版本',
 
   'Service components should not be empty': '服务组件不能为空',
   'Please finish the sub form first': '请完成子表单的编辑',
@@ -126,16 +125,12 @@ export default {
   APP_GOVERNANCE_DESC:
     '开启应用治理后会在每个组件中以 SideCar 的方式注入 Istio-proxy 容器 <a href="https://istio.io/docs/setup/kubernetes/additional-setup/sidecar-injection/" target="_blank">了解更多</a>',
 
-  COMPONENT_VERSION_DESC:
-    '用于应用治理时区分组件版本, 最长 16 个字符，只能包含小写字母及数字',
+  COMPONENT_VERSION_DESC: '最长 16 个字符，只能包含小写字母及数字',
 
   APP_ICON_TIP: '点击上传应用图标，尺寸最大为 120px * 120px',
 
   CLUSTER_NAME_DESC:
-    '最长 14 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母或数字开头及结尾',
-
-  CLUSTER_ALIAS_DESC:
-    '别名可以由任意字符组成，帮助您更好的区分资源，并支持中文名称',
+    '最长 14 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头, 字母或数字结尾',
 
   SERVICE_PORT_NAME_DESC:
     '端口的名字必须遵循如下格式 <protocol>[-<suffix>]，可以是 http、http2、 grpc、 mongo、 或者 redis 作为 <protocol> ，这样才能使用 Istio 的路由功能。例如 name: http2-foo 和 name: http 都是有效的端口名称，而 name: http2foo 不是。',
@@ -174,7 +169,7 @@ export default {
 
   'Connection pool management': '连接池管理',
   CONNECTION_POOL_TIP:
-    '为应用程序创建固定数量的连接对象，保存在池中进行复用。每次访问时从池中获取已存在，使用完毕后，返回池中。',
+    '为应用程序创建固定数量的连接对象，保存在池中进行复用。每次访问时会从池中获取已存在的连接对象，使用完毕后，连接对象将返回池中。',
   'Continuous error response (5xx) number': '连续错误响应(5xx)个数',
   'The number of consecutive 5xx errors in one inspection cycle':
     '在一个检查周期内连续出现5xx错误的个数',

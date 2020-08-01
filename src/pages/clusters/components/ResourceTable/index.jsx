@@ -19,6 +19,7 @@
 import React from 'react'
 import { observer, inject } from 'mobx-react'
 import { isEmpty } from 'lodash'
+import { parse } from 'qs'
 
 import {
   Dropdown,
@@ -35,6 +36,17 @@ import ProjectSelect from './ProjectSelect'
 
 class ResourceTable extends BaseTable {
   routing = this.props.rootStore.routing
+
+  componentDidMount() {
+    super.componentDidMount()
+    const params = parse(location.search.slice(1))
+    if (
+      params.namespace &&
+      this.props.clusterStore.project !== params.namespace
+    ) {
+      this.props.clusterStore.setProject(params.namespace)
+    }
+  }
 
   get showEmpty() {
     const { data, isLoading, filters, clusterStore } = this.props
@@ -97,7 +109,6 @@ class ResourceTable extends BaseTable {
   }
 }
 
-export default inject(
-  'rootStore',
-  'clusterStore'
-)(observer(withTableActions(ResourceTable)))
+export default inject('rootStore', 'clusterStore')(
+  observer(withTableActions(ResourceTable))
+)

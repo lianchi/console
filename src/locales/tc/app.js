@@ -18,19 +18,19 @@
 
 export default {
   APP_TEMPLATE_DESC:
-    'KubeSphere 提供全生命週期的應用管理，可以上傳或者創建新的應用範本，并且快速部署它們，也可以通過應用商店進行發佈應用。',
+    'KubeSphere 提供全生命週期的應用管理，可以上傳或者創建新的應用模板，并且快速部署它們，也可以通過應用商店進行發佈應用。',
   APP_TEMPLATE_CREATE_DESC:
-    'KubeSphere 提供全生命週期的應用管理，可以上傳或者創建新的應用範本，并且快速部署它們，也可以通過應用商店進行發佈應用。',
-  DEVELOP_APP_TITLE: '開發應用範本',
+    'KubeSphere 提供全生命週期的應用管理，可以上傳或者創建新的應用模板，并且快速部署它們，也可以通過應用商店進行發佈應用。',
+  DEVELOP_APP_TITLE: '開發應用模板',
   DEVELOP_APP_DESC:
-    '您可以上傳 Helm Chart 或者使用 KubeSphere 提供的資源編排工具進行應用範本的開發',
+    '您可以上傳 Helm Chart 或者使用 KubeSphere 提供的資源編排工具進行應用模板的開發',
   HOW_PUBLISH_APP_TITLE: '如何發佈已有應用',
   HOW_PUBLISH_APP_DESC:
-    'KubeSphere 目前支持將已有應用的 Helm Chart 上傳至企業空間的應用範本，提交審核後，可以將應用發佈在應用商店中。',
+    'KubeSphere 目前支持將已有應用的 Helm Chart 上傳至企業空間的應用模板，提交審核後，可以將應用發佈在應用商店中。',
   HOW_APP_DEPLOY_TITLE: '如何部署和測試應用',
-  'Upload Template': '上傳範本',
+  'Upload Template': '上傳模板',
   APPS_CREATE_DESC:
-    'KubeSphere 提供全生命週期的應用管理，可以上傳或者創建新的應用範本，並且快速部署它們，也可以通過應用商店進行發佈應用。',
+    'KubeSphere 提供全生命週期的應用管理，可以上傳或者創建新的應用模板，並且快速部署它們，也可以通過應用商店進行發佈應用。',
 
   'Apps Management': '應用管理',
   'App Store Management': '應用商店管理',
@@ -53,7 +53,7 @@ export default {
   'Application Version': '應用版本',
   'App Description': '應用簡介',
   APP_ABSTRACTION_DESC: '對應用的概括性介紹',
-  APP_DETAIL_DESC: '在使用者搜索應用時會非常有幫助',
+  APP_DETAIL_DESC: '在用戶搜索應用時會非常有幫助',
   'Upload Icon': '上傳圖標',
   APP_ICON_NOTE: '200px*200px以内JPG或者PNG',
   APP_ICON_FORMAT: '格式: png 背景透明最佳',
@@ -110,7 +110,7 @@ export default {
   'Adjust Successfully': '調整成功',
 
   APP_TEMPLATES_DESC:
-    'KubeSphere 提供全生命週期的應用管理，可以上傳或者創建新的應用範本，並且快速部署它們，也可以通過應用商店進行發佈應用。',
+    'KubeSphere 提供全生命週期的應用管理，可以上傳或者創建新的應用模板，並且快速部署它們，也可以通過應用商店進行發佈應用。',
   UPLOAD_HELM_TITLE: '上傳 Helm 配置文件',
   UPLOAD_HELM_DESC: '上傳已有的 Helm  Chart ',
   'Edit App Informatio': '編輯應用資訊',
@@ -136,9 +136,9 @@ export default {
   'Activate Successfully': '上架成功',
   'In Project': '所屬項目',
 
-  'Create App Template': '創建應用範本',
+  'Create App Template': '創建應用模板',
   CREATE_APP_DESC:
-    '輕量級、可移植、自包含的軟體封裝技術，使應用可以在幾乎任何地方以相同的方式運行。',
+    '輕量化、可移植、自包含的軟體封裝技術，使應用可以在幾乎任何地方以相同的方式運行。',
   RESOURCE_TOOL_TITLE: '通過資源編排工具創建',
   RESOURCE_TOOL_DESCRIPTION:
     'KubeSphere 提供了視覺化的資源編排工具，您可以通過資源預編輯來創建應用模板，部署測試',
@@ -157,14 +157,14 @@ export default {
   FILE_FORMAT_SCREENSHOTS: '截圖格式支持 png 和 jpg',
   FILE_MAX_PACKAGE: '配置包大小不能超過 2M',
   FILE_MAX_ICON: '圖示大小不能超過 20KB',
-  FILE_MAX_SCREENSHOTS: '截圖大小不能超过 2M',
+  FILE_MAX_SCREENSHOTS: '截圖大小不能超過 2M',
   UPLOAD_PACKAGE_OK_NOTE: '請上傳配置包或上傳的配置包不正確',
   'Delete picture': '刪除圖片',
   'Re-upload': '重新上傳',
   'Package problems': '文件有問題',
-  'Upload again': '重新上传',
+  'Upload again': '重新上傳',
   'App Name': '應用名稱',
-  'App Home': '應用主頁',
+  'App Home': '應用首頁',
   'Select File': '選擇檔案',
   'App Screenshots': '應用截圖',
   'Upload Screenshots': '上傳截圖',
@@ -172,11 +172,11 @@ export default {
   'Edit App Information': '編輯應用資訊',
   Uncategorized: '未分類',
   'Category Name': '分類名稱',
-  CATEGORY_NAME_DESC: '建議不超過8个字元，最多能輸入20个字元',
+  CATEGORY_NAME_DESC: '建議不超過8個字元，最多能輸入20個字元',
   'Please input category name': '請輸入分類名稱',
-  ICON_DESC: '請選擇一個圖示来標示分類',
+  ICON_DESC: '請選擇一個圖示來標示分類',
   'Please select icon': '請選擇圖示',
-  'Website format is error': '輸入的網站格式錯誤',
+  'Wrong website format': '輸入的網站格式錯誤',
 
   Screenshot: '截圖',
   'Version No': '版本號碼',
@@ -193,11 +193,11 @@ export default {
   'Delete all': '刪除全部',
   'A general introduction to the application': '對應用的概括性介紹',
   'Detail Introduction': '詳細介紹',
-  'Very helpful when users search for apps': '在使用者搜索應用時會非常有幫助',
+  'Very helpful when users search for apps': '在用戶搜索應用時會非常有幫助',
   Icon: '圖示',
   'Format png/svg background transparency is the best':
     '格式: png/svg 背景透明最佳',
-  CHOOSE_APP_CATEGORY_DESC: '選擇適合的應用分類，便於使用者更快發現你的應用',
+  CHOOSE_APP_CATEGORY_DESC: '選擇適合的應用分類，便於用戶更快發現你的應用',
   'Service Provider Website': '服務商網站',
   "Service provider's official website address": '服務商的官方網站地址',
   MODIFY_VERSION_TIPS: '每次修改的内容都將跟随下一次版本上架而真正生效。',
@@ -220,4 +220,7 @@ export default {
   'Please select a workspace': '請選擇企業空間',
   'Please select a cluster': '請選擇集群',
   'Please select a project': '請選擇項目',
+
+  HELM_APP_SCHEMA_FORM_TIP:
+    '此應用支持表單模式，可選擇通過表單或 YAML 編輯器來修改預設應用配置。注意：不同模式之間數據獨立。',
 }

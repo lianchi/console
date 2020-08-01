@@ -40,11 +40,7 @@ const handleLogin = async ctx => {
     ctx.session.errorCount = 0
   }
 
-  if (
-    isEmpty(params) ||
-    !params.username ||
-    !(params.password || params.encrypt)
-  ) {
+  if (isEmpty(params) || !params.username || !params.encrypt) {
     Object.assign(error, {
       status: 400,
       reason: 'Invalid Login Params',
@@ -66,10 +62,7 @@ const handleLogin = async ctx => {
 
   if (isEmpty(error)) {
     try {
-      if (params.encrypt) {
-        params.password = decryptPassword(params.encrypt, ctx.session.salt)
-        delete params.encrypt
-      }
+      params.password = decryptPassword(params.encrypt, ctx.session.salt)
 
       user = await login(params, { 'x-client-ip': ctx.request.ip })
       if (!user) {
@@ -102,14 +95,14 @@ const handleLogin = async ctx => {
           Object.assign(error, {
             status: err.code,
             reason: 'Internal Server Error',
-            message: 'Unable to access backend services',
+            message: 'Unable to access the backend services',
           })
           break
         case 'ETIMEDOUT':
           Object.assign(error, {
             status: 400,
             reason: 'Internal Server Error',
-            message: 'Unable to access gateway',
+            message: 'Unable to access the api server',
           })
           break
         default:
@@ -136,6 +129,8 @@ const handleLogin = async ctx => {
 
   ctx.session = {}
   ctx.cookies.set('token', user.token)
+  ctx.cookies.set('expire', user.expire)
+  ctx.cookies.set('refreshToken', user.refreshToken)
   ctx.cookies.set('currentUser', user.username, { httpOnly: false })
   ctx.cookies.set('referer', null)
 
@@ -148,6 +143,8 @@ const handleLogin = async ctx => {
 
 const handleLogout = async ctx => {
   ctx.cookies.set('token', null)
+  ctx.cookies.set('expire', null)
+  ctx.cookies.set('refreshToken', null)
   ctx.cookies.set('currentUser', null)
 
   const { origin = '', referer = '' } = ctx.headers

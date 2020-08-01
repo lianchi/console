@@ -232,6 +232,7 @@ export default {
   Add: '添加',
   'Add ': '添加',
   'Edit ': '编辑',
+  Set: '设置',
   New: '新建',
   Yes: '是',
   true: '是',
@@ -266,13 +267,10 @@ export default {
   LONG_NAME_DESC:
     '最长 253 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母或数字开头及结尾',
   LONG_NAME_TOO_LONG: '最长 253 个字符',
-  LONG_DESC_TOO_LONG: '最长 1000 个字符',
-  ALIAS_DESC: '别名可以由任意字符组成，帮助您更好的区分资源，并支持中文名称',
+  ALIAS_DESC: '别名可以由任意字符组成，帮助您更好的区分资源，最长 63 个字符。',
   LABEL_FORMAT_DESC:
     '标签的 key 和 value 最长 63 个字符，key 如果包含域名, 则最长 253 字符。只能包含大小写字母、数字, 分隔符("-")，下划线(_)及点(.)，且必须以数字或大小写开头和结尾',
-  DESCRIPTION_DESC:
-    '描述将被作为注释添加到资源中，并显示在应用的详情中，描述信息不超过 1000 个字符',
-  SHORT_DESCRIPTION_DESC: '描述信息不超过 1000 个字符',
+  DESCRIPTION_DESC: '描述信息不超过 256 个字符',
   PROJECT_DESC: '将根据项目进行资源进行分组, 可以按项目对资源进行查看管理',
   'MULTI-CLUSTER_PROJECT_CREATE_DESC':
     '将根据项目进行资源进行分组, 可以按项目对资源进行查看管理',
@@ -344,16 +342,6 @@ export default {
   EVENT_NORMAL: '正常',
   EVENT_WARNING: '异常',
 
-  ASCENDING_ORDER: '升序排列',
-  DESCENDING_ORDER: '降序排列',
-  OPERATE: '操作',
-  PLEASE_SELECT: '请选择',
-  FILTER: '过滤选项',
-  CANCEL: '取消',
-  NO_RESULTS_FOUND: '暂无结果',
-  REACH_BOTTOM: '已到底部',
-  CLEAR_VALUE: '清除',
-
   'Edit Mode': '编辑模式',
   'Load More': '加载更多',
   'Please enter a name to find': '请输入名称进行查找',
@@ -407,7 +395,7 @@ export default {
   to: '至',
   Download: '下载',
   Aborted: '已取消',
-  Paused: '暂停',
+  Paused: '已暂停',
   'This param is required': '此参数不能为空',
   Images: '镜像',
   filename: '文件名',
@@ -457,7 +445,7 @@ export default {
   'rules desc':
     'KubeSphere可以根据您设置的规则进行操作审计的收集，点击查看如何定义规则。',
   Category: '类别',
-  Resources: '资源',
+  Resource: '资源',
   'Earliest start time': '最早发生时间',
   'Most recent start time': '最近发生时间',
   'Related resources': '关联资源',
@@ -532,7 +520,7 @@ export default {
 
   DATA_SOURCE: '数据源',
 
-  EMPTY_WRAPPER: '未发现{resource}',
+  EMPTY_WRAPPER: '未发现 {resource}',
 
   'User Guides': '用户指南',
   'Quick Support': '快速获取帮助',
@@ -554,4 +542,7 @@ export default {
   HOW_TO_MODIFY_PLATFORM_INFO: '如何修改平台信息?',
   PLATFORM_INFO_DESC: '查看平台标题及描述等信息',
   PLATFORM_SETTINGS_SELECTOR_DESC: '定制化平台的系统配置',
+
+  EVENT_AGE: '发生时间',
+  EVENT_FROM: '来源',
 }

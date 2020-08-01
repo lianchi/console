@@ -159,6 +159,7 @@ export default {
   Privileged: '特权模式',
   'Desired Replicas': '期望副本',
   'Current Replicas': '实际运行副本',
+  MinReadySeconds: '最小就绪时间 (MinReadySeconds)',
 
   REPLICAS_SCALE_NOTIFY_TITLE: '立即生效？',
   REPLICAS_SCALE_NOTIFY_CONTENT:
@@ -167,20 +168,15 @@ export default {
   REPLICAS_SCALE_NOTIFY_CANCEL: '放弃更改',
 
   POD_SETTING_TIP: '更新时容器组数量',
-  MIN_AVAILABLE_POD_LABEL: '容器组最小可用数量',
-  MAX_SURGE_POD_LABEL: '更新时容器组最大数量',
+  MAX_UNAVAILABLE_POD_LABEL: '容器组最大不可用数量',
+  MAX_SURGE_POD_LABEL: '容器组最大超出数量',
   UPDATE_STRATEGY_DESC:
     '配置升级过程中替换容器组的策略 <a href="{link}" target="_blank">了解更多</a>',
-  MAX_UNAVAILABLE_DESC:
-    '升级过程中「允许存在的不可用的容器组」所占总容器组数的最大百分比',
-  MIN_AVAILABLE_POD_DESC:
-    '每次滚动升级要求存活的最小容器组数量，建议配置为正整数，最小为 1',
-  MAX_SURGE_POD_DESC: '升级过程中「允许超出副本数量的容器组」的最大数量',
-  MAX_SURGE_POD_VALIDATOR: '',
-  MIN_AVAILABLE_POD_VALIDATOR_MIN: '最小容器组数量不能小于1',
-  MIN_AVAILABLE_POD_VALIDATOR_MAX: '最小容器组数量不能大于当前副本数',
-  MAX_SURGE_POD_VALIDATOR_MIN: '最大容器组数量不能小于当前副本数',
-  MAX_SURGE_POD_VALIDATOR_MAX: '最大容器组数量不能大于当前副本数的两倍',
+  MAX_DAEMON_UNAVAILABLE_POD_DESC:
+    '升级过程中「允许存在的不可用的容器组」所占总容器组数的最大百分比或数量',
+  MAX_DEPLOY_UNAVAILABLE_POD_DESC: '升级过程中可能不可用的 Pod 的最大数量。',
+  MAX_SURGE_POD_DESC:
+    '升级过程中「允许超出副本数量的容器组」的最大数量或百分比',
   ROLLING_UPDATE_POD_TIP:
     '更新时，会根据当前容器组的副本数对最小可用及最大数量进行限制；最小容器组数不可以超过当前副本数，且最大容器组数量不能超过当前副本数的2倍。',
   ONDELETE_ALERT_TIP:
@@ -209,6 +205,7 @@ export default {
   'Container Name': '容器名称',
   'Container Type': '容器类型',
   'Advanced Options': '高级选项',
+  'Applied to the workload': '应用于工作负载',
   'CPU(m)': 'CPU(m)',
   Commands: '命令',
   'Add command': '添加命令',
@@ -295,7 +292,7 @@ export default {
   CRONJOBS_VOLUME_DESC:
     '可以将临时存储卷，持久化存储卷挂载至定时任务的容器组内。',
   CRONJOB_CRON_DESC:
-    '按照给定的时间计划运行工作。语法参照 <a href="//en.wikipedia.org/wiki/Cron" target="_blank">CRON</a>',
+    '按照给定的时间计划运行工作。语法参照 <a href="//en.wikipedia.org/wiki/Cron" target="_blank">CRON</a>。Kubernetes 默认使用 UTC 时间, 请注意根据时区调整定时计划。',
 
   MOUNT_VOLUME_DESC:
     '持久化存储卷请选择支持多节点读写模式 (ROX 或者 RWX) 的存储卷，否则可能因容器组不在同一节点导致容器组更新失败。如果您选择了单节点读写 (RWO) 模式的存储卷您也可以通过节点选择将容器组安排在同一节点上来避免因存储卷访问模式造成的更新错误。',
@@ -375,12 +372,14 @@ export default {
   PROBE_TIME: '初始延时: {delay}s 超时时间:{timeout}s',
   'Readiness Probe': '就绪探针',
   'Liveness Probe': '存活探针',
+  'Startup Probe': '启动探针',
 
   INITIAL_DELAY_DESC: '在检查其运行状况之前，容器启动后需要等待多长时间。',
   TIMEOUT_DESC:
-    '等待探针完成多长时间。如果超过时间，则认为探测失败。默认为1秒。最小值为1',
-  PERIOD_SECONDS_DESC: '执行探测的频率（以秒为单位）。默认为10秒。最小值为1',
-  SUCCESS_THRESHOLD_DESC: '探测失败后，连续最小成功探测为成功。默认值为1。',
+    '等待探针完成多长时间。如果超过时间，则认为探测失败。默认为1秒。最小值为1。',
+  PERIOD_SECONDS_DESC: '执行探测的频率（以秒为单位）。默认为10秒。最小值为1。',
+  SUCCESS_THRESHOLD_DESC:
+    '探测失败后，连续最小成功探测为成功。默认值为1。最小值为1。存活探针和启动探针内必须为1。',
   FAILURE_THRESHOLD_DESC: '探针进入失败状态时需要连续探测失败的最小次数。',
 
   HPA_MSG:
@@ -500,6 +499,7 @@ export default {
   LIVENESS_PROBE_DESC: '该检查方式用于检测容器是否活着。',
   READINESS_PROBE_DESC: '该检查方式用于检测容器是否准备好开始处理用户请求。',
   STARTUP_PROBE_DESC: '该检查方式用于检测容器是否启动成功。',
+  STARTUP_PROBE_TIP: '需要 kubernetes 版本 v1.18 或以上。',
 
   COLLECT_SAVED_LOG_DESC:
     '您已开启落盘日志收集，请至少添加一个存储卷并指定日志所在目录',
@@ -544,6 +544,8 @@ export default {
   'How pods are assinged to nodes?': '容器组如何被调度至节点?',
   'Pod CPU Request': '容器组CPU请求',
   'Pod Memory Request': '容器组内存请求',
+
+  'Sync Host Timezone': '同步主机时区',
 
   POD_CONDITION_INITIALIZED: 'Initialized',
   POD_CONDITION_INITIALIZED_DESC: '所有 init 容器都已成功启动',
@@ -623,10 +625,15 @@ export default {
   FailedDelete: '删除失败',
   SuccessfulDelete: '删除成功',
 
+  SYNC_HOST_TIMEZONE_DESC: '时区与主机同步后，容器内的时区将与主机节点一致。',
+  HOST_PATH_WARNING:
+    'HostPath 将主机的文件系统挂载到Pod中，它使一些应用程序能逃出对其做出的隔离限制，请谨慎使用。',
+
   'Use Default Ports': '使用默认端口',
 
   'Please select at least one container to mount': '请至少选择一个容器进行挂载',
   'Sure to delete the workload(s)?': '确认删除工作负载',
+  'No related resources': '没有关联的资源',
   'No related resources found with the current workload(s)':
     '当前工作负载下没有关联的资源',
   DELETE_WORKLOAD_DESC:
@@ -667,6 +674,9 @@ export default {
     '根据不同的需要在不同的集群中设置不同的容器',
   CLUSTER_SERVICE_DIFF_DESC: '可以在不同集群设置不同的服务端口',
   CLUSTER_ENV_DIFF_DESC: '可以在不同集群设置不同的环境变量',
+
+  CONTAINER_RESOURCE_LIMIT_TIP:
+    '请设置容器的资源限制与资源预留，这将能够帮助系统更好地调度容器，提高稳定性。您也可在【项目设置】中，通过【基本信息】->【项目管理】->【编辑资源默认请求】，来统一设置默认值。',
 
   REPLICAS_AVAILABLE: '实际副本',
   REPLICAS_EXPECTED: '期望副本',

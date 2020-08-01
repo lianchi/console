@@ -16,7 +16,6 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { parse } = require('qs')
 const get = require('lodash/get')
 const uniq = require('lodash/uniq')
 const isEmpty = require('lodash/isEmpty')
@@ -30,22 +29,20 @@ const { getServerConfig, isAppsRoute, safeParseJSON } = require('../libs/utils')
 const { client: clientConfig } = getServerConfig()
 
 const login = async (data, headers) => {
-  const base64Str = Buffer.from(`${data.username}:${data.password}`).toString(
-    'base64'
-  )
   const resp = await send_gateway_request({
-    method: 'GET',
-    url: '/oauth/authorize?client_id=default&response_type=token',
+    method: 'POST',
+    url: '/oauth/token',
     headers: {
       ...headers,
-      Authorization: `Basic ${base64Str}`,
+      'content-type': 'application/x-www-form-urlencoded',
     },
-    redirect: 'manual',
+    params: {
+      ...data,
+      grant_type: 'password',
+    },
   })
 
-  const { access_token } = parse(
-    resp.headers.get('location').replace(/http.*(\?|#)/, '')
-  )
+  const { access_token, refresh_token, expires_in } = resp || {}
 
   if (!access_token) {
     throw new Error(resp.message)
@@ -53,7 +50,44 @@ const login = async (data, headers) => {
 
   const { username } = jwtDecode(access_token)
 
-  return { username, token: access_token }
+  return {
+    username,
+    token: access_token,
+    refreshToken: refresh_token,
+    expire: new Date().getTime() + Number(expires_in) * 1000,
+  }
+}
+
+const getNewToken = async ctx => {
+  const refreshToken = ctx.cookies.get('refreshToken')
+  let newToken = {}
+
+  const resp = await send_gateway_request({
+    method: 'POST',
+    url: '/oauth/token',
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded',
+    },
+    params: {
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    },
+    token: refreshToken,
+  })
+
+  const { access_token, refresh_token, expires_in } = resp || {}
+
+  if (!access_token) {
+    throw new Error(resp.message)
+  }
+
+  newToken = {
+    token: access_token,
+    refreshToken: refresh_token,
+    expire: new Date().getTime() + Number(expires_in) * 1000,
+  }
+
+  return newToken
 }
 
 const oAuthLogin = async params => {
@@ -242,4 +276,5 @@ module.exports = {
   oAuthLogin,
   getCurrentUser,
   getOAuthInfo,
+  getNewToken,
 }

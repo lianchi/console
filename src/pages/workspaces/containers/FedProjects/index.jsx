@@ -27,13 +27,13 @@ import ClusterWrapper from 'components/Clusters/ClusterWrapper'
 
 import { getDisplayName, getLocalTime } from 'utils'
 
-import FederatedStore from 'stores/federated'
+import FederatedStore from 'stores/project.federated'
 import ProjectStore from 'stores/project'
 
 @withList({
   store: new FederatedStore({ module: 'namespaces' }),
   name: 'Multi-cluster Project',
-  module: 'federatedprojects',
+  module: 'projects',
   injectStores: ['rootStore', 'workspaceStore'],
 })
 export default class Projects extends React.Component {
@@ -51,7 +51,7 @@ export default class Projects extends React.Component {
 
   get tabs() {
     return {
-      value: this.props.module,
+      value: 'federatedprojects',
       onChange: this.handleTabChange,
       options: [
         {
@@ -64,18 +64,6 @@ export default class Projects extends React.Component {
         },
       ],
     }
-  }
-
-  getData = async ({ silent, ...params } = {}) => {
-    const { store } = this.props
-    const { workspace } = this.props.match.params
-
-    silent && (store.list.silent = true)
-    await store.fetchList({
-      labelSelector: `kubesphere.io/workspace=${workspace}`,
-      ...params,
-    })
-    store.list.silent = false
   }
 
   get workspace() {
@@ -105,74 +93,87 @@ export default class Projects extends React.Component {
     ]
   }
 
-  getCheckboxProps = record => ({
-    disabled: record.deletionTime,
-    name: record.name,
-  })
-
-  getColumns = () => {
-    return [
-      {
-        title: t('Name'),
-        dataIndex: 'name',
-        render: (name, record) => (
-          <Avatar
-            to={
-              record.deletionTime
-                ? null
-                : `/${this.workspace}/federatedprojects/${name}`
-            }
-            icon="project"
-            iconSize={40}
-            isMultiCluster={true}
-            desc={record.description || '-'}
-            title={getDisplayName(record)}
-          />
-        ),
-      },
-      {
-        title: t('Status'),
-        dataIndex: 'status',
-        isHideable: true,
-        search: true,
-        render: status => <Status type={status} name={t(status)} flicker />,
-      },
-      {
-        title: t('Deployment Location'),
-        dataIndex: 'clusters',
-        isHideable: true,
-        render: clusters => (
-          <ClusterWrapper clusters={clusters} clustersDetail={this.clusters} />
-        ),
-      },
-      {
-        title: t('Created Time'),
-        dataIndex: 'createTime',
-        isHideable: true,
-        width: '20%',
-        render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
-      },
-    ]
+  get tableActions() {
+    const { name, trigger, getData, tableProps } = this.props
+    return {
+      ...tableProps.tableActions,
+      selectActions: [
+        {
+          key: 'delete',
+          type: 'danger',
+          text: t('Delete'),
+          onClick: () =>
+            trigger('federated.project.delete.batch', {
+              type: t(name),
+              success: getData,
+              rowKey: 'name',
+              ...this.props.match.params,
+            }),
+        },
+      ],
+      getCheckboxProps: record => ({
+        disabled: record.deletionTime,
+        name: record.name,
+      }),
+    }
   }
+
+  getColumns = () => [
+    {
+      title: t('Name'),
+      dataIndex: 'name',
+      render: (name, record) => (
+        <Avatar
+          to={
+            record.deletionTime
+              ? null
+              : `/${this.workspace}/federatedprojects/${name}`
+          }
+          icon="project"
+          iconSize={40}
+          isMultiCluster={true}
+          desc={record.description || '-'}
+          title={getDisplayName(record)}
+        />
+      ),
+    },
+    {
+      title: t('Status'),
+      dataIndex: 'status',
+      isHideable: true,
+      render: status => <Status type={status} name={t(status)} flicker />,
+    },
+    {
+      title: t('Deployment Location'),
+      dataIndex: 'clusters',
+      isHideable: true,
+      render: clusters => (
+        <ClusterWrapper clusters={clusters} clustersDetail={this.clusters} />
+      ),
+    },
+    {
+      title: t('Created Time'),
+      dataIndex: 'createTime',
+      isHideable: true,
+      sorter: true,
+      width: '20%',
+      render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
+    },
+  ]
 
   showCreate = () =>
     this.props.trigger('federated.project.create', {
       ...this.props.match.params,
       store: this.projectStore,
       clusters: this.clusters.slice(),
-      success: () => this.getData(),
+      success: () => this.props.getData(),
     })
 
   render() {
     const { bannerProps, tableProps } = this.props
 
     return (
-      <ListPage
-        {...this.props}
-        getData={this.getData}
-        module="namespaces"
-        isFederated
-      >
+      <ListPage {...this.props} module="namespaces" isFederated>
         <Banner
           {...bannerProps}
           tabs={this.tabs}
@@ -182,12 +183,12 @@ export default class Projects extends React.Component {
         />
         <Table
           {...tableProps}
+          tableActions={this.tableActions}
           itemActions={this.itemActions}
           columns={this.getColumns()}
           onCreate={this.showCreate}
           searchType="name"
           clusters={this.clusters}
-          getCheckboxProps={this.getCheckboxProps}
         />
       </ListPage>
     )

@@ -103,7 +103,6 @@ export default class Workspaces extends React.Component {
         dataIndex: 'name',
         sorter: true,
         sortOrder: getSortOrder('name'),
-        search: true,
         render: (name, record) => (
           <Avatar
             icon="enterprise"
@@ -158,9 +157,8 @@ export default class Workspaces extends React.Component {
           itemActions={this.itemActions}
           tableActions={this.tableActions}
           onCreate={this.showCreate}
-          isClusterLoading={isClusterLoading}
+          isLoading={tableProps.isLoading || isClusterLoading}
           searchType="name"
-          alwaysUpdate
         />
       </ListPage>
     )

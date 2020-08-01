@@ -22,7 +22,7 @@ import { observer } from 'mobx-react'
 
 import { PATTERN_NAME } from 'utils/constants'
 
-import { Columns, Column, Input, TextArea } from '@pitrix/lego-ui'
+import { Columns, Column, Input } from '@pitrix/lego-ui'
 import { Form } from 'components/Base'
 
 @observer
@@ -77,21 +77,10 @@ export default class BaseInfo extends React.Component {
                 { validator: this.nameValidator },
               ]}
             >
-              <Input name="metadata.name" />
+              <Input name="metadata.name" maxLength={253} />
             </Form.Item>
           </Column>
-          <Column>
-            <Form.Item label={t('Alias')} desc={t('ALIAS_DESC')}>
-              <Input name="metadata.annotations['kubesphere.io/alias-name']" />
-            </Form.Item>
-          </Column>
-        </Columns>
-        <Columns>
-          <Column>
-            <Form.Item label={t('Description')}>
-              <TextArea name="metadata.annotations['kubesphere.io/description']" />
-            </Form.Item>
-          </Column>
+          <Column />
         </Columns>
       </Form>
     )

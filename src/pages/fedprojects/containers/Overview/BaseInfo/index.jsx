@@ -33,16 +33,14 @@ export default class BaseInfo extends React.Component {
       <div className={classNames(styles.wrapper, className)}>
         <div className={styles.header}>
           <Icon name="project" size={40} />
-          <div className={styles.text}>
-            <div>{getDisplayName(detail)}</div>
-            <p>{detail.description || '-'}</p>
-          </div>
+          <Text
+            title={getDisplayName(detail)}
+            description={detail.description || '-'}
+          />
         </div>
         <div className={styles.content}>
           <Text
-            title={
-              <Link to={`/workspaces/${workspace}/overview`}>{workspace}</Link>
-            }
+            title={<Link to={`/workspaces/${workspace}`}>{workspace}</Link>}
             description={t('Workspace')}
           />
           <Text title={detail.creator || '-'} description={t('Creator')} />

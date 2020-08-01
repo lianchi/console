@@ -16,21 +16,18 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, uniq, isArray } from 'lodash'
+import { get, set, uniq, isArray, intersection } from 'lodash'
 import { observable, action } from 'mobx'
 import { Notify } from 'components/Base'
 import { safeParseJSON } from 'utils'
+import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
 
 import Base from './base'
+import List from './base.list'
 
 export default class UsersStore extends Base {
-  @observable
-  logs = {
-    data: [],
-    total: 0,
-    isLoading: true,
-  }
+  records = new List()
 
   @observable
   roles = []
@@ -83,16 +80,6 @@ export default class UsersStore extends Base {
   getListUrl = this.getResourceUrl
 
   @action
-  async fetchLogs({ name }) {
-    this.logs.isLoading = true
-
-    const result = await request.get(`k${this.getDetailUrl({ name })}/logs`)
-
-    this.logs.data = result
-    this.logs.isLoading = false
-  }
-
-  @action
   async fetchRules({ name, ...params }) {
     let module = 'globalroles'
     if (params.namespace || params.devops) {
@@ -112,7 +99,7 @@ export default class UsersStore extends Base {
       () => {}
     )
 
-    const rules = {}
+    let rules = {}
     resp &&
       resp.forEach(item => {
         const rule = safeParseJSON(
@@ -142,15 +129,22 @@ export default class UsersStore extends Base {
         const parentActions = globals.app.getActions({ module: 'clusters' })
         set(globals.user, `clusterRules[${params.cluster}]`, {
           ...rules,
-          _: parentActions,
+          _: intersection(parentActions, ['view', 'manage']),
         })
         break
       }
       case 'workspaceroles': {
+        if (params.workspace === globals.config.systemWorkspace) {
+          set(globals.user, `workspaceRules[${params.workspace}]`, {
+            ...globals.config.systemWorkspaceRules,
+          })
+          break
+        }
+
         const parentActions = globals.app.getActions({ module: 'workspaces' })
         set(globals.user, `workspaceRules[${params.workspace}]`, {
           ...rules,
-          _: parentActions,
+          _: intersection(parentActions, ['view', 'manage']),
         })
         break
       }
@@ -167,12 +161,17 @@ export default class UsersStore extends Base {
             ...obj,
             module: 'projects',
           })
+
+          if (params.workspace === globals.config.systemWorkspace) {
+            rules = globals.config.systemWorkspaceProjectRules
+          }
+
           set(
             globals.user,
             `projectRules[${params.cluster}][${params.namespace}]`,
             {
               ...rules,
-              _: parentActions,
+              _: intersection(parentActions, ['view', 'manage']),
             }
           )
         } else if (params.devops) {
@@ -186,7 +185,7 @@ export default class UsersStore extends Base {
             `devopsRules[${params.cluster}][${params.devops}]`,
             {
               ...rules,
-              _: parentActions,
+              _: intersection(parentActions, ['view', 'manage']),
             }
           )
         }
@@ -224,6 +223,13 @@ export default class UsersStore extends Base {
   }
 
   @action
+  async modifyPassword({ name }, data) {
+    return this.submitting(
+      request.put(`${this.getDetailUrl({ name })}/password`, data)
+    )
+  }
+
+  @action
   async batchDelete({ rowKeys, ...params }) {
     if (rowKeys.includes(globals.user.username)) {
       Notify.error(t('Error Tips'), t('Unable to delete itself'))
@@ -249,5 +255,32 @@ export default class UsersStore extends Base {
     }
 
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+  }
+
+  @action
+  async fetchLoginRecords({ name, ...params }) {
+    this.records.isLoading = true
+
+    if (params.limit === Infinity || params.limit === -1) {
+      params.limit = -1
+      params.page = 1
+    }
+
+    params.limit = params.limit || 10
+
+    const result = await request.get(
+      `kapis/iam.kubesphere.io/v1alpha2/users/${name}/loginrecords`,
+      params
+    )
+    const data = result.items.map(ObjectMapper.default)
+
+    this.records.update({
+      data,
+      total: result.totalItems || 0,
+      ...params,
+      limit: Number(params.limit) || 10,
+      page: Number(params.page) || 1,
+      isLoading: false,
+    })
   }
 }

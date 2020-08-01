@@ -46,18 +46,17 @@ export default class AdvancedSettings extends React.Component {
   }
 
   render() {
-    const { formRef, store, module } = this.props
+    const { formRef, store, module, prefix } = this.props
     return (
       <Form data={this.fedFormTemplate} ref={formRef}>
         {module !== 'daemonsets' && (
           <Form.Group
             label={t('Set Node Scheduling Policy')}
             desc={t('You can allow Pod replicas to run on specified nodes.')}
-            keepDataWhenUnCheck
             checkable
           >
             <NodeSchedule
-              prefix={this.props.prefix}
+              prefix={prefix}
               namespace={this.namespace}
               formTemplate={this.fedFormTemplate}
             />
@@ -73,6 +72,7 @@ export default class AdvancedSettings extends React.Component {
         >
           <Metadata
             store={store}
+            module={module}
             cluster={this.cluster}
             namespace={this.namespace}
             formTemplate={this.fedFormTemplate}

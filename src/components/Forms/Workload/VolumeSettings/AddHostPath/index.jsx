@@ -21,7 +21,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Input } from '@pitrix/lego-ui'
 import { PATTERN_NAME } from 'utils/constants'
-import { Form } from 'components/Base'
+import { Form, Alert } from 'components/Base'
 import { MountInput } from 'components/Inputs'
 
 import styles from './index.scss'
@@ -101,6 +101,11 @@ export default class AddHostPath extends React.Component {
 
     return (
       <div className={styles.wrapper}>
+        <Alert
+          className="margin-b12"
+          type="warning"
+          message={t('HOST_PATH_WARNING')}
+        />
         <Form data={formData} ref={formRef}>
           <Form.Item
             label={t('Volume Name')}
@@ -114,7 +119,7 @@ export default class AddHostPath extends React.Component {
               { validator: this.nameValidator },
             ]}
           >
-            <Input name="name" autoFocus={true} />
+            <Input name="name" autoFocus={true} maxLength={63} />
           </Form.Item>
           <Form.Item label={t('HostPath')}>
             <Input name="hostPath.path" />

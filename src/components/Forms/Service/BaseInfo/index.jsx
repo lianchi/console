@@ -16,21 +16,22 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, set, debounce } from 'lodash'
+import { get, set } from 'lodash'
 import React from 'react'
 import { observer } from 'mobx-react'
-import { Columns, Column, Input, TextArea } from '@pitrix/lego-ui'
-import { Form } from 'components/Base'
-import { updateLabels, updateFederatedAnnotations, generateId } from 'utils'
+import { Columns, Column, Input } from '@pitrix/lego-ui'
+import { Form, TextArea } from 'components/Base'
+import { updateLabels } from 'utils'
 import { ProjectSelect } from 'components/Inputs'
 
 import {
   PATTERN_SERVICE_NAME,
-  PATTERN_LENGTH_63,
+  PATTERN_SERVICE_VERSION,
   MODULE_KIND_MAP,
 } from 'utils/constants'
 
 import ServiceStore from 'stores/service'
+import WorkloadStore from 'stores/workload'
 import FederatedStore from 'stores/federated'
 
 @observer
@@ -44,8 +45,10 @@ export default class ServiceBaseInfo extends React.Component {
     }
 
     this.store = new ServiceStore()
+    this.workloadStore = new WorkloadStore(props.module)
     if (props.isFederated) {
       this.store = new FederatedStore(this.store)
+      this.workloadStore = new FederatedStore(this.workloadStore)
     }
   }
 
@@ -94,21 +97,11 @@ export default class ServiceBaseInfo extends React.Component {
 
   updateWorkload(value) {
     const { module, formTemplate, isFederated } = this.props
-    const aliasName = get(
-      this.formTemplate,
-      'metadata.annotations["kubesphere.io/alias-name"]'
-    )
     const labels = get(this.formTemplate, 'metadata.labels', {})
     const namespace = get(this.formTemplate, 'metadata.namespace')
-    const workloadName = `${value}-${generateId()}`
+    const workloadName = `${value}-${labels.version}`
     set(formTemplate[this.workloadKind], 'metadata.name', workloadName)
     set(formTemplate[this.workloadKind], 'metadata.namespace', namespace)
-    set(
-      formTemplate[this.workloadKind],
-      'metadata.annotations["kubesphere.io/alias-name"]',
-      aliasName || value
-    )
-
     set(formTemplate[this.workloadKind], 'metadata.labels.app', value)
     updateLabels(
       isFederated
@@ -138,24 +131,6 @@ export default class ServiceBaseInfo extends React.Component {
     )
   }
 
-  handleAliasNameChange = debounce(value => {
-    const { formTemplate, noWorkload } = this.props
-
-    const name = get(this.formTemplate, 'metadata.name')
-
-    if (!noWorkload) {
-      set(
-        formTemplate[this.workloadKind],
-        'metadata.annotations["kubesphere.io/alias-name"]',
-        value || name
-      )
-    }
-
-    if (this.props.isFederated) {
-      updateFederatedAnnotations(this.formTemplate)
-    }
-  }, 200)
-
   nameValidator = (rule, value, callback) => {
     if (!value) {
       return callback()
@@ -175,8 +150,48 @@ export default class ServiceBaseInfo extends React.Component {
       })
   }
 
+  versionValidator = (rule, value, callback) => {
+    if (!value) {
+      return callback()
+    }
+
+    const serviceName = get(this.formTemplate, 'metadata.name')
+    const name = `${serviceName}-${value}`
+    this.workloadStore
+      .checkName({
+        name,
+        namespace: this.namespace,
+        cluster: this.props.cluster,
+      })
+      .then(resp => {
+        if (resp.exist) {
+          return callback({
+            message: t(
+              `${t(this.workloadKind)} ${name} ${t('exists')}, ${t(
+                'version number is invalid'
+              )}`
+            ),
+            field: rule.field,
+          })
+        }
+        callback()
+      })
+  }
+
+  handleVersionChange = value => {
+    const serviceName = get(this.formTemplate, 'metadata.name')
+    const workloadName = `${serviceName}-${value}`
+    const { formTemplate } = this.props
+    set(formTemplate[this.workloadKind], 'metadata.name', workloadName)
+    set(
+      formTemplate.Service,
+      'metadata.annotations["kubesphere.io/workloadName"]',
+      workloadName
+    )
+  }
+
   render() {
-    const { formRef } = this.props
+    const { formRef, noWorkload, cluster, namespace } = this.props
 
     return (
       <Form data={this.formTemplate} ref={formRef}>
@@ -191,7 +206,6 @@ export default class ServiceBaseInfo extends React.Component {
                   pattern: PATTERN_SERVICE_NAME,
                   message: `${t('Invalid name')}, ${t('SERVICE_NAME_DESC')}`,
                 },
-                { pattern: PATTERN_LENGTH_63, message: t('NAME_TOO_LONG') },
                 { validator: this.nameValidator },
               ]}
             >
@@ -199,6 +213,7 @@ export default class ServiceBaseInfo extends React.Component {
                 name="metadata.name"
                 onChange={this.handleNameChange}
                 autoFocus={true}
+                maxLength={63}
               />
             </Form.Item>
           </Column>
@@ -206,13 +221,13 @@ export default class ServiceBaseInfo extends React.Component {
             <Form.Item label={t('Alias')} desc={t('ALIAS_DESC')}>
               <Input
                 name="metadata.annotations['kubesphere.io/alias-name']"
-                onChange={this.handleAliasNameChange}
+                maxLength={63}
               />
             </Form.Item>
           </Column>
         </Columns>
         <Columns>
-          {!this.props.namespace && (
+          {!namespace && (
             <Column>
               <Form.Item
                 label={t('Project')}
@@ -223,15 +238,41 @@ export default class ServiceBaseInfo extends React.Component {
               >
                 <ProjectSelect
                   name="metadata.namespace"
-                  cluster={this.props.cluster}
+                  cluster={cluster}
                   defaultValue={this.namespace}
                 />
               </Form.Item>
             </Column>
           )}
+          {!noWorkload && (
+            <Column>
+              <Form.Item
+                label={t('Version')}
+                desc={t('COMPONENT_VERSION_DESC')}
+                rules={[
+                  { required: true, message: t('COMPONENT_VERSION_DESC') },
+                  {
+                    pattern: PATTERN_SERVICE_VERSION,
+                    message: t('COMPONENT_VERSION_DESC'),
+                  },
+                  { validator: this.versionValidator },
+                ]}
+              >
+                <Input
+                  name="metadata.labels.version"
+                  defaultValue="v1"
+                  maxLength={16}
+                  onChange={this.handleVersionChange}
+                />
+              </Form.Item>
+            </Column>
+          )}
           <Column>
-            <Form.Item label={t('Description')}>
-              <TextArea name="metadata.annotations['kubesphere.io/description']" />
+            <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
+              <TextArea
+                name="metadata.annotations['kubesphere.io/description']"
+                maxLength={256}
+              />
             </Form.Item>
           </Column>
         </Columns>

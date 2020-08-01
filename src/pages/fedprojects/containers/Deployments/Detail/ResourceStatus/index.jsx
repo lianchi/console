@@ -17,6 +17,7 @@
  */
 
 import React from 'react'
+import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { isEmpty, flatten, uniqBy, keyBy } from 'lodash'
 
@@ -48,8 +49,11 @@ class ResourceStatus extends React.Component {
   }
 
   renderReplicaInfo() {
-    const { detail, resources, isResourcesLoading } = this.store
-    const clusters = keyBy(this.props.projectStore.detail.clusters, 'name')
+    const { detail = {}, resources, isResourcesLoading } = this.store
+    const clustersDetail = keyBy(
+      this.props.projectStore.detail.clusters,
+      'name'
+    )
 
     return (
       <ClusterWorkloadStatus
@@ -57,7 +61,8 @@ class ResourceStatus extends React.Component {
         store={this.store}
         detail={detail}
         resources={resources}
-        clusters={clusters}
+        clustersDetail={clustersDetail}
+        clusters={detail.clusters}
         isLoading={isResourcesLoading}
       />
     )
@@ -70,15 +75,15 @@ class ResourceStatus extends React.Component {
       return null
     }
 
-    const { isResourcesLoading } = this.store
+    const { resources, isResourcesLoading } = this.store
     const ports = []
-    Object.values(this.store.resources).forEach(resource => {
+    Object.values(resources).forEach(resource => {
       if (resource && resource.containers) {
         ports.push(
           ...uniqBy(
             flatten(
               resource.containers.map(container =>
-                isEmpty(container.ports) ? [] : container.ports
+                isEmpty(container.ports) ? [] : container.ports.slice()
               )
             ),
             'name'
@@ -100,17 +105,15 @@ class ResourceStatus extends React.Component {
 
   renderPods() {
     const { detail, resources } = this.store
-    const clusters = detail.clusters.map(item => item.name)
-    const resourceDetail = Object.values(resources)[0]
-
-    if (isEmpty(resourceDetail)) {
-      return null
-    }
+    const clustersMap = keyBy(this.props.projectStore.detail.clusters, 'name')
+    const clusters = detail.clusters
+      .filter(item => clustersMap[item.name])
+      .map(item => item.name)
 
     return (
       <PodsCard
         prefix={this.prefix}
-        detail={resourceDetail}
+        details={toJS(resources)}
         clusters={clusters}
         isFederated
       />

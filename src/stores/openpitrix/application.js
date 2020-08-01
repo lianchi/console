@@ -77,7 +77,7 @@ export default class Application extends Base {
     workspace,
     more,
     status,
-    order,
+    sortBy: order,
     reverse,
     ...filters
   } = {}) => {
@@ -203,13 +203,12 @@ export default class Application extends Base {
     )
 
   @action
-  delete = ({ cluster_id, cluster, workspace, zone }) => {
-    return this.submitting(
+  delete = ({ cluster_id, cluster, workspace, zone }) =>
+    this.submitting(
       request.delete(
         this.getUrl({ namespace: zone, cluster_id, cluster, workspace })
       )
     )
-  }
 
   @action
   batchDelete = (rowKeys, { namespace, cluster, workspace }) =>

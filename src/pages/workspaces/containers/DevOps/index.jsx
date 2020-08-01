@@ -19,12 +19,12 @@
 import React from 'react'
 import { computed } from 'mobx'
 
-import { Avatar } from 'components/Base'
+import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import Table from 'workspaces/components/ResourceTable'
 import withList, { ListPage } from 'components/HOCs/withList'
 
-import { getLocalTime } from 'utils'
+import { getLocalTime, getDisplayName } from 'utils'
 
 import DevOpsStore from 'stores/devops'
 
@@ -45,24 +45,21 @@ export default class DevOps extends React.Component {
         key: 'edit',
         icon: 'pen',
         text: t('Edit'),
-        onClick: item =>
-          trigger('devops.edit', { detail: item, success: this.getData }),
+        action: 'edit',
+        onClick: item => trigger('devops.edit', { detail: item }),
       },
       {
         key: 'delete',
         icon: 'trash',
         text: t('Delete'),
-        onClick: item =>
+        action: 'delete',
+        onClick: item => {
           trigger('resource.delete', {
             type: t('DevOps Project'),
             resource: item.name,
             detail: item,
-            success: () => {
-              setTimeout(() => {
-                this.getData()
-              }, 500)
-            },
-          }),
+          })
+        },
       },
     ]
   }
@@ -103,6 +100,27 @@ export default class DevOps extends React.Component {
     }
   }
 
+  get tableActions() {
+    const { tableProps, trigger } = this.props
+    return {
+      ...tableProps.tableActions,
+      selectActions: [
+        {
+          key: 'delete',
+          type: 'danger',
+          text: t('Delete'),
+          action: 'delete',
+          onClick: () => {
+            trigger('resource.batch.delete', {
+              type: t(tableProps.name),
+              rowKey: tableProps.rowKey,
+            })
+          },
+        },
+      ],
+    }
+  }
+
   handleClusterChange = cluster => {
     this.workspaceStore.selectCluster(cluster)
     this.getData()
@@ -127,20 +145,24 @@ export default class DevOps extends React.Component {
     {
       title: t('Name'),
       dataIndex: 'name',
-      width: '20%',
       render: (name, record) => {
+        const isTerminating = record.status === 'Terminating'
         return (
-          <Avatar
-            icon="strategy-group"
-            iconSize={40}
-            to={
-              record.namespace && record.cluster
-                ? `/${this.workspace}/clusters/${record.cluster}/devops/${record.namespace}`
-                : null
-            }
-            desc={record.description || '-'}
-            title={name}
-          />
+          <>
+            <Avatar
+              icon="strategy-group"
+              iconSize={40}
+              to={
+                record.namespace && record.cluster && !isTerminating
+                  ? `/${this.workspace}/clusters/${record.cluster}/devops/${
+                      record.namespace
+                    }`
+                  : null
+              }
+              desc={record.description || '-'}
+              title={getDisplayName(record)}
+            />
+          </>
         )
       },
     },
@@ -148,20 +170,24 @@ export default class DevOps extends React.Component {
       title: t('ID'),
       dataIndex: 'namespace',
       isHideable: true,
-      width: '20%',
+    },
+    {
+      title: t('Status'),
+      dataIndex: 'status',
+      isHideable: true,
+      render: status => <Status type={status} name={t(status)} flicker />,
     },
     {
       title: t('Creator'),
       dataIndex: 'creator',
       isHideable: true,
-      width: '40%',
       render: creator => creator || '-',
     },
     {
       title: t('Created Time'),
       dataIndex: 'createTime',
       isHideable: true,
-      width: '20%',
+      sorter: true,
       render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
     },
   ]
@@ -169,17 +195,29 @@ export default class DevOps extends React.Component {
   showCreate = () =>
     this.props.trigger('devops.create', {
       ...this.props.match.params,
+      cluster: this.workspaceStore.cluster,
       success: () => {
-        setTimeout(() => {
-          this.getData()
-        }, 500)
+        this.getData({ silent: true })
       },
     })
 
+  getCheckboxProps = record => ({
+    disabled: record.status === 'Terminating',
+    name: record.name,
+  })
+
   render() {
-    const { bannerProps, tableProps } = this.props
+    const { bannerProps, tableProps, match } = this.props
+    const matchParams = {
+      ...match,
+      params: {
+        ...match.params,
+        cluster: this.workspaceStore.cluster,
+      },
+    }
+
     return (
-      <ListPage {...this.props} getData={this.getData} noWatch>
+      <ListPage {...this.props} getData={this.getData} match={matchParams}>
         <Banner
           {...bannerProps}
           description={t('DEVOPS_DESCRIPTION')}
@@ -188,10 +226,13 @@ export default class DevOps extends React.Component {
         <Table
           {...tableProps}
           itemActions={this.itemActions}
+          tableActions={this.tableActions}
           columns={this.getColumns()}
           onCreate={this.showCreate}
           searchType="name"
+          isLoading={tableProps.isLoading}
           {...this.clusterProps}
+          getCheckboxProps={this.getCheckboxProps}
         />
       </ListPage>
     )

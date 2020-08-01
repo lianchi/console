@@ -54,13 +54,19 @@ export default class DeploymentDetail extends React.Component {
   get listUrl() {
     const { workspace, cluster, namespace } = this.props.match.params
     if (workspace) {
-      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${this.module}`
+      return `/${workspace}/clusters/${cluster}/projects/${namespace}/${
+        this.module
+      }`
     }
     return `/clusters/${cluster}/${this.module}`
   }
 
   get routing() {
     return this.props.rootStore.routing
+  }
+
+  get isFedManaged() {
+    return this.store.detail.isFedManaged
   }
 
   fetchData = async () => {
@@ -102,6 +108,7 @@ export default class DeploymentDetail extends React.Component {
       onClick: () =>
         this.trigger('workload.revision.rollback', {
           detail: this.store.detail,
+          success: this.fetchData,
         }),
     },
     {
@@ -124,6 +131,7 @@ export default class DeploymentDetail extends React.Component {
         this.trigger('workload.template.edit', {
           detail: this.store.detail,
           ...this.props.match.params,
+          success: this.fetchData,
         }),
     },
     {
@@ -134,6 +142,7 @@ export default class DeploymentDetail extends React.Component {
       onClick: () =>
         this.trigger('resource.yaml.edit', {
           detail: this.store.detail,
+          success: this.fetchData,
         }),
     },
     {
@@ -208,7 +217,7 @@ export default class DeploymentDetail extends React.Component {
       module: this.module,
       name: getDisplayName(this.store.detail),
       desc: this.store.detail.description,
-      operations: this.getOperations(),
+      operations: this.isFedManaged ? [] : this.getOperations(),
       attrs: this.getAttrs(),
       breadcrumbs: [
         {
@@ -223,6 +232,7 @@ export default class DeploymentDetail extends React.Component {
         stores={stores}
         {...sideProps}
         routes={getRoutes(this.props.match.path)}
+        watch
       />
     )
   }

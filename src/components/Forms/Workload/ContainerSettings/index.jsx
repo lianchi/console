@@ -86,7 +86,9 @@ export default class ContainerSetting extends React.Component {
   }
 
   get containerSecretPath() {
-    return `${this.prefix}metadata.annotations["kubesphere.io/containerSecrets"]`
+    return `${
+      this.prefix
+    }metadata.annotations["kubesphere.io/containerSecrets"]`
   }
 
   checkPullSecret() {
@@ -118,7 +120,11 @@ export default class ContainerSetting extends React.Component {
     let serviceName = get(this.props.formTemplate, 'Service.metadata.name')
 
     if (workloadName && !serviceName) {
-      serviceName = `${workloadName}-${generateId()}`
+      serviceName = `${workloadName.slice(0, 57)}-${generateId(4)}`
+      if (!/^[a-z]/.test(serviceName)) {
+        serviceName = `s${serviceName}`
+      }
+
       set(this.props.formTemplate, 'Service.metadata.name', serviceName)
       set(
         this.props.formTemplate,
@@ -186,6 +192,31 @@ export default class ContainerSetting extends React.Component {
       showContainer: false,
       selectContainer: {},
     })
+  }
+
+  updateTimeZone = mergedContainers => {
+    let volumes = get(this.fedFormTemplate, `${this.prefix}spec.volumes`, [])
+    const hasLocalTime = mergedContainers.some(container =>
+      (container.volumeMounts || []).some(
+        vm => vm.mountPath === '/etc/localtime'
+      )
+    )
+
+    if (hasLocalTime) {
+      volumes.push({
+        hostPath: { path: '/etc/localtime', type: '' },
+        name: 'host-time',
+      })
+    } else {
+      volumes = volumes.filter(
+        volume =>
+          volume.name === 'host-time' &&
+          volume.hostPath &&
+          volume.hostPath === '/etc/localtime'
+      )
+    }
+
+    set(this.fedFormTemplate, `${this.prefix}spec.volumes`, volumes)
   }
 
   updatePullSecrets = () => {
@@ -343,6 +374,8 @@ export default class ContainerSetting extends React.Component {
       _initContainers
     )
 
+    this.updateTimeZone(mergedContainers)
+
     // update image pull secrets
     this.updatePullSecrets()
 
@@ -451,16 +484,10 @@ export default class ContainerSetting extends React.Component {
   }
 
   renderUpdateStrategy() {
-    const { formRef, module } = this.props
-    const { replicas } = this.state
+    const { module } = this.props
     return (
       <div className="margin-t12">
-        <UpdateStrategy
-          formRef={formRef}
-          module={module}
-          data={this.fedFormTemplate}
-          replicas={replicas}
-        />
+        <UpdateStrategy module={module} data={this.fedFormTemplate} />
       </div>
     )
   }

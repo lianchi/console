@@ -59,6 +59,9 @@ export default {
   'Project Quota': '项目配额',
   'Quota Management': '配额管理',
 
+  'Project Quota Not Set': '项目配额未设置',
+  'Resource Default Request Not Set': '容器资源默认请求未设置',
+
   'Project Placement': '项目位置',
 
   'Multi-cluster Project': '多集群项目',
@@ -152,7 +155,7 @@ export default {
   'Invite Members to the DevOps Project': '邀请成员到该工程',
   INVITE_MEMBER_DESC: '您可以邀请新的成员来协助您的项目',
   INVITE_MEMBER_DESC_DEVOPS: '您可以邀请新的成员来协助您的工程',
-  INVITE_MEMBER_SEARCH_PLACEHODLER: '输入邮箱邀请项目成员',
+  INVITE_MEMBER_SEARCH_PLACEHODLER: '输入用户名邀请项目成员',
   INVITE_MEMBER_CHOOSE_ROLE_TIP: '请选择一个角色赋予该成员',
   PROJECT_ADMIN_DESC: '可以指定项目内一个成员为管理员',
 
@@ -177,7 +180,7 @@ export default {
   'Empty value means no limit, CPU 1 Core = 1000m':
     '值为空表示无限制, CPU 1核 = 1000m',
 
-  'Project name exists on host cluster': '项目名在 Host 集群上已存在.',
+  'The project name exists on the host cluster.': '项目名在 Host 集群上已存在',
 
   MULTI_CLUSTER_PROJECT_DELETE_TIP:
     '删除多集群项目同时也会删除依赖于 Host 集群上的同名项目,</br>请输入{type}名称 <strong>{resource}</strong> 确保您已了解操作所带来的风险。',
@@ -199,7 +202,7 @@ export default {
 
   HOW_TO_USE_QUOTA_Q: '如何使用配额?',
   HOW_TO_USE_QUOTA_A:
-    '资源配额（Resource Quotas）是用来限制用户资源用量的一种机制，可以对 CPU、内存、容器组数量等进行配额限制；点击项目管理可以对各类资源设置配额。',
+    '资源配额（Resource Quotas）是用来限制用户资源用量的一种机制，可以对 CPU、内存、容器组数量等进行配额限制。',
 
   WHAT_IS_LIMIT_RANGE_Q: '什么是容器资源默认请求?',
   WHAT_IS_LIMIT_RANGE_A:
@@ -232,9 +235,12 @@ export default {
   MULTI_CLUSER_PROJECT_TIP:
     '当前项目为多集群项目，项目将分布在不同集群中共同来构成多集群项目，您可以切换到不同集群查看项目在该集群中的设置。',
 
+  MULTI_CLUSER_RESOURCE_TIP:
+    '当前资源为多集群资源，资源将分布在不同集群中共同来构成多集群资源，您可以切换到不同集群查看资源在该集群中的设置。',
+
   FEDPROJECT_RESOURCE_TIP:
-    '无法在集群管理内创建多集群项目的资源, 请到多集群项目页面内进行操作.',
-  FEDPROJECT_CANNOT_DEPLOY_APP_TIP: '无法在多集群项目里部署应用.',
+    '无法在集群管理内创建多集群项目的资源, 请到多集群项目页面内进行操作。',
+  FEDPROJECT_CANNOT_DEPLOY_APP_TIP: '无法在多集群项目里部署应用。',
 
   FED_HOST_NAMESPACE_TIP:
     '该项目为多集群项目的相关资源, 请勿在此项目下操作资源',

@@ -104,6 +104,19 @@ export default class Projects extends React.Component {
     }
   }
 
+  get tableActions() {
+    const { tableProps } = this.props
+    return {
+      ...tableProps.tableActions,
+      onFetch: this.handleFetch,
+    }
+  }
+
+  handleFetch = (params, refresh) => {
+    const { routing } = this.props
+    routing.query({ ...params, type: this.type }, refresh)
+  }
+
   handleTabChange = type => {
     const { cluster } = this.props.match.params
     this.props.routing.push(`/clusters/${cluster}/projects?type=${type}`)
@@ -161,7 +174,6 @@ export default class Projects extends React.Component {
         title: t('Status'),
         dataIndex: 'status',
         isHideable: true,
-        search: true,
         render: status => <Status type={status} name={t(status)} flicker />,
       },
       {
@@ -216,11 +228,11 @@ export default class Projects extends React.Component {
         <Table
           {...tableProps}
           itemActions={this.itemActions}
+          tableActions={this.tableActions}
           columns={this.getColumns()}
           onCreate={this.showCreate}
-          monitorLoading={isLoadingMonitor}
+          isLoading={tableProps.isLoading || isLoadingMonitor}
           searchType="name"
-          alwaysUpdate
         />
       </ListPage>
     )

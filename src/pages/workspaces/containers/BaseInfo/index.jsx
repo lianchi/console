@@ -17,7 +17,7 @@
  */
 
 import React from 'react'
-import { get, isEmpty } from 'lodash'
+import { get, isEmpty, set } from 'lodash'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { Checkbox } from '@pitrix/lego-ui'
@@ -44,7 +44,7 @@ class BaseInfo extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchMetrics()
+    this.canViewWorkspaceProjects && this.fetchMetrics()
   }
 
   get store() {
@@ -79,6 +79,14 @@ class BaseInfo extends React.Component {
   get enabledActions() {
     return globals.app.getActions({
       module: 'workspace-settings',
+      workspace: this.workspace,
+    })
+  }
+
+  get canViewWorkspaceProjects() {
+    return globals.app.hasPermission({
+      module: 'projects',
+      action: 'view',
       workspace: this.workspace,
     })
   }
@@ -145,6 +153,15 @@ class BaseInfo extends React.Component {
       .then(() => this.fetchDetail())
   }
 
+  handleSingleClusterNetworkChange = () => {
+    const detail = toJS(this.store.detail)
+    const obj = {}
+
+    set(obj, 'spec.template.spec.networkIsolation', !detail.networkIsolation)
+
+    this.store.patch(detail, obj).then(() => this.fetchDetail())
+  }
+
   handleDeleteCheckboxChange = (e, checked) => {
     this.setState({ confirm: checked })
   }
@@ -205,18 +222,20 @@ class BaseInfo extends React.Component {
             </Button>
           )}
         </div>
-        <div className={styles.content}>
-          {options
-            .filter(option => !option.hidden)
-            .map(option => (
-              <Text
-                key={option.name}
-                icon={option.icon}
-                title={option.value}
-                description={t(option.name)}
-              />
-            ))}
-        </div>
+        {this.canViewWorkspaceProjects && (
+          <div className={styles.content}>
+            {options
+              .filter(option => !option.hidden)
+              .map(option => (
+                <Text
+                  key={option.name}
+                  icon={option.icon}
+                  title={option.value}
+                  description={t(option.name)}
+                />
+              ))}
+          </div>
+        )}
       </Panel>
     )
   }
@@ -247,7 +266,7 @@ class BaseInfo extends React.Component {
 
   renderNetwork() {
     const workspace = this.store.detail
-    if (!globals.app.isMultiCluster) {
+    if (!globals.app.isMultiCluster && globals.app.hasKSModule('network')) {
       const networkIsolation = workspace.networkIsolation || false
       return (
         <Panel className={styles.network} title={t('Network Policy')}>
@@ -261,7 +280,7 @@ class BaseInfo extends React.Component {
               <Switch
                 className={styles.switch}
                 text={t(networkIsolation ? 'On' : 'Off')}
-                onChange={this.handleNetworkChange(workspace)}
+                onChange={this.handleSingleClusterNetworkChange}
                 checked={networkIsolation}
               />
             )}
@@ -281,9 +300,11 @@ class BaseInfo extends React.Component {
           const clusterTemp =
             get(workspace, `clusterTemplates[${cluster.name}]`) || {}
           const networkIsolation =
-            get(clusterTemp, 'spec.networkIsolation') ||
-            workspace.networkIsolation ||
-            false
+            get(
+              clusterTemp,
+              'spec.networkIsolation',
+              workspace.networkIsolation
+            ) || false
 
           return (
             <div className={styles.item} key={cluster.name}>
@@ -293,14 +314,19 @@ class BaseInfo extends React.Component {
                 title={t(networkIsolation ? 'On' : 'Off')}
                 description={t('Workspace Network Isolation')}
               />
-              {this.enabledActions.includes('manage') && cluster.isReady && (
-                <Switch
-                  className={styles.switch}
-                  text={t(networkIsolation ? 'On' : 'Off')}
-                  onChange={this.handleNetworkChange(cluster.name)}
-                  checked={networkIsolation}
-                />
-              )}
+              {this.enabledActions.includes('manage') &&
+                (get(cluster, 'configz.network') ? (
+                  <Switch
+                    className={styles.switch}
+                    text={t(networkIsolation ? 'On' : 'Off')}
+                    onChange={this.handleNetworkChange(cluster.name)}
+                    checked={networkIsolation}
+                  />
+                ) : (
+                  <span className={styles.noModule}>
+                    {t('Network module is not installed')}
+                  </span>
+                ))}
             </div>
           )
         })}

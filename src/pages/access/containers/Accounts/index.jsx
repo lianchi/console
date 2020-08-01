@@ -88,7 +88,6 @@ export default class Accounts extends React.Component {
     {
       title: t('Name'),
       dataIndex: 'username',
-      search: true,
       render: (name, record) => (
         <Avatar
           avatar={record.avatar_url || '/assets/default-user.svg'}
@@ -116,7 +115,7 @@ export default class Accounts extends React.Component {
     },
     {
       title: t('Last login time'),
-      dataIndex: 'last_login_time',
+      dataIndex: 'lastLoginTime',
       isHideable: true,
       width: '20%',
       render: time =>

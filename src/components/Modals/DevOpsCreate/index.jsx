@@ -20,14 +20,10 @@ import React from 'react'
 import { observer } from 'mobx-react'
 import { get, isEmpty } from 'lodash'
 import PropTypes from 'prop-types'
-import { Columns, Column, Select, Input, TextArea } from '@pitrix/lego-ui'
-import { Modal, Form } from 'components/Base'
+import { Columns, Column, Select, Input } from '@pitrix/lego-ui'
+import { Modal, Form, TextArea } from 'components/Base'
 import ClusterTitle from 'components/Clusters/ClusterTitle'
-import {
-  PATTERN_SERVICE_NAME,
-  PATTERN_LENGTH_63,
-  PATTERN_LENGTH_1000,
-} from 'utils/constants'
+import { PATTERN_SERVICE_NAME } from 'utils/constants'
 
 import WorkspaceStore from 'stores/workspace'
 
@@ -56,6 +52,8 @@ export default class ProjectCreateModal extends React.Component {
 
     this.store = props.store
     this.workspaceStore = new WorkspaceStore()
+    this.nameRef = React.createRef()
+    this.formRef = React.createRef()
   }
 
   componentDidMount() {
@@ -82,11 +80,13 @@ export default class ProjectCreateModal extends React.Component {
   }
 
   get defaultCluster() {
-    const clusters = this.workspaceStore.clusters.data
-      .filter(item => item.isReady)
-      .map(item => item.name)
+    const { cluster } = this.props
+    const clusters = this.clusters
+      .filter(item => !item.disabled)
+      .map(item => item.value)
+    const defaultCluster = clusters.find(value => value === cluster)
 
-    return isEmpty(clusters) ? undefined : clusters[0]
+    return defaultCluster || clusters[0]
   }
 
   fetchClusters(params) {
@@ -118,6 +118,39 @@ export default class ProjectCreateModal extends React.Component {
     </>
   )
 
+  nameValidator = (rule, value, callback) => {
+    if (!value) {
+      return callback()
+    }
+
+    const { formTemplate, workspace } = this.props
+    const cluster = get(formTemplate, 'spec.placement.cluster')
+
+    this.store.checkName({ name: value, cluster, workspace }).then(resp => {
+      if (resp.exist) {
+        return callback({ message: t('Name exists'), field: rule.field })
+      }
+      callback()
+    })
+  }
+
+  handleClusterChange = () => {
+    if (this.nameRef && this.nameRef.current) {
+      const name = 'metadata.name'
+      if (
+        this.formRef &&
+        this.formRef.current &&
+        !isEmpty(this.formRef.current.state.errors)
+      ) {
+        this.formRef.current.resetValidateResults(name)
+      }
+
+      this.nameRef.current.validate({
+        [name]: get(this.props.formTemplate, name),
+      })
+    }
+  }
+
   render() {
     const { visible, formTemplate, hideCluster, onOk, onCancel } = this.props
     return (
@@ -130,6 +163,7 @@ export default class ProjectCreateModal extends React.Component {
         visible={visible}
         closable={false}
         hideHeader
+        formRef={this.formRef}
       >
         <div className={styles.header}>
           <img src="/assets/project-create.svg" alt="" />
@@ -144,21 +178,29 @@ export default class ProjectCreateModal extends React.Component {
               <Form.Item
                 label={t('Name')}
                 desc={t('SERVICE_NAME_DESC')}
+                ref={this.nameRef}
                 rules={[
                   { required: true, message: t('Please input name') },
                   {
                     pattern: PATTERN_SERVICE_NAME,
                     message: `${t('Invalid name')}, ${t('SERVICE_NAME_DESC')}`,
                   },
-                  { pattern: PATTERN_LENGTH_63, message: t('NAME_TOO_LONG') },
+                  { validator: this.nameValidator },
                 ]}
               >
-                <Input name="metadata.name" autoFocus={true} />
+                <Input
+                  name="metadata.generateName"
+                  autoFocus={true}
+                  maxLength={63}
+                />
               </Form.Item>
             </Column>
             <Column>
               <Form.Item label={t('Alias')} desc={t('ALIAS_DESC')}>
-                <Input name="metadata.annotations['kubesphere.io/alias-name']" />
+                <Input
+                  name="metadata.annotations['kubesphere.io/alias-name']"
+                  maxLength={63}
+                />
               </Form.Item>
             </Column>
           </Columns>
@@ -178,22 +220,17 @@ export default class ProjectCreateModal extends React.Component {
                     valueRenderer={this.valueRenderer}
                     optionRenderer={this.optionRenderer}
                     defaultValue={this.defaultCluster}
+                    onChange={this.handleClusterChange}
                   />
                 </Form.Item>
               </Column>
             )}
             <Column>
-              <Form.Item
-                label={t('Description')}
-                desc={t('DESCRIPTION_DESC')}
-                rules={[
-                  {
-                    pattern: PATTERN_LENGTH_1000,
-                    message: t('LONG_DESC_TOO_LONG'),
-                  },
-                ]}
-              >
-                <TextArea name="metadata.annotations['kubesphere.io/description']" />
+              <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
+                <TextArea
+                  name="metadata.annotations['kubesphere.io/description']"
+                  maxLength={256}
+                />
               </Form.Item>
             </Column>
           </Columns>

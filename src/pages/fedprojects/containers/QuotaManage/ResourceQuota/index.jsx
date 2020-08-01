@@ -32,6 +32,8 @@ import QuotaItem from './QuotaItem'
 
 import styles from './index.scss'
 
+const RESERVED_KEYS = ['limits.cpu', 'limits.memory', 'pods']
+
 @inject('rootStore')
 @observer
 @trigger
@@ -51,6 +53,7 @@ export default class ResourceQuota extends React.Component {
     this.trigger('project.quota.edit', {
       detail: { name: namespace, namespace, cluster: cluster.name },
       success: this.fetchData,
+      isFederated: true,
     })
   }
 
@@ -60,6 +63,25 @@ export default class ResourceQuota extends React.Component {
     }))
   }
 
+  get items() {
+    const detail = this.store.data
+    return Object.entries(QUOTAS_MAP)
+      .map(([key, value]) => ({
+        key,
+        name: key,
+        total: get(detail, `hard["${value.name}"]`),
+        used: get(detail, `used["${value.name}"]`, 0),
+        left: get(detail, `left["${value.name}"]`),
+      }))
+      .filter(({ total, used, name }) => {
+        if (!total && !Number(used) && RESERVED_KEYS.indexOf(name) === -1) {
+          return false
+        }
+
+        return true
+      })
+  }
+
   fetchData = () => {
     const { namespace, cluster } = this.props
     this.store.fetch({ namespace, cluster: cluster.name })
@@ -67,29 +89,26 @@ export default class ResourceQuota extends React.Component {
 
   render() {
     const { isFold } = this.state
-    const { cluster } = this.props
-    const detail = this.store.data
+    const { cluster, canEdit } = this.props
+
+    const items = this.items
 
     return (
       <Panel>
         <div className={styles.cluster}>
           <ClusterTitle cluster={cluster} theme="light" />
         </div>
-        <div className={styles.actions}>
-          <Button onClick={this.showEdit}>{t('Edit Quota')}</Button>
-        </div>
+        {canEdit && (
+          <div className={styles.actions}>
+            <Button onClick={this.showEdit}>{t('Edit Quota')}</Button>
+          </div>
+        )}
         <div className={classNames(styles.content, { [styles.fold]: isFold })}>
-          {Object.entries(QUOTAS_MAP).map(([key, value]) => (
-            <QuotaItem
-              key={key}
-              name={key}
-              total={get(detail, `hard["${value.name}"]`)}
-              used={get(detail, `used["${value.name}"]`, 0)}
-              left={get(detail, `left["${value.name}"]`)}
-            />
+          {items.map(props => (
+            <QuotaItem {...props} />
           ))}
         </div>
-        {Object.keys(QUOTAS_MAP).length > 3 && (
+        {items.length > 3 && (
           <div className={styles.folder}>
             <Button
               icon={isFold ? 'chevron-down' : 'chevron-up'}

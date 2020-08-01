@@ -100,12 +100,14 @@ export default class ImageSearch extends Component {
 
   getImageDetail = async ({ image, secret, ...rest }) => {
     const { namespace, cluster } = this.props
-    if (!image) {
+    if (!image || this.isUnMounted) {
       return
     }
+
     this.image = image
 
     this.setState({ isLoading: true })
+
     const result = await this.store.getImageDetail({
       cluster,
       namespace,
@@ -115,10 +117,6 @@ export default class ImageSearch extends Component {
 
     const selectedImage = { ...result, ...rest, image }
     set(globals, `cache[${image}]`, selectedImage)
-
-    if (this.isUnMounted) {
-      return
-    }
 
     if (!isEmpty(selectedImage.exposedPorts)) {
       this.setState({ showPortsTips: true })

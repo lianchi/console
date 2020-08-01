@@ -18,6 +18,7 @@
 
 import React, { Component } from 'react'
 import { toJS } from 'mobx'
+import { isEmpty } from 'lodash'
 import { observer, inject } from 'mobx-react'
 import { NavLink } from 'react-router-dom'
 import { Columns, Column } from '@pitrix/lego-ui'
@@ -33,8 +34,7 @@ class Nav extends Component {
   }
 
   get enabledActions() {
-    const { cluster, project_id } = this.props.match.params
-    const devops = this.props.detailStore.getDevops(project_id)
+    const { cluster, devops } = this.props.match.params
 
     return globals.app.getActions({
       module: 'pipelines',
@@ -45,9 +45,8 @@ class Nav extends Component {
 
   get isMutiBranch() {
     const { detailStore } = this.props
-    const scmSource = toJS(detailStore).detail.scmSource
-    const length = scmSource ? Object.keys(scmSource).length : 0
-    return Boolean(length)
+    const scmSource = toJS(detailStore.detail.scmSource)
+    return !isEmpty(scmSource)
   }
 
   renderBaseInfo() {

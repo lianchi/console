@@ -256,9 +256,8 @@ export default class MountConfig extends React.Component {
     const { formData, type } = this.state
     const volumeMounts = get(formData, 'volumeMounts')
 
-    const hasVolume = volume => {
-      return !isEmpty(volume) && get(volume, '[0].readOnly') !== 'null'
-    }
+    const hasVolume = volume =>
+      !isEmpty(volume) && get(volume, '[0].readOnly') !== 'null'
 
     if (hasVolume(volumeMounts) && !value) {
       return type === 'configmap'
@@ -276,6 +275,7 @@ export default class MountConfig extends React.Component {
     const { type, formData } = this.state
 
     const options = this.getResourceOptions()
+    const supportedAccessModes = ['ReadOnly', 'Not Mount']
 
     const placeholder = {
       label: isEmpty(options)
@@ -298,6 +298,7 @@ export default class MountConfig extends React.Component {
           <Form.Item rules={[{ validator: this.mountValidator }]}>
             <MountInput
               name="volumeMounts"
+              supportedAccessModes={supportedAccessModes}
               containers={containers}
               collectSavedLog={collectSavedLog}
             />

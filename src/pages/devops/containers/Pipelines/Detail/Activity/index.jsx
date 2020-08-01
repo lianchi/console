@@ -21,6 +21,7 @@ import {
   result as _result,
   get,
   omit,
+  isEmpty,
   debounce,
   isArray,
   isUndefined,
@@ -69,8 +70,7 @@ export default class Activity extends React.Component {
   }
 
   get enabledActions() {
-    const { project_id } = this.props.match.params
-    const devops = this.store.getDevops(project_id)
+    const { devops } = this.props.match.params
     return globals.app.getActions({
       module: 'pipelines',
       cluster: this.props.match.params.cluster,
@@ -102,6 +102,7 @@ export default class Activity extends React.Component {
     const { params } = this.props.match
     const isMutibranch = detail.branchNames
     const hasParameters = detail.parameters && detail.parameters.length
+
     if (isMutibranch || hasParameters) {
       this.setState({ showBranchModal: true })
     } else {
@@ -129,7 +130,7 @@ export default class Activity extends React.Component {
   }
 
   get isMutibranch() {
-    return this.store.detail && this.store.detail.scmSource
+    return this.store.detail && !isEmpty(toJS(this.store.detail.scmSource))
   }
 
   rowKeys = record => `${record.startTime}${record.queueId}`
@@ -137,7 +138,7 @@ export default class Activity extends React.Component {
   handleReplay = record => async () => {
     const { params } = this.props.match
 
-    const url = `devops/${params.project_id}/pipelines/${
+    const url = `devops/${params.devops}/pipelines/${
       params.name
     }${this.getActivityDetailLinks(record)}`
 
@@ -153,7 +154,7 @@ export default class Activity extends React.Component {
     const { detail } = this.props.detailStore
 
     await this.props.detailStore.scanRepository({
-      project_id: params.project_id,
+      devops: params.devops,
       name: detail.name,
       cluster: params.cluster,
     })
@@ -166,7 +167,7 @@ export default class Activity extends React.Component {
   handleStop = record => async () => {
     const { params } = this.props.match
 
-    const url = `devops/${params.project_id}/pipelines/${
+    const url = `devops/${params.devops}/pipelines/${
       params.name
     }${this.getActivityDetailLinks(record)}`
     await this.props.detailStore.handleActivityStop({
@@ -317,7 +318,7 @@ export default class Activity extends React.Component {
   ]
 
   renderModals = () => {
-    const { branchDetail } = this.store
+    const { detail } = this.store
     const { params } = this.props.match
 
     return (
@@ -325,7 +326,8 @@ export default class Activity extends React.Component {
         onOk={this.handleRunBranch}
         onCancel={this.hideBranchModal}
         visible={this.state.showBranchModal}
-        branches={toJS(branchDetail.branchNames)}
+        branches={toJS(detail.branchNames)}
+        parameters={toJS(detail.parameters)}
         params={params || {}}
       />
     )

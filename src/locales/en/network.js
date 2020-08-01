@@ -17,6 +17,17 @@
  */
 
 export default {
+  'Add Allowlist': 'Add Allowlist',
+  'Create Network Policy': 'Create Network Policy',
+  Direction: 'Direction',
+  Egress: 'Egress',
+  Ingress: 'Ingress',
+  'Network Isolation': 'Network Isolation',
+  'Network Policies': 'Network Policies',
+  'Network Policy': 'Network Policy',
+  'Traffic Egress': 'Traffic Egress',
+  'Traffic Ingress': 'Traffic Ingress',
+
   'Network Policys': 'Network Policies',
   NETWORK_POLICY_DESC:
     'The Network policy configuration allows network isolation within the same cluster, which means firewalls can be set up between certain instances (Pods).',
@@ -55,4 +66,6 @@ export default {
     'The network policy is configured to allow network isolation within the same cluster, that is, the ability to build a firewall between certain instances (pods).',
   CIDR_DESC: 'Based on the traffic direction',
   NETWORK_POLICY_MODAL_DIRECT: 'Please select the rule direction',
+  NETWORK_POLICY_MODAL_CIDRERR: 'Please fill in the CIDR information correctly',
+  NETWORK_POLICY_MODAL_PORTERR: 'Please fill in the port correctly',
 }

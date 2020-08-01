@@ -32,9 +32,8 @@ import PolicyStore from 'stores/alerting/policy'
 
 @withList({
   store: new PolicyStore('node'),
-  module: 'alerting-policy',
+  module: 'alert-policies',
   name: 'Alerting Policy',
-  authKey: 'alerting',
 })
 export default class AlertingPolicy extends React.Component {
   get tips() {
@@ -72,7 +71,6 @@ export default class AlertingPolicy extends React.Component {
     {
       title: t('Name'),
       dataIndex: 'name',
-      search: true,
       render: (name, record) => (
         <Avatar
           icon="wrench"

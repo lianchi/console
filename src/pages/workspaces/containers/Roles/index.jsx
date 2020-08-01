@@ -61,6 +61,7 @@ export default class Roles extends React.Component {
         onClick: item =>
           trigger('resource.baseinfo.edit', {
             detail: item,
+            success: routing.query,
           }),
       },
       {
@@ -99,10 +100,7 @@ export default class Roles extends React.Component {
     return {
       ...tableProps.tableActions,
       onCreate: this.showCreate,
-      getCheckboxProps: record => ({
-        disabled: !this.showAction(record),
-        name: record.name,
-      }),
+      selectActions: [],
     }
   }
 
@@ -113,7 +111,6 @@ export default class Roles extends React.Component {
       {
         title: t('Name'),
         dataIndex: 'name',
-        search: true,
         width: '25%',
         render: name => (
           <Avatar
@@ -173,6 +170,7 @@ export default class Roles extends React.Component {
           tableActions={this.tableActions}
           itemActions={this.itemActions}
           columns={this.getColumns()}
+          searchType="name"
         />
       </ListPage>
     )

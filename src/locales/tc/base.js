@@ -49,7 +49,7 @@ export default {
   Pods: '容器組',
   Memory: '記憶體',
   memory: '記憶體',
-  Custom: '自定議',
+  Custom: '自定義',
   Others: '其它',
 
   Platform: '平台管理',
@@ -63,7 +63,7 @@ export default {
   'As of Date': '統計截止時間',
   Workbench: '工作台',
   'Access Control': '訪問控制',
-  'App Templates': '應用範本',
+  'App Templates': '應用模板',
   'Service Components': '服務組件',
   Infrastructure: '基礎設施',
   'Basic Information': '基本資訊',
@@ -84,7 +84,7 @@ export default {
   ACCESS_CONTROL_DESC: '對平台中的企業空間、帳號、以及角色權限進行統一管理',
   APP_STORE_MANAGEMENT_DESC:
     '對雲原生應用的上架、下架以及審核等應用全生命週期的統一管理',
-  PLATFORM_SETTINGS_DESC: '客製化平台設置，如平台基本資訊、日誌收集器等',
+  PLATFORM_SETTINGS_DESC: '客製化平台設置，如平台基本資訊、紀錄收集器等',
 
   Loading: '載入中',
   Active: '已啟用',
@@ -114,13 +114,14 @@ export default {
   pending: '等待中',
   updating: '更新中',
   'is updating': '正在更新',
-  warning: '异常',
+  upgrading: '升級中',
+  warning: '異常',
   stopped: '已停止',
   disabled: '已停用',
-  deleted: '已删除',
+  deleted: '已刪除',
   completed: '已完成',
   unfinished: '未完成',
-  terminated: '已终止',
+  terminated: '已終止',
   healthy: '健康',
   unknown: '未知',
   failed: '失敗',
@@ -135,7 +136,7 @@ export default {
   Cordon: '停止調度',
   Uncordon: '啟動調度',
   Delete: '刪除',
-  Destroy: '銷毁',
+  Destroy: '銷毀',
   Enable: '啟用',
   Disable: '停用',
   Reset: '重置',
@@ -180,7 +181,7 @@ export default {
 
   NOT_ENABLE: '{resource}暫未啟用',
   NOT_AVAILABLE: '暫時没有可用的{resource}',
-  NO_RESOURCE: '暫时没有{resource}',
+  NO_RESOURCE: '暫時没有{resource}',
   RESOURCE_NOT_FOUND: '很抱歉，没有找到您所尋找的資源。',
   'No Available Resource': '暫無可用資源',
   'No Data': '暫無數據',
@@ -197,14 +198,14 @@ export default {
   'Display all': '顯示全部',
   'Display selected': '顯示已選',
   Display: '顯示',
-  Hidden: '隐藏',
+  Hidden: '隱藏',
   Fold: '折疊',
   Unfold: '展開',
 
   'Basic Info': '基本資訊',
-  'Pod Template': '容器組範本',
+  'Pod Template': '容器組模板',
   'Volume Settings': '儲存卷設置',
-  'Volume Templates': '儲存卷範本',
+  'Volume Templates': '儲存卷模板',
   'Storage Device': '儲存設備',
   'Port Settings': '端口設置',
   'Service Settings': '服務設置',
@@ -220,7 +221,7 @@ export default {
   'Official Document': '官網文件',
 
   optional: '選填',
-  Protocol: '協議',
+  Protocol: '協定',
   Certificate: '憑證',
   key: '鍵',
   value: '值',
@@ -232,6 +233,7 @@ export default {
   Add: '添加',
   'Add ': '添加',
   'Edit ': '編輯',
+  Set: '設置',
   New: '新建',
   Yes: '是',
   true: '是',
@@ -260,19 +262,16 @@ export default {
   MINUTE_TIME: '{count} 分鐘',
 
   NAME_DESC:
-    '最長 63 個字元，只能包含小寫字母、數字及分隔符號("-")，且必須以小謝字母或數字開頭及結尾',
+    '最長 63 個字元，只能包含小寫字母、數字及分隔符號("-")，且必須以小寫字母或數字開頭及結尾',
   NAME_TOO_LONG: '最長 63 个字元',
 
   LONG_NAME_DESC:
     '最長 253 個字元，只能包含小寫字母、數字及分隔符號("-")，且必須以小寫字母或數字開頭及結尾',
   LONG_NAME_TOO_LONG: '最長 253 個字元',
-  LONG_DESC_TOO_LONG: '最長 1000 個字元',
-  ALIAS_DESC: '别名可以由任意字元组成，幫助您更好的區分資源，並支持中文名稱',
+  ALIAS_DESC: '别名可以由任意字元组成，幫助您更好的區分資源，最長 63 個字元。',
   LABEL_FORMAT_DESC:
     '標籤的 key 和 value 最長 63 個字元，key 如果包含域名, 則最長 253 字元。只能包含大小寫字母、數字, 分隔符號("-")，下底線(_)及小數點(.)，且必須以數字或大小寫開頭和結尾',
-  DESCRIPTION_DESC:
-    '描述將被作為註解添加到資源中，並顯示在應用的詳情中，描述資訊不超過 1000 个字元',
-  SHORT_DESCRIPTION_DESC: '描述資訊不超過 1000 個字元',
+  DESCRIPTION_DESC: '描述資訊不超過 256 個字元',
   PROJECT_DESC: '將根據項目進行資源進行分組, 可以按項目對資源進行查看管理',
   'MULTI-CLUSTER_PROJECT_CREATE_DESC':
     '將根據項目進行資源進行分組, 可以按項目對資源進行查看管理',
@@ -327,7 +326,7 @@ export default {
     '資源被應用 <strong>{app}</strong> 管理, 刪除後可能影響此應用的正常使用。請輸入{type}名稱 <strong>{resource}</strong> 確保您已了解操作所带來的風險。',
   DELETE_CONFIRM_PLACEHOLDER: '請輸入{resource}',
 
-  REMOVE_USER_TIP: '確定移除使用者 <strong>{username}</strong> ? ',
+  REMOVE_USER_TIP: '確定移除用戶 <strong>{username}</strong> ? ',
 
   REMOVE_MEMBER_TIP: '確定移除成員 <strong>{resource}</strong> ?',
 
@@ -343,16 +342,6 @@ export default {
 
   EVENT_NORMAL: '正常',
   EVENT_WARNING: '異常',
-
-  ASCENDING_ORDER: '升序排列',
-  DESCENDING_ORDER: '降序排列',
-  OPERATE: '操作',
-  PLEASE_SELECT: '請選擇',
-  FILTER: '過濾選項',
-  CANCEL: '取消',
-  NO_RESULTS_FOUND: '暫無結果',
-  REACH_BOTTOM: '已到底部',
-  CLEAR_VALUE: '清除',
 
   'Edit Mode': '編輯模式',
   'Load More': '載入更多',
@@ -381,8 +370,8 @@ export default {
   Confirm: '確認',
   Stage: '階段',
   'Default Value': '預設值',
-  Username: '使用者名稱',
-  'Unknown User': '未知使用者',
+  Username: '用戶名稱',
+  'Unknown User': '未知用戶',
   secret_text: '秘密文本',
   domain: '域名',
   Account: '帳戶',
@@ -407,7 +396,7 @@ export default {
   to: '至',
   Download: '下載',
   Aborted: '已取消',
-  Paused: '暫停',
+  Paused: '已暫停',
   'This param is required': '此参數不能為空',
   Images: '鏡像',
   filename: '文件名稱',
@@ -424,17 +413,17 @@ export default {
   DETAIL_NOT_FOUND_DESC:
     '🙇 對不起没有找到相關資源，返回 <a href="{link}">{title}</a>',
   Toolbox: '工具箱',
-  TOOLBOX_DESC: '提供日誌、事件、審計等相關查詢工具',
+  TOOLBOX_DESC: '提供紀錄、事件、審計等相關查詢工具',
   'Analysis Tools': '分析工具',
   'Control Tools': '控制工具',
   'Third-party Tools': '第三方工具',
 
-  Logging: '日誌',
-  logging: '日誌',
+  Logging: '紀錄',
+  logging: '紀錄',
   Auditing: '審計',
   auditing: '審計',
-  'Log Search': '日誌查詢',
-  LOG_SEARCH_DESC: '針對企業空間、項目、資源等多維度的日誌查詢工具。',
+  'Log Search': '紀錄查詢',
+  LOG_SEARCH_DESC: '針對企業空間、項目、資源等多維度的紀錄查詢工具。',
   KUBECTL_DESC: '目前集群客戶端命令行工具',
   TOOLBOX_KUBECTL_DESC: '操作多集群的客戶端命令行工具',
 
@@ -457,7 +446,7 @@ export default {
   'rules desc':
     'KubeSphere可以根據您設置的規則進行操作審計的收集，點擊查看如何定義規則。',
   Category: '類别',
-  Resources: '資源',
+  Resource: '資源',
   'Earliest start time': '最早發生時間',
   'Most recent start time': '最近發生時間',
   'Related resources': '關聯資源',
@@ -471,7 +460,7 @@ export default {
   'Operation Account': '操作帳號',
   'Source IP': '來源 IP',
   Subresource: '子資源',
-  'Status Code': '狀態碼',
+  'Status Code': '狀態代碼',
 
   NanoSeconds: '奈秒',
   MicroSeconds: '微秒',
@@ -505,7 +494,7 @@ export default {
   'Learn more': '了解更多',
 
   KS_DESCRIPTION:
-    'KubeSphere 是一款開源項目，在目前主流容器調度平台 Kubernetes 之上構建的企業級分佈式多租戶容器管理平台，提供簡單易用的操作界面以及引導式操作方式，在降低使用者使用容器調度平台學習成本的同時，極大降低開發、測試、維運的日常工作的複雜度。',
+    'KubeSphere 是一款開源項目，在目前主流容器調度平台 Kubernetes 之上構建的企業級分佈式多租戶容器管理平台，提供簡單易用的操作界面以及引導式操作方式，在降低用戶使用容器調度平台學習成本的同時，極大降低開發、測試、維運的日常工作的複雜度。',
 
   REPS_ADDRESS: '項目地址',
   ISSUE_FEEDBACK: '問題反饋',
@@ -532,16 +521,16 @@ export default {
 
   DATA_SOURCE: '數據源',
 
-  EMPTY_WRAPPER: '未發現{resource}',
+  EMPTY_WRAPPER: '未發現 {resource}',
 
-  'User Guides': '使用者指南',
+  'User Guides': '用戶指南',
   'Quick Support': '快速獲取幫助',
   'Developer Community': '開發者社區',
   HISTORY_DESC:
     '當您在多個企業空間或者項目下進行協同工作時，瀏覽器會紀錄下您最近訪問的路徑，您可以透過 F1 / (Win + K) / (Command + K) 查看歷史紀錄，來快速切換您的訪問資源。',
-  NO_HISTORY_TITLE: '瀏覽器暫未收錄到您對集群或者企業空间等區域的訪問紀錄',
+  NO_HISTORY_TITLE: '瀏覽器暫未收錄到您對集群或者企業空間等區域的訪問紀錄',
   NO_HISTORY_DESC: '您可以嘗試對企業空間或者集群、項目等資源的訪問',
-  USER_GUIDES_DESC: '最詳盡的 KubeSphere 使用者指南文件',
+  USER_GUIDES_DESC: '最詳盡的 KubeSphere 用戶指南文件',
   DEVELOPER_DESC: '透過在開發者社區提出問題獲得幫助',
   API_DOCS_DESC: '最詳盡的 KubeSphere API 文件',
   GITHUB_ISSUES_DESC: '透過在 GitHub 提出 Issue 獲得幫助',
@@ -553,5 +542,8 @@ export default {
 
   HOW_TO_MODIFY_PLATFORM_INFO: '如何修改平台資訊?',
   PLATFORM_INFO_DESC: '查看平台標題及描述等資訊',
-  PLATFORM_SETTINGS_SELECTOR_DESC: '客製化平台的系统配置',
+  PLATFORM_SETTINGS_SELECTOR_DESC: '客製化平台的系統配置',
+
+  EVENT_AGE: '发生时间',
+  EVENT_FROM: '来源',
 }

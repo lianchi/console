@@ -19,7 +19,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { observer } from 'mobx-react'
-import { get } from 'lodash'
+import { get, isArray } from 'lodash'
 import { Icon, Loading, Tooltip } from '@pitrix/lego-ui'
 
 import { Status, Button } from 'components/Base'
@@ -63,11 +63,7 @@ export default class ImageBuilderLastRun extends React.Component {
       return
     }
 
-    if (globals.app.hasClusterModule(cluster, 'logging')) {
-      await this.store.fetchPodsLogs(logURL, cluster)
-    } else {
-      await this.store.getLog(logURL, cluster)
-    }
+    await this.store.getLog(logURL, cluster)
 
     this.handleScrollToBottom()
     if (logData.hasMore) {
@@ -94,10 +90,20 @@ export default class ImageBuilderLastRun extends React.Component {
     e && e.stopPropagation()
   }
 
+  pathAddCluster = (path, cluster) => {
+    const match = path.match(/(\/kapis|api|apis)(.*)/)
+    return !cluster || cluster === 'default' || !isArray(match)
+      ? path
+      : `${match[1]}/clusters/${cluster}${match[2]}`
+  }
+
   handleDownload = () => {
-    const { sourceUrl } = this.props.runDetail
+    const { sourceUrl, cluster } = this.props.runDetail
     const path = get(parseUrl(sourceUrl), 'pathname', `/${sourceUrl}`)
-    const downLoadUrl = `${window.location.protocol}//${window.location.host}/b2i_download${path}`
+    const url = this.pathAddCluster(path, cluster)
+    const downLoadUrl = `${window.location.protocol}//${
+      window.location.host
+    }/b2i_download${url}`
     window.open(downLoadUrl)
   }
 
@@ -123,7 +129,13 @@ export default class ImageBuilderLastRun extends React.Component {
   }
 
   renderDetailInfo = () => {
-    const { imageName, branch, binaryName, binarySize } = this.props.runDetail
+    const {
+      imageName,
+      branch,
+      binaryName,
+      binarySize,
+      status,
+    } = this.props.runDetail
 
     if (!this.props.isB2i) {
       return (
@@ -147,7 +159,12 @@ export default class ImageBuilderLastRun extends React.Component {
           <Icon name="templet" />
           <p>{imageName}</p>
         </div>
-        <Button onClick={this.handleDownload} type="primary">
+
+        <Button
+          onClick={this.handleDownload}
+          type="primary"
+          disabled={status !== 'Successful'}
+        >
           {t('Download Artifact')}
         </Button>
       </div>

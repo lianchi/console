@@ -134,6 +134,14 @@ export const safeParseJSON = (json, defaultValue) => {
   return result
 }
 
+export const safeAtob = str => {
+  let result = ''
+  try {
+    result = atob(str)
+  } catch (e) {}
+  return result
+}
+
 export const isSystemRole = role => /^system:/.test(role)
 
 /**
@@ -164,7 +172,7 @@ export const capitalize = string =>
 export const getQueryString = params =>
   Object.keys(params)
     .filter(key => params[key])
-    .map(key => `${key}=${params[key]}`)
+    .map(key => `${key}=${encodeURIComponent(params[key])}`)
     .join('&')
 
 export const getFilterString = (
@@ -310,9 +318,13 @@ export const memoryFormat = (memory, unit = 'Mi') => {
 
   let value = Number(trimEnd(memory.toLowerCase(), currentUnit))
 
-  if (/m$/g.test(memory)) {
-    // transfer to ki
+  if (/m$/g.test(String(memory))) {
+    // transfer m to ki
     value = Number(trimEnd(memory, 'm')) / (1000 * 1024)
+    currentUnitIndex = 0
+  } else if (/^[0-9.]*$/.test(String(memory))) {
+    // transfer bytes to ki
+    value = Number(memory) / 1024
     currentUnitIndex = 0
   }
 
@@ -381,14 +393,14 @@ export const getWebSocketProtocol = protocol => {
 export const getDocsUrl = module => {
   const lang = LANG_MAP[cookie('lang') || getBrowserLang()]
 
-  const { url: prefix, version } = globals.config.documents
+  const { url: prefix } = globals.config.documents
   const docUrl = get(globals.config, `resourceDocs[${module}]`, '')
 
   if (!docUrl) {
     return ''
   }
 
-  return `${prefix}/${version}/${lang}${docUrl}`
+  return `${prefix}/${lang}${docUrl}`
 }
 
 export const hasChinese = str => /.*[\u4E00-\u9FA5]+.*/.test(str)
@@ -396,6 +408,9 @@ export const hasChinese = str => /.*[\u4E00-\u9FA5]+.*/.test(str)
 export const getBrowserLang = () => {
   const lang = (navigator.language || navigator.browserLanguage).toLowerCase()
 
+  if (lang === 'zh-tw') {
+    return 'tc'
+  }
   if (lang.indexOf('zh') !== -1) {
     return 'zh'
   }

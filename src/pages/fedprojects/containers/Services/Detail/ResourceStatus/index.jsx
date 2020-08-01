@@ -17,8 +17,9 @@
  */
 
 import React from 'react'
+import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import { get, isEmpty, keyBy } from 'lodash'
+import { get, keyBy } from 'lodash'
 
 import WorkloadStore from 'stores/workload'
 import FedStore from 'stores/federated'
@@ -35,6 +36,10 @@ export default class ResourceStatus extends React.Component {
     super(props)
 
     this.store = props.detailStore
+
+    this.state = {
+      workloadExist: true,
+    }
 
     this.workloadName = get(
       this.store.detail.annotations,
@@ -64,19 +69,22 @@ export default class ResourceStatus extends React.Component {
     const name = this.workloadName
 
     const clusters = this.store.detail.clusters.map(item => item.name)
-    if (name) {
+    const result = await this.workloadStore.checkName({ name, namespace })
+    if (result.exist) {
       this.workloadStore.fetchDetail({ name, namespace })
-      this.workloadStore.fetchResources({
-        name,
-        namespace,
-        clusters,
-      })
+      this.workloadStore.fetchResources({ name, namespace, clusters })
+    } else {
+      this.setState({ workloadExist: false })
     }
   }
 
   renderReplicaInfo() {
+    const { clusters } = this.store.detail || {}
     const { detail, resources, isResourcesLoading } = this.workloadStore
-    const clusters = keyBy(this.props.projectStore.detail.clusters, 'name')
+    const clustersDetail = keyBy(
+      this.props.projectStore.detail.clusters,
+      'name'
+    )
 
     return (
       <ClusterWorkloadStatus
@@ -85,6 +93,7 @@ export default class ResourceStatus extends React.Component {
         detail={detail}
         resources={resources}
         clusters={clusters}
+        clustersDetail={clustersDetail}
         isLoading={isResourcesLoading}
       />
     )
@@ -93,16 +102,11 @@ export default class ResourceStatus extends React.Component {
   renderWorkloadPods() {
     const { resources } = this.workloadStore
     const clusters = this.store.detail.clusters.map(item => item.name)
-    const resourceDetail = Object.values(resources)[0]
-
-    if (isEmpty(resourceDetail)) {
-      return null
-    }
 
     return (
       <PodsCard
         prefix={this.prefix}
-        detail={resourceDetail}
+        details={toJS(resources)}
         clusters={clusters}
         isFederated
       />
@@ -113,12 +117,11 @@ export default class ResourceStatus extends React.Component {
     const { resources, isResourcesLoading } = this.store
 
     const clusters = this.store.detail.clusters.map(item => item.name)
-    const detail = Object.values(resources)[0]
 
     return (
       <PodsCard
         prefix={this.prefix}
-        detail={detail}
+        details={toJS(resources)}
         clusters={clusters}
         isLoading={isResourcesLoading}
         isFederated
@@ -127,7 +130,7 @@ export default class ResourceStatus extends React.Component {
   }
 
   renderContent() {
-    if (!this.workloadName) {
+    if (!this.workloadName || !this.state.workloadExist) {
       return this.renderPods()
     }
 

@@ -17,6 +17,71 @@
  */
 
 export default {
+  'Add Cluster': 'Add Cluster',
+  'Add New Cluster': 'Add New Cluster',
+  'All Projects': 'All Projects',
+  'Authorize the cluster to workspace': 'Authorize the cluster to workspace',
+  Authorized: 'Authorized',
+  'Available Clusters': 'Available Clusters',
+  'Choose a provider': 'Choose a provider',
+  'Click to Copy': 'Click to Copy',
+  'Cluster Info': 'Cluster Info',
+  'Cluster initialization failed': 'Cluster initialization failed',
+  'Cluster List': 'Cluster List',
+  'Cluster Management': 'Cluster Management',
+  'Cluster Member': 'Cluster Member',
+  'Cluster Members': 'Cluster Members',
+  'Cluster Name': 'Cluster Name',
+  'Cluster Roles': 'Cluster Roles',
+  'Cluster Settings': 'Cluster Settings',
+  'Cluster Visibility': 'Cluster Visibility',
+  'Connection Method': 'Connection Method',
+  'Copy successfully': 'Copy successfully',
+  'Custom Resources': 'Custom Resources',
+  'Edit cluster basic information': 'Edit cluster basic information',
+  'Edit Cluster Info': 'Edit Cluster Info',
+  'Edit Visibility': 'Edit Visibility',
+  'Enter the project': 'Enter the project',
+  'Go back': 'Go back',
+  'Host Cluster': 'Host Cluster',
+  'Host Clusters': 'Host Clusters',
+  Import: 'Import',
+  'Import Kubernetes Cluster': 'Import Kubernetes Cluster',
+  'Invite members to the cluster': 'Invite members to the cluster',
+  'IP Ranges': 'IP Ranges',
+  'Kubernetes Settings': 'Kubernetes Settings',
+  'Kubernetes Status': 'Kubernetes Status',
+  'Kubernetes Version': 'Kubernetes Version',
+  'Member Cluster': 'Member Cluster',
+  'Member Clusters': 'Member Clusters',
+  'Network Management': 'Network Management',
+  'Network Policies': 'Network Policies',
+  'Network Topology': 'Network Topology',
+  'Node Types': 'Node Types',
+  'Nodes Management': 'Nodes Management',
+  'Not Ready': 'Not Ready',
+  'Please input cluster name': 'Please input cluster name',
+  'Please input the kubesphere api server address of the cluster':
+    'Please input the kubesphere api server address of the cluster',
+  'Please select or input a provider': 'Please select or input a provider',
+  'Please select or input a tag': 'Please select or input a tag',
+  'Scheduler Scheduling Times': 'Scheduler Scheduling Times',
+  'Scheduling Failed Pods': 'Scheduling Failed Pods',
+  'Select Clusters': 'Select Clusters',
+  'Set as public cluster': 'Set as public cluster',
+  Snapshots: 'Snapshots',
+  'Storage Management': 'Storage Management',
+  'System Projects': 'System Projects',
+  'The current cluster is public': 'The current cluster is public',
+  Tools: 'Tools',
+  Unauthorized: 'Unauthorized',
+  Unbind: 'Unbind',
+  'Unbind Cluster': 'Unbind Cluster',
+  'User Projects': 'User Projects',
+  Validating: 'Validating',
+  'Validation failed': 'Validation failed',
+  'Waiting for the cluster to join': 'Waiting for the cluster to join',
+
   NO_CLUSTER_TIP: 'Please add at least one cluster.',
   NO_CLUSTER_TIP_DESC:
     'A cluster is a group of nodes (physical or virtual machines) running Kubernetes, and the function of Kubesphere also depends on the nodes in the cluster.',
@@ -71,9 +136,9 @@ export default {
   INPUT_KUBECONFIG: 'Please fill in the kubeconfig of the target cluster',
 
   CLUSTER_DIRECT_IMPORT_TIP:
-    'The multi-cluster control interface of KubeSphere connects to imported clusters through the kubeconfig provided. For this method, the current cluster must be able to directly access clusters that are to be imported through the server address in the kubeconfig.</br></br>This method generally applies to the conditions below:</br>1. The current cluster and clusters to be imported are in the same internal network.</br>2. The network of both the current cluster and clusters to be imported is connected through VPN or other technologies (e.g. Tunneling).</br>3. The server address in the kubeconfig can be accessed through public network.',
+    'The multi-cluster control plane of KubeSphere connects to imported clusters through the kubeconfig provided. For this method, the current cluster must be able to directly access clusters that are to be imported through the server address in the kubeconfig.</br></br>This method generally applies to the conditions below:</br>1. The current cluster and clusters to be imported are in the same internal network.</br>2. The network of both the current cluster and clusters to be imported is connected through VPN or other technologies (e.g. Tunneling).</br>3. The server address in the kubeconfig can be accessed through public network.',
   CLUSTER_AGENT_IMPORT_TIP:
-    'The KubeSphere control interface connects to clusters that are to be imported through a proxy. The control interface runs a public proxy service, which is connected to a client component created by clusters to be imported. Thus, a reserve proxy is created. For this method, the control interface and clusters to be imported do not need to be in the same network. The apiserver address of clusters to be imported does not need to be exposed either. However, network performance may be affected.</br></br>This method generally applies to the conditions below:</br>1. The current cluster and clusters to be imported are not in the same network.<br/>2. The network of both the current cluster and clusters to be imported cannot be connected through VPN or other technologies (e.g. Tunneling).<br/>3. Network performance deficiencies within clusters can be accepted.',
+    'The KubeSphere control plane connects to clusters that are to be imported through a proxy. The control plane runs a public proxy service, which is connected to a client component created by clusters to be imported. Thus, a reserve proxy is created. For this method, the control plane and clusters to be imported do not need to be in the same network. The apiserver address of clusters to be imported does not need to be exposed either. However, network performance may be affected.</br></br>This method generally applies to the conditions below:</br>1. The current cluster and clusters to be imported are not in the same network.<br/>2. The network of both the current cluster and clusters to be imported cannot be connected through VPN or other technologies (e.g. Tunneling).<br/>3. Network performance deficiencies within clusters can be accepted.',
   CLUSTER_AGENT_TITLE:
     'Please add the cluster based on the Agent provided in the cluster.',
   CLUSTER_AGENT_DESC: 'A corresponding Agent needs to be set in the cluster.',
@@ -101,7 +166,13 @@ export default {
     'A public cluster means all platform users can access the cluster, in which they are able to create and schedule resources.',
 
   SELECT_HOST_CLUSTER_WARNING:
-    'Please try not to create resources on the host cluster to avoid excessive load, which leads to a decrease in the stability of the multi-cluster.',
+    'Please try not to create resources on the host cluster to avoid excessive loads, which can lead to a decrease in the stability across clusters.',
   HOST_CLUSTER_VISIBILITY_WARNING:
-    'Please be careful to authorize the host cluster to the workspace.If the load of the host cluster is too high, the stability of the multi-cluster will decrease.',
+    'Please be careful to authorize the host cluster to the workspace. If the load of the host cluster is too high, the stability across clusters will decrease.',
+  CLUSTER_VISIBILITY_REMOVE_WARNING:
+    'Once the authorization for the workspace to use the cluster is removed, all resources of the workspace in the current cluster will be deleted.',
+
+  REMOVE_WORKSPACE_CONFIRM_TITLE: 'Are you sure to remove authorization?',
+  REMOVE_WORKSPACE_CONFIRM_DESC:
+    'Are you sure to remove the authorization to the workspace(s) {resource}? Once the authorization for the workspace to use the cluster is removed, all resources of the workspace in the current cluster will be deleted.',
 }

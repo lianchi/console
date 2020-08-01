@@ -57,6 +57,7 @@ export default class AppRepos extends React.Component {
         onClick: item =>
           trigger('openpitrix.repo.edit', {
             detail: item,
+            workspace: this.workspace,
             success: routing.query,
           }),
       },
@@ -108,7 +109,10 @@ export default class AppRepos extends React.Component {
   handleIndex = async () => {
     await Promise.all(
       this.props.store.list.selectedRowKeys.map(async repo => {
-        const resp = await this.props.store.index({ repo_id: repo })
+        const resp = await this.props.store.index({
+          repo_id: repo,
+          workspace: this.workspace,
+        })
         const { message } = resp
 
         if (message === 'success') {
@@ -123,7 +127,6 @@ export default class AppRepos extends React.Component {
     {
       title: t('Name'),
       dataIndex: 'name',
-      search: true,
       width: '25%',
       render: (name, record) => (
         <Avatar
@@ -163,6 +166,7 @@ export default class AppRepos extends React.Component {
           tableActions={this.tableActions}
           itemActions={this.itemActions}
           columns={this.getColumns()}
+          searchType="keyword"
         />
       </ListPage>
     )

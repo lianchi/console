@@ -28,7 +28,8 @@ import EmptyTable from 'components/Cards/EmptyTable'
 import { getLocalTime } from 'utils'
 
 import Banner from 'components/Cards/Banner'
-import CICDTable from '../Pipelines/Table'
+import Table from 'components/Tables/Base'
+
 import CreateModal from './credentialModal'
 import styles from './index.scss'
 
@@ -72,9 +73,9 @@ class Credential extends React.Component {
   }
 
   getData(params) {
-    const { project_id, cluster } = this.props.match.params
+    const { devops, cluster } = this.props.match.params
     this.store.fetchList({
-      project_id,
+      devops,
       cluster,
       ...params,
     })
@@ -159,14 +160,12 @@ class Credential extends React.Component {
     const { data, filters, isLoading, total, page, limit } = toJS(
       this.store.list
     )
-
-    const isEmptyList = isLoading === false && total === 0 && data.length <= 0
-
-    const omitFilters = omit(filters, 'page')
-
     const showCreate = this.enabledActions.includes('create')
       ? this.showCreate
       : null
+
+    const isEmptyList = isLoading === false && total === 0 && data.length <= 0
+    const omitFilters = omit(filters, ['page', 'limit'])
 
     if (isEmptyList) {
       return (
@@ -179,9 +178,8 @@ class Credential extends React.Component {
     }
 
     const pagination = { total, page, limit }
-
     return (
-      <CICDTable
+      <Table
         data={data}
         columns={this.getColumns()}
         filters={omitFilters}
@@ -195,13 +193,13 @@ class Credential extends React.Component {
   }
 
   renderModals() {
-    const { project_id, cluster } = this.props.match.params
+    const { devops, cluster } = this.props.match.params
     return (
       <CreateModal
         visible={this.state.showCreate}
         onOk={this.handleCreate}
         onCancel={this.hideCreate}
-        project_id={project_id}
+        devops={devops}
         cluster={cluster}
       />
     )

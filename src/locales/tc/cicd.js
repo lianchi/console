@@ -20,7 +20,7 @@ export default {
   'Discover branches from repoitory': '發現存儲庫上的分支',
   'Discover pull requests from origin': '發現原始儲存庫與目標儲存庫相同的 PR',
   'Discover pull requests from forks': '發現 Fork 儲存庫與目標儲存庫相同的 PR',
-  'User types that can trigger builds': '可以觸發構建的使用者類型',
+  'User types that can trigger builds': '可以觸發構建的用戶類型',
   'If you check this option, you cannot run multiple builds concurrently.':
     '如果勾選此選項，則不能同時運行多個 build.',
   'Parametric Build': '参數化構建',
@@ -43,7 +43,7 @@ export default {
   'The name of the pipeline. Pipelines in the same project must have different names.':
     'Pipeline 的名稱，同一個項目内 Pipeline 不能重名',
   'It specifies the default value of the field, allowing the user to save the typed actual value.':
-    '指定字段的預設值，允許使用者保存鍵入實際值。',
+    '指定字段的預設值，允許用戶保存鍵入實際值。',
   'Comment information': '註解資訊',
   'Alternate options, one per line. The first line will be used as the default option.':
     '備用選擇，每行一個。第一行的將作為預設選項。',
@@ -72,7 +72,7 @@ export default {
   'Add Parallel Stage': '添加並行階段',
   'Add Step': '添加步驟',
   'Pipeline Configuration': '編輯流水線',
-  'Show Logs': '查看日誌',
+  'Show Logs': '查看紀錄',
   'Code Repository': '代碼倉庫',
   'Discard Old Builds': '丢棄舊的構建',
   'Discard old branch': '丢棄舊的分支',
@@ -94,7 +94,7 @@ export default {
   'Repository Url': '倉庫 URL',
   'get token': '獲取 Token',
   'CI/CD_CREATE_DESC': `Pipeline 是一系列的插件集合，可以通過組合它們來實現持續集成和持續交付的功能。
-    Pipeline DSL 為我们提供了一個可擴展的工具集，讓我们可以將简單到複雜的邏輯通過代碼實現。`,
+    Pipeline DSL 為我們提供了一個可擴展的工具集，讓我們可以將簡單到複雜的邏輯通過代碼實現。`,
   'Create Credentials': '創建憑證',
   'Credential ID': '憑證 ID',
   username_password: '帳戶憑證',
@@ -105,7 +105,7 @@ export default {
   'Discover PR form Origin': '以原倉庫中發現 PR',
   'Discover PR form Forks': '以 Fork 倉庫中發現 PR',
   'Pull Strategy': '拉取策略',
-  'Trusted User': '可信任使用者',
+  'Trusted User': '可信任用戶',
   'Add Action': '添加操作',
   'All branches': '所有分支',
   'Exclude branches that are also filed as PRs': '排除也作為 PR 提交的分支',
@@ -115,7 +115,7 @@ export default {
   OPTIONS_PR_PARAMS_3: `當 PR 被發現時會創建兩個流水線，
     一個流水線使用 PR 本身的源代碼版本，
     一個流水線使用 PR 與目標分支合併後的源代碼版本`,
-  'From users with Admin or Write permission': '管理員或有編輯權限的使用者',
+  'From users with Admin or Write permission': '管理員或有編輯權限的用戶',
   Normal: '通用',
   'Run Pipeline': '運行流水線',
   Artifacts: '成品',
@@ -134,8 +134,8 @@ export default {
   'No artifacts records': '没有成品紀錄',
   'Select this repo': '選擇此倉庫',
   'Scan repo success': '掃描倉庫觸發成功',
-  'Pipeline Run Logs': '流水線運行日誌',
-  'Download Logs': '下载日誌',
+  'Pipeline Run Logs': '流水線運行紀錄',
+  'Download Logs': '下载紀錄',
   'Time Used': '用時',
   'not run': '未運行',
   'Not Build': '未執行',
@@ -148,10 +148,10 @@ export default {
   'Sub-healthy': '亞健康',
   Schedule: '行程表',
   'Stop Job Successfully, Status updated later': '任務已停止，狀態稍後更新',
-  'Scan Reponsitory Logs': '掃描倉庫日誌',
+  'Scan Reponsitory Logs': '掃描倉庫紀錄',
   'Started By': '實施者',
   Rescan: '重新掃描',
-  'Scan Logs Success': '掃描日誌成功',
+  'Logs Scanned Successfully': '掃描紀錄成功',
   'Configuration error': '配置資訊錯誤',
   'branch success': '分支成功',
   tips_Parametric_build: `參數化構建過程允許您在進行構建時傳入一個或多個參數。
@@ -159,7 +159,7 @@ export default {
   每個參數都有一個 Name 和某種 Value，Value 的值取決於參數類型。在 Pipeline 當中可以使用
     params.Name
   或 Name 訪問這些值。這意味著此處定義的每個參數應具有唯一的名稱。
-  當參數化項目時，構建會被替換為參數化構建，其中將提示使用者為每個定義的參數輸入值。
+  當參數化項目時，構建會被替換為參數化構建，其中將提示用戶為每個定義的參數輸入值。
   如果他们選擇不輸入任何内容，則構建以每個參數的預設值進行。
   如果項目的構建是自動啟動，例如，由定時觸發器啟動，這時將使用參數的預設值進行觸發。`,
   tips_Authentication_token: `如果需要通過訪問預定義 URL 開觸發構建，請啟用此選項。
@@ -265,7 +265,7 @@ export default {
   'Branch Included': '包括分支',
   'Branch Excluded': '排除分支',
   "The default value here is the current user's kubeconfig.":
-    '这里的預設值为当前用户的 kubeconfig',
+    '這裡的預設值為目前用户的 kubeconfig',
   'The label on which to run the Pipeline or individual stage':
     '流水線或單個階段的標籤',
   'single Svn': '單分支 SVN',
@@ -293,7 +293,7 @@ export default {
     <li>Replica Set</li>
     <li>
       Replication
-      Controller (不支持滾動更新，如果要使用滾動更新请使用部署)
+      Controller (不支持滾動更新，如果要使用滾動更新請使用部署)
     </li>`,
   'username or group name, multiple values ​​used, separated':
     '用戶名或組名，多個值使用英文逗號分隔',
@@ -317,14 +317,14 @@ export default {
   'Executes the code inside the block with a determined time out limit.':
     '使用確定的超時限制執行塊内的代碼.',
   'Timeout after no activity in logs for this block':
-    '此區塊代碼無日誌輸出後開始計算超時',
+    '此區塊代碼無紀錄輸出後開始計算超時',
   'Absolute duration': '代碼塊所用的絕對時間',
   pipeline_conditions: '條件',
   'The conditions required to implement the current phase (optional).':
     '執行目前階段段所需要滿足的條件 （可選）',
   'Add conditions': '添加條件',
   'Add nesting conditions': '添加嵌套條件',
-  'Current branch name must match the input value': '目前分支名需符合輸入值',
+  'Current branch name must match the input value': '目前分支名稱需符合輸入值',
   'The environment variable entered before running the pipeline is match the current value.':
     '運行流水線前輸入的環境變量與目前值一致',
   'Enter an expression': '輸入一個表達式',
@@ -332,7 +332,7 @@ export default {
   'Internal nesting conditions must be matched': '内部嵌套的條件需全部滿足',
   'Internal nested conditions only need to satisfy one':
     '内部嵌套的條件只需符合一個',
-  'Enviroment name': '環境變量名',
+  'Enviroment name': '環境變量名稱',
   expression: '表達式',
   PARAMS_STRING: '字符串參數 (String) ',
   PARAMS_TEXT: '文本 (Text) ',
@@ -462,4 +462,6 @@ export default {
   'select a pipeline': '選擇一個流水線',
   timer: '定時器',
   'Started By {name}': '由{name}觸發掃描',
+  'Credential ID exists': '憑證 ID 已存在',
+  'Invalid credential ID': '憑證 ID 格式不合法',
 }

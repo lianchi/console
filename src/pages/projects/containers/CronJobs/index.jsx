@@ -129,7 +129,7 @@ export default class CronJobs extends React.Component {
   }
 
   getItemDesc = record => {
-    const { status, reason } = getWorkloadStatus(record, this.module)
+    const { status, reason } = getWorkloadStatus(record, this.props.module)
     const desc = reason ? (
       <StatusReason status={status} reason={t(reason)} data={record} />
     ) : (
@@ -175,16 +175,14 @@ export default class CronJobs extends React.Component {
         title: t('Schedule'),
         dataIndex: 'spec.schedule',
         isHideable: true,
-        search: true,
         width: '15%',
       },
       {
         title: t('Created Time'),
-        dataIndex: 'creationTimestamp',
+        dataIndex: 'createTime',
         sorter: true,
-        sortOrder: getSortOrder('creationTimestamp'),
+        sortOrder: getSortOrder('createTime'),
         isHideable: true,
-        search: true,
         width: 150,
         render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
       },

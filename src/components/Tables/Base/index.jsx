@@ -170,8 +170,8 @@ export default class WorkloadTable extends React.Component {
   }
 
   get showEmpty() {
-    const { data, filters } = this.props
-    return this.mounted && isEmpty(data) && isEmpty(filters)
+    const { filters, pagination } = this.props
+    return this.mounted && isEmpty(filters) && pagination.total === 0
   }
 
   handleChange = (_, filters, sorter) => {
@@ -222,6 +222,8 @@ export default class WorkloadTable extends React.Component {
   handleFilterInput = tags => {
     const filters = {}
     tags.forEach(n => {
+      // transfer keyword to name
+      n.filter = n.filter === 'keyword' ? 'name' : n.filter
       filters[n.filter] = n.value
     })
 
@@ -326,6 +328,7 @@ export default class WorkloadTable extends React.Component {
         tags={this.tags}
         suggestions={this.suggestions}
         onChange={this.handleFilterInput}
+        defaultKeywordLabel={t('Name')}
       />
     )
   }

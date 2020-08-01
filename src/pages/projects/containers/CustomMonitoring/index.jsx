@@ -44,8 +44,9 @@ export default class CustomMonitoringDashboards extends React.Component {
     editData: {},
   }
 
-  getData = () => {
-    this.props.store.fetchListByK8s(this.props.match.params)
+  getData = (params = {}) => {
+    const { cluster, namespace } = this.props.match.params
+    this.props.store.fetchList({ cluster, namespace, ...params })
   }
 
   getColumns() {
@@ -55,7 +56,6 @@ export default class CustomMonitoringDashboards extends React.Component {
         title: t('Name'),
         dataIndex: 'title',
         sortOrder: getSortOrder('name'),
-        search: true,
         render: (title, { name, _originData, description }) => (
           <Avatar
             icon={ICON_TYPES[module]}
@@ -75,10 +75,7 @@ export default class CustomMonitoringDashboards extends React.Component {
       {
         title: t('Created Time'),
         dataIndex: 'creationTimestamp',
-        sorter: true,
-        sortOrder: getSortOrder('creationTimestamp'),
         isHideable: true,
-        search: true,
         width: 150,
         render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
       },
@@ -86,7 +83,7 @@ export default class CustomMonitoringDashboards extends React.Component {
   }
 
   get itemActions() {
-    const { trigger, routing } = this.props
+    const { name, trigger, routing } = this.props
     return [
       {
         key: 'editYaml',
@@ -106,12 +103,33 @@ export default class CustomMonitoringDashboards extends React.Component {
         action: 'delete',
         onClick: item =>
           trigger('resource.delete', {
-            type: t(this.name),
+            type: t(name),
             detail: item,
-            success: routing.query,
+            success: () => this.getData({ page: 1 }),
           }),
       },
     ]
+  }
+
+  get tableActions() {
+    const { name, tableProps, trigger } = this.props
+    return {
+      ...tableProps.tableActions,
+      selectActions: [
+        {
+          key: 'delete',
+          type: 'danger',
+          text: t('Delete'),
+          action: 'delete',
+          onClick: () =>
+            trigger('resource.batch.delete', {
+              type: t(name),
+              rowKey: 'name',
+              success: () => this.getData({ page: 1 }),
+            }),
+        },
+      ],
+    }
   }
 
   showCreateModal = () => {
@@ -167,8 +185,10 @@ export default class CustomMonitoringDashboards extends React.Component {
           <Table
             {...tableProps}
             itemActions={this.itemActions}
+            tableActions={this.tableActions}
             columns={this.getColumns()}
             onCreate={this.showCreateModal}
+            searchType="name"
           />
         </ListPage>
 
@@ -189,6 +209,7 @@ export default class CustomMonitoringDashboards extends React.Component {
             isSaving={this.props.store.isSubmitting}
             onCancel={this.hideEditModal}
             onSave={this.editDashboard}
+            readOnly={!tableProps.enabledActions.includes('edit')}
           />
         )}
       </div>

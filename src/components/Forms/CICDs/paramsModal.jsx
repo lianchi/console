@@ -53,7 +53,7 @@ export default class ParamsModal extends React.Component {
 
   get branch() {
     const { branches, params } = this.props
-    let currentBranch = params.branch
+    let currentBranch = params ? params.branch : ''
     if (!isEmpty(branches)) {
       currentBranch = get(this.branchOptions, '[0].value')
     }
@@ -96,8 +96,10 @@ export default class ParamsModal extends React.Component {
     return options
   }
 
-  init = () => {
-    const parameters = this.getParametersFromBranch(this.branch)
+  init = async () => {
+    const parameters = this.branch
+      ? await this.getParametersFromBranch(this.branch)
+      : this.props.parameters
     this.setState({
       currentBranch: this.branch,
       parameters,
@@ -114,19 +116,28 @@ export default class ParamsModal extends React.Component {
   }
 
   handleOk = () => {
-    const { branch, ...parameters } = this.formRef.current.getData()
+    const { branch, ...formParameters } = this.formRef.current.getData()
+    const { parameters } = this.state
+
     this.formRef.current.validate(() => {
-      const params = Object.keys(parameters).map(key => ({
-        name: key,
-        value: parameters[key],
-      }))
+      const params = isEmpty(formParameters)
+        ? !isEmpty(parameters)
+          ? parameters.map(item => ({
+              name: item.name,
+              value: '',
+            }))
+          : null
+        : Object.keys(formParameters).map(key => ({
+            name: key,
+            value: formParameters[key],
+          }))
       this.props.onOk(params, branch)
     })
   }
 
   renderParamsItem(param) {
     const type = param.type.toLowerCase().split('parameterdefinition')[0]
-
+    const defaultValue = get(param, 'defaultParameterValue.value')
     switch (type) {
       case 'string':
         return (
@@ -135,10 +146,7 @@ export default class ParamsModal extends React.Component {
             label={param.name}
             desc={param.description}
           >
-            <Input
-              defaultValue={param.defaultParameterValue.value}
-              name={param.name}
-            />
+            <Input defaultValue={defaultValue} name={param.name} />
           </Form.Item>
         )
       case 'text':
@@ -148,10 +156,7 @@ export default class ParamsModal extends React.Component {
             label={param.name}
             desc={param.description}
           >
-            <TextArea
-              defaultValue={param.defaultParameterValue.value}
-              name={param.name}
-            />
+            <TextArea defaultValue={defaultValue} name={param.name} />
           </Form.Item>
         )
       case 'boolean':
@@ -161,10 +166,7 @@ export default class ParamsModal extends React.Component {
             label={param.name}
             desc={param.description}
           >
-            <RadioGroup
-              name={param.name}
-              defaultValue={String(param.defaultParameterValue.value)}
-            >
+            <RadioGroup name={param.name} defaultValue={String(defaultValue)}>
               <Radio name={param.name} value={'true'}>
                 True
               </Radio>
@@ -199,7 +201,7 @@ export default class ParamsModal extends React.Component {
             desc={param.description}
           >
             <Input
-              defaultValue={param.defaultParameterValue.value}
+              defaultValue={defaultValue}
               type="password"
               name={param.name}
             />
@@ -212,17 +214,14 @@ export default class ParamsModal extends React.Component {
             label={param.name}
             desc={param.description}
           >
-            <Input
-              defaultValue={param.defaultParameterValue.value}
-              name={param.name}
-            />
+            <Input defaultValue={defaultValue} name={param.name} />
           </Form.Item>
         )
     }
   }
 
-  handleBranchChange = branch => {
-    const parameters = this.getParametersFromBranch(branch)
+  handleBranchChange = async branch => {
+    const parameters = await this.getParametersFromBranch(branch)
     this.setState({ currentBranch: branch, parameters })
   }
 
@@ -254,7 +253,7 @@ export default class ParamsModal extends React.Component {
               <Select
                 name="branch"
                 options={this.branchOptions}
-                value={currentBranch}
+                defaultValue={currentBranch}
                 onChange={this.handleBranchChange}
               />
             </Form.Item>
@@ -262,7 +261,8 @@ export default class ParamsModal extends React.Component {
           {!isEmpty(parameters) ? (
             <div className={style.desc}>{t('PARAMS_DESC')}</div>
           ) : null}
-          {parameters && parameters.map(param => this.renderParamsItem(param))}
+          {Array.isArray(parameters) &&
+            parameters.map(param => this.renderParamsItem(param))}
         </Form>
       </Modal>
     )

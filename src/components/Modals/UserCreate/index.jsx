@@ -22,8 +22,8 @@ import PropTypes from 'prop-types'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react'
 
-import { Input, TextArea, Select } from '@pitrix/lego-ui'
-import { Modal, Form } from 'components/Base'
+import { Input, Select } from '@pitrix/lego-ui'
+import { Modal, Form, TextArea } from 'components/Base'
 import { InputPassword } from 'components/Inputs'
 import { isSystemRole } from 'utils'
 import { PATTERN_NAME, PATTERN_PASSWORD } from 'utils/constants'
@@ -118,7 +118,7 @@ export default class UserCreateModal extends Component {
           { required: true, message: t('Please input user name') },
           {
             pattern: PATTERN_NAME,
-            message: `${t('Invalid user name')}, ${t('USER_NAME_DESC')}`,
+            message: `${t('Invalid user name')}. ${t('USER_NAME_DESC')}`,
           },
           { validator: this.userNameValidator },
         ]
@@ -190,9 +190,14 @@ export default class UserCreateModal extends Component {
             />
           </Form.Item>
         )}
-        <Form.Item className={styles.textarea} label={t('Description')}>
+        <Form.Item
+          className={styles.textarea}
+          label={t('Description')}
+          desc={t('DESCRIPTION_DESC')}
+        >
           <TextArea
             name="metadata.annotations['kubesphere.io/description']"
+            maxLength={256}
             rows="3"
           />
         </Form.Item>

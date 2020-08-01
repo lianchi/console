@@ -51,6 +51,7 @@ export default class HealthChecker extends React.Component {
             name={`${this.prefix}livenessProbe`}
             type={t('Container Liveness Check')}
             description={t('LIVENESS_PROBE_DESC')}
+            probType="livenessProbe"
           />
         </Form.Item>
         <Form.Item
@@ -61,13 +62,19 @@ export default class HealthChecker extends React.Component {
             name={`${this.prefix}readinessProbe`}
             type={t('Container Readiness Check')}
             description={t('READINESS_PROBE_DESC')}
+            probType="readinessProbe"
           />
         </Form.Item>
-        <Form.Item className={styles.item} label={t('Container Startup Check')}>
+        <Form.Item
+          className={styles.item}
+          label={t('Container Startup Check')}
+          tip={t('STARTUP_PROBE_TIP')}
+        >
           <ProbeInput
             name={`${this.prefix}startupProbe`}
             type={t('Container Startup Check')}
             description={t('STARTUP_PROBE_DESC')}
+            probType="startupProbe"
           />
         </Form.Item>
       </Form.Group>

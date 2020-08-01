@@ -68,7 +68,8 @@ class BaseInfo extends React.Component {
   }
 
   getData = () => {
-    this.store.fetchDetail(this.params)
+    const { namespace } = this.params
+    this.store.fetchDetail({ namespace, name: namespace })
   }
 
   get itemActions() {
@@ -109,7 +110,10 @@ class BaseInfo extends React.Component {
         onClick: () =>
           this.trigger('federated.project.delete', {
             detail,
-            success: () => this.props.rootStore.routing.push('/'),
+            success: () =>
+              this.props.rootStore.routing.push(
+                `/workspaces/${this.params.workspace}/federatedprojects`
+              ),
           }),
       },
     ]

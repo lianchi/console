@@ -16,7 +16,7 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { omit, set } from 'lodash'
+import { set } from 'lodash'
 import { action, observable } from 'mobx'
 import {
   CREDENTIAL_KEY,
@@ -27,7 +27,7 @@ import {
 import FORM_TEMPLATES from 'utils/form.templates'
 import BaseStore from './base'
 
-const TABLE_LIMIT = 20
+const TABLE_LIMIT = 10
 
 export default class CredentialStore extends BaseStore {
   module = 'secrets'
@@ -62,8 +62,6 @@ export default class CredentialStore extends BaseStore {
     return API_VERSIONS.devops
   }
 
-  gettype = type => `credential.devops.kubesphere.io/${type}`
-
   getResourceUrl = (params = {}) => {
     const path = `${this.apiVersion}${this.getPath(params)}/devops/${
       params.devops
@@ -73,17 +71,14 @@ export default class CredentialStore extends BaseStore {
   }
 
   @action
-  async fetchList({ project_id, cluster, ...filters } = {}) {
-    const devops = this.getDevops(project_id)
+  async fetchList({ devops, cluster, page, ...filters } = {}) {
     this.list.isLoading = true
-    const { page } = filters
 
     const result = await this.request.get(
       this.getResourceUrl({ devops, cluster }),
       {
-        start: (page - 1) * TABLE_LIMIT || 0,
-        limit: TABLE_LIMIT,
-        type: 'credential.devops.kubesphere.io/',
+        paging: `limit=${TABLE_LIMIT},page=${page}`,
+        conditions: `keyword=${filters.name}`,
       }
     )
 
@@ -99,10 +94,10 @@ export default class CredentialStore extends BaseStore {
 
     this.list = {
       data: dataList,
-      total: result.total_count || result.length || 0,
-      limit: 100,
+      total: result.totalItems || dataList.length || 0,
+      limit: 10,
       page: parseInt(page, 10) || 1,
-      filters: omit(filters, 'name'),
+      filters,
       isLoading: false,
     }
 
@@ -110,10 +105,9 @@ export default class CredentialStore extends BaseStore {
   }
 
   @action
-  async handleCreate(data, { project_id, cluster }, reject) {
-    const devops = this.getDevops(project_id)
+  async handleCreate(data, { devops, cluster }) {
     const body = FORM_TEMPLATES[this.module]({
-      namespace: project_id,
+      namespace: devops,
     })
 
     const typeDate = data[data.type]
@@ -145,14 +139,13 @@ export default class CredentialStore extends BaseStore {
       this.getResourceUrl({ devops, cluster }),
       body,
       null,
-      reject
+      null
     )
   }
 
   @action
   async fetchDetail() {
-    const { project_id, credential_id, cluster } = this.params
-    const devops = this.getDevops(project_id)
+    const { devops, credential_id, cluster } = this.params
     const result = await this.request.get(
       `${this.getResourceUrl({
         devops,
@@ -175,17 +168,17 @@ export default class CredentialStore extends BaseStore {
 
   @action
   async getUsageDetail() {
-    const { project_id, credential_id, cluster } = this.params
+    const { devops, credential_id, cluster } = this.params
 
     return await this.request.get(
       `${this.getDevopsUrlV2({
         cluster,
-      })}${project_id}/credentials/${credential_id}/usage`
+      })}${devops}/credentials/${credential_id}/usage`
     )
   }
 
   @action
-  async updateCredential(credential, { project_id, cluster }) {
+  async updateCredential(credential, { devops, cluster }) {
     const data = credential[credential.type]
     const des = credential.description
     const origin = credential._originData
@@ -199,8 +192,6 @@ export default class CredentialStore extends BaseStore {
     set(origin, 'data', data)
     set(origin, 'metadata.annotations["kubesphere.io/description"]', des)
 
-    const devops = this.getDevops(project_id)
-
     return await this.request.put(
       `${this.getResourceUrl({
         devops,
@@ -213,8 +204,7 @@ export default class CredentialStore extends BaseStore {
 
   @action
   async delete(credential_id) {
-    const { project_id, cluster } = this.params
-    const devops = this.getDevops(project_id)
+    const { devops, cluster } = this.params
 
     return await this.request.delete(
       `${this.getResourceUrl({
@@ -222,6 +212,17 @@ export default class CredentialStore extends BaseStore {
         name: credential_id,
         cluster,
       })}`
+    )
+  }
+
+  @action
+  checkName(params) {
+    return request.get(
+      this.getResourceUrl(params),
+      {},
+      {
+        headers: { 'x-check-exist': true },
+      }
     )
   }
 }

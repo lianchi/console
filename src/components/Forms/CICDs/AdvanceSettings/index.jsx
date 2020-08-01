@@ -71,11 +71,17 @@ export default class AdvanceSettings extends React.Component {
 
     switch (this.sourceType) {
       case 'bitbucket_server':
-        return `${window.location.protocol}//${window.location.host}/devops_webhook/git/?url=${bitbucket_url}`
+        return `${window.location.protocol}//${
+          window.location.host
+        }/devops_webhook/git/?url=${bitbucket_url}`
       case 'github':
-        return `${window.location.protocol}//${window.location.host}/devops_webhook/${this.sourceType}/`
+        return `${window.location.protocol}//${
+          window.location.host
+        }/devops_webhook/${this.sourceType}/`
       default:
-        return `${window.location.protocol}//${window.location.host}/devops_webhook/git/?url=${url}`
+        return `${window.location.protocol}//${
+          window.location.host
+        }/devops_webhook/git/?url=${url}`
     }
   }
 
@@ -407,7 +413,9 @@ export default class AdvanceSettings extends React.Component {
                   desc={t('WHEN_CHRETE_PIEPLINE_DESC')}
                 >
                   <Select
-                    name={`${this.prefix}.multibranch_job_trigger.create_action_job_to_trigger`}
+                    name={`${
+                      this.prefix
+                    }.multibranch_job_trigger.create_action_job_to_trigger`}
                     isLoading={isLoading}
                     isLoadingAtBottom
                     onMenuScrollToBottom={this.handleScrollToBottom}
@@ -422,7 +430,9 @@ export default class AdvanceSettings extends React.Component {
                   desc={t('WHEN_DELETE_PIEPLINE_DESC')}
                 >
                   <Select
-                    name={`${this.prefix}.multibranch_job_trigger.delete_action_job_to_trigger`}
+                    name={`${
+                      this.prefix
+                    }.multibranch_job_trigger.delete_action_job_to_trigger`}
                     isLoading={isLoading}
                     isLoadingAtBottom
                     onMenuScrollToBottom={this.handleScrollToBottom}
@@ -454,8 +464,8 @@ export default class AdvanceSettings extends React.Component {
               <Form.Item
                 label={t('Days to Keep Builds')}
                 desc={`${t(
-                  'Old builds will be deleted after this number of days'
-                )}. (${t('defaultValue -1 means not discard')})`}
+                  'Old builds will be deleted after this number of days.'
+                )} (${t('defaultValue -1 means not discard')})`}
               >
                 <Input
                   name={`${this.prefix}.discarder.days_to_keep`}
@@ -467,8 +477,8 @@ export default class AdvanceSettings extends React.Component {
               <Form.Item
                 label={t('Maximum Number of Builds to Keep')}
                 desc={`${t(
-                  'Old builds will be discarded after the build number exceeds the maximum amount'
-                )}. (${t('defaultValue -1 means not discard')})`}
+                  'Old builds will be discarded after the build number exceeds the maximum amount.'
+                )} (${t('defaultValue -1 means not discard')})`}
               >
                 <Input
                   name={`${this.prefix}.discarder.num_to_keep`}

@@ -32,9 +32,8 @@ import MessageStore from 'stores/alerting/message'
 
 @withList({
   store: new MessageStore('node'),
-  module: 'alert-message',
+  module: 'alert-messages',
   name: 'Alerting Message',
-  authKey: 'alerting',
 })
 export default class AlertingPolicy extends React.Component {
   state = {
@@ -82,7 +81,7 @@ export default class AlertingPolicy extends React.Component {
   }
 
   get itemActions() {
-    const { trigger } = this.props
+    const { trigger, routing } = this.props
     return [
       {
         key: 'delete',
@@ -93,6 +92,7 @@ export default class AlertingPolicy extends React.Component {
           trigger('resource.delete', {
             type: t(this.name),
             detail: item,
+            success: routing.query,
           }),
       },
     ]
@@ -101,10 +101,12 @@ export default class AlertingPolicy extends React.Component {
   getTableProps() {
     const { tableProps } = this.props
     return {
-      ...tableProps.tableAction,
-      searchType: 'keyword',
+      tableActions: {
+        ...tableProps.tableActions,
+        selectActions: [],
+      },
       placeholder: t('Please input a monitoring target to find'),
-      selectActions: [],
+      searchType: 'keyword',
       emptyProps: {
         desc: t('ALERT_MESSAGE_DESC'),
       },

@@ -22,8 +22,8 @@ import { observer } from 'mobx-react'
 
 import { PATTERN_NAME, MODULE_KIND_MAP } from 'utils/constants'
 
-import { Columns, Column, Input, TextArea } from '@pitrix/lego-ui'
-import { Form } from 'components/Base'
+import { Columns, Column, Input } from '@pitrix/lego-ui'
+import { Form, TextArea } from 'components/Base'
 
 @observer
 export default class BaseInfo extends React.Component {
@@ -74,7 +74,11 @@ export default class BaseInfo extends React.Component {
                 { validator: this.nameValidator },
               ]}
             >
-              <Input name="alert.alert_name" onChange={this.handleNameChange} />
+              <Input
+                name="alert.alert_name"
+                onChange={this.handleNameChange}
+                maxLength={253}
+              />
             </Form.Item>
           </Column>
           <Column>
@@ -85,8 +89,8 @@ export default class BaseInfo extends React.Component {
         </Columns>
         <Columns>
           <Column>
-            <Form.Item label={t('Description')}>
-              <TextArea name="policy.policy_description" />
+            <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
+              <TextArea name="policy.policy_description" maxLength={256} />
             </Form.Item>
           </Column>
         </Columns>

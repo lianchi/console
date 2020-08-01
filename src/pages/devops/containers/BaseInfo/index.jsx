@@ -21,7 +21,7 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { Icon, Dropdown, Menu } from '@pitrix/lego-ui'
-import { Card, Button } from 'components/Base'
+import { Card, Button, Notify } from 'components/Base'
 import DeleteModal from 'components/Modals/Delete'
 import Info from 'components/Cards/Info'
 import Banner from 'components/Cards/Banner'
@@ -29,7 +29,6 @@ import EditModal from 'devops/components/Modals/DevOpsEdit'
 
 import UserStore from 'stores/user'
 import RoleStore from 'stores/role'
-
 import styles from './index.scss'
 
 @inject('rootStore', 'devopsStore')
@@ -64,12 +63,12 @@ class BaseInfo extends React.Component {
     return this.props.devopsStore
   }
 
-  get project_id() {
-    return this.props.match.params.project_id
+  get devops() {
+    return this.props.match.params.devops
   }
 
-  get devops() {
-    return this.store.devops
+  get devopsName() {
+    return this.store.devopsName
   }
 
   get workspace() {
@@ -117,15 +116,16 @@ class BaseInfo extends React.Component {
     })
   }
 
-  handleEdit = ({ name, ...data }) => {
+  handleEdit = ({ devops, ...data }) => {
     this.store
       .update(
-        { name, cluster: this.cluster, workspace: this.workspace },
+        { devops, cluster: this.cluster, workspace: this.workspace },
         data,
         true
       )
       .then(() => {
         this.hideEdit()
+        Notify.success({ content: `${t('Updated Successfully')}!` })
         this.store.fetchDetail({
           workspace: this.workspace,
           ...this.props.match.params,
@@ -142,7 +142,7 @@ class BaseInfo extends React.Component {
   handleDelete = () => {
     this.store
       .delete({
-        name: this.devops,
+        devops: this.devops,
         cluster: this.cluster,
         workspace: this.workspace,
       })
@@ -212,14 +212,18 @@ class BaseInfo extends React.Component {
               icon="group"
               title={memberCount}
               desc={t('Members')}
-              url={`/${this.workspace}/clusters/${this.cluster}/devops/${this.project_id}/members`}
+              url={`/${this.workspace}/clusters/${this.cluster}/devops/${
+                this.devops
+              }/members`}
             />
             <Info
               className={styles.info}
               icon="role"
               title={roleCount}
               desc={t('Project Roles')}
-              url={`/${this.workspace}/clusters/${this.cluster}/devops/${this.project_id}/roles`}
+              url={`/${this.workspace}/clusters/${this.cluster}/devops/${
+                this.devops
+              }/roles`}
             />
           </div>
         </Card>
@@ -233,7 +237,7 @@ class BaseInfo extends React.Component {
     return (
       <div>
         <Banner
-          title={t('DevOps BaseInfo')}
+          title={t('DevOps Basic Info')}
           icon="cdn"
           description={t('DEVOPS_DESCRIPTION')}
           module={this.module}

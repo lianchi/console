@@ -20,10 +20,10 @@ import React from 'react'
 import { observer } from 'mobx-react'
 import { get, isEmpty } from 'lodash'
 import PropTypes from 'prop-types'
-import { Columns, Column, Select, Input, TextArea } from '@pitrix/lego-ui'
-import { Modal, Form } from 'components/Base'
+import { Columns, Column, Select, Input } from '@pitrix/lego-ui'
+import { Modal, Form, TextArea } from 'components/Base'
 import ClusterTitle from 'components/Clusters/ClusterTitle'
-import { PATTERN_SERVICE_NAME, PATTERN_LENGTH_63 } from 'utils/constants'
+import { PATTERN_SERVICE_NAME } from 'utils/constants'
 
 import WorkspaceStore from 'stores/workspace'
 
@@ -54,7 +54,8 @@ export default class ProjectCreateModal extends React.Component {
     this.store = props.store
     this.workspaceStore = new WorkspaceStore()
 
-    this.clusterRef = React.createRef()
+    this.formRef = React.createRef()
+    this.nameRef = React.createRef()
   }
 
   componentDidMount() {
@@ -102,7 +103,13 @@ export default class ProjectCreateModal extends React.Component {
       return callback()
     }
 
-    const { cluster } = this.props
+    const cluster =
+      this.props.cluster || get(this.props.formTemplate, 'cluster')
+
+    if (!cluster && globals.app.isMultiCluster) {
+      return callback()
+    }
+
     this.store.checkName({ name: value, cluster }).then(resp => {
       if (resp.exist) {
         return callback({ message: t('Name exists'), field: rule.field })
@@ -111,25 +118,19 @@ export default class ProjectCreateModal extends React.Component {
     })
   }
 
-  singleClusterValidator = (rule, value, callback) => {
-    const name = get(this.props.formTemplate, 'metadata.name')
-
-    if (!value || !name) {
-      return callback()
-    }
-
-    this.store.checkName({ name, cluster: value }).then(resp => {
-      if (resp.exist) {
-        return callback({ message: t('Name exists'), field: rule.field })
+  handleClusterChange = () => {
+    if (this.nameRef && this.nameRef.current) {
+      const name = 'metadata.name'
+      if (
+        this.formRef &&
+        this.formRef.current &&
+        !isEmpty(this.formRef.current.state.errors)
+      ) {
+        this.formRef.current.resetValidateResults(name)
       }
-      callback()
-    })
-  }
 
-  handleNameChange = () => {
-    if (this.clusterRef.current && this.clusterRef.current.state.error) {
-      this.clusterRef.current.validate({
-        cluster: get(this.props.formTemplate, 'cluster'),
+      this.nameRef.current.validate({
+        [name]: get(this.props.formTemplate, name),
       })
     }
   }
@@ -149,18 +150,16 @@ export default class ProjectCreateModal extends React.Component {
         desc={t('Select the cluster to create the project.')}
       >
         <Form.Item
-          ref={this.clusterRef}
-          rules={[
-            { required: true, message: t('Please select a cluster') },
-            { validator: this.singleClusterValidator },
-          ]}
+          rules={[{ required: true, message: t('Please select a cluster') }]}
         >
           <Select
             name="cluster"
             className={styles.cluster}
             options={this.clusters}
+            defaultValue={this.props.defaultCluster}
             valueRenderer={this.valueRenderer}
             optionRenderer={this.optionRenderer}
+            onChange={this.handleClusterChange}
           />
         </Form.Item>
       </Form.Group>
@@ -179,6 +178,7 @@ export default class ProjectCreateModal extends React.Component {
     return (
       <Modal.Form
         width={960}
+        formRef={this.formRef}
         bodyClassName={styles.body}
         data={formTemplate}
         onCancel={onCancel}
@@ -201,51 +201,38 @@ export default class ProjectCreateModal extends React.Component {
               <Form.Item
                 label={t('Name')}
                 desc={t('SERVICE_NAME_DESC')}
+                ref={this.nameRef}
                 rules={[
                   { required: true, message: t('Please input name') },
                   {
                     pattern: PATTERN_SERVICE_NAME,
                     message: `${t('Invalid name')}, ${t('SERVICE_NAME_DESC')}`,
                   },
-                  { pattern: PATTERN_LENGTH_63, message: t('NAME_TOO_LONG') },
-                  {
-                    validator: hideCluster ? this.nameValidator : null,
-                  },
+                  { validator: this.nameValidator },
                 ]}
               >
-                <Input
-                  name="metadata.name"
-                  autoFocus={true}
-                  onChange={this.handleNameChange}
-                />
+                <Input name="metadata.name" autoFocus={true} maxLength={63} />
               </Form.Item>
             </Column>
             <Column>
               <Form.Item label={t('Alias')} desc={t('ALIAS_DESC')}>
-                <Input name="metadata.annotations['kubesphere.io/alias-name']" />
+                <Input
+                  name="metadata.annotations['kubesphere.io/alias-name']"
+                  maxLength={63}
+                />
               </Form.Item>
             </Column>
           </Columns>
           <Columns>
             <Column>
-              <Form.Item
-                label={t('Network Isolation')}
-                desc={t('NETWORK_ISOLATED_DESC')}
-              >
-                <Select
-                  name="metadata.annotations['kubesphere.io/network-isolate']"
-                  options={this.networkOptions}
-                  defaultValue={
-                    globals.config.defaultNetworkIsolation ? 'enabled' : ''
-                  }
+              <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
+                <TextArea
+                  name="metadata.annotations['kubesphere.io/description']"
+                  maxLength={256}
                 />
               </Form.Item>
             </Column>
-            <Column>
-              <Form.Item label={t('Description')}>
-                <TextArea name="metadata.annotations['kubesphere.io/description']" />
-              </Form.Item>
-            </Column>
+            <Column />
           </Columns>
           {!hideCluster && this.renderClusters()}
         </div>

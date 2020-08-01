@@ -54,7 +54,9 @@ export default class OPAppDetail extends React.Component {
   get listUrl() {
     const { cluster, workspace, namespace } = this.props.match.params
 
-    return `/${workspace}/clusters/${cluster}/projects/${namespace}/${this.module}/template`
+    return `/${workspace}/clusters/${cluster}/projects/${namespace}/${
+      this.module
+    }/template`
   }
 
   get routing() {
@@ -74,6 +76,18 @@ export default class OPAppDetail extends React.Component {
       action: 'edit',
       onClick: () =>
         this.trigger('openpitrix.app.edit', {
+          type: t(this.name),
+          detail: toJS(this.store.detail),
+          success: this.fetchData,
+        }),
+    },
+    {
+      key: 'edit',
+      icon: 'pen',
+      text: t('Version Upgrade'),
+      action: 'edit',
+      onClick: () =>
+        this.trigger('openpitrix.app.upgrade', {
           type: t(this.name),
           detail: toJS(this.store.detail),
           success: this.fetchData,

@@ -16,12 +16,13 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { get, isNaN } from 'lodash'
+import { get, isNaN, unset } from 'lodash'
 import React from 'react'
 import { toJS } from 'mobx'
 
 import { PropTypes } from 'prop-types'
 import { safeParseJSON } from 'utils'
+import { ACCESS_MODES } from 'utils/constants'
 import { Form, Slider, SearchSelect } from 'components/Base'
 import { AccessModes } from 'components/Inputs'
 
@@ -131,7 +132,7 @@ export default class VolumeSettings extends React.Component {
       return safeParseJSON(
         get(
           storageClass,
-          'annotations["storageclass.kubesphere.io/supported_access_modes"]',
+          'annotations["storageclass.kubesphere.io/supported-access-modes"]',
           ''
         )
       )
@@ -146,11 +147,22 @@ export default class VolumeSettings extends React.Component {
     const newStorageClass =
       storageClasses.find(item => item.name === value) || {}
 
-    this.context.formData[ACCESSMODE_KEY] = undefined
+    unset(this.context.formData, ACCESSMODE_KEY)
 
     this.setState({
       storageClass: newStorageClass,
     })
+  }
+
+  sizeValidator = (rule, value, callback) => {
+    if (parseInt(value, 10) <= 0) {
+      return callback({
+        message: t('volume size must be greater than zero'),
+        field: rule.field,
+      })
+    }
+
+    return callback()
   }
 
   render() {
@@ -180,15 +192,23 @@ export default class VolumeSettings extends React.Component {
           />
         </Form.Item>
 
-        <Form.Item label={t('Access Mode')}>
+        <Form.Item
+          label={t('Access Mode')}
+          rules={[{ required: true, message: t('This param is required') }]}
+        >
           <AccessModes
             name={ACCESSMODE_KEY}
-            defaultValue={get(supportedAccessModes, '[0]', '')}
+            defaultValue={
+              get(supportedAccessModes, '[0]') || Object.keys(ACCESS_MODES)[0]
+            }
             supportedAccessModes={supportedAccessModes}
             loading={isLoading}
           />
         </Form.Item>
-        <Form.Item label={t('Volume Capacity')}>
+        <Form.Item
+          label={t('Volume Capacity')}
+          rules={[{ validator: this.sizeValidator }]}
+        >
           <Slider
             name="spec.resources.requests.storage"
             {...this.getSliderProps(storageClass)}
